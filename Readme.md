@@ -38,7 +38,7 @@ Other ways of contribution, such as reviews and bug reports are welcome.
 [Name 1]
 [Name 2]
 [Name 3]
-[Name 4]
+[Yuan Jiale]
 
 # License 
 [SilverFocs Incubator Licence] (Link to it on silverfocs website) 
