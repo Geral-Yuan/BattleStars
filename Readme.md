@@ -37,7 +37,7 @@ Other ways of contribution, such as reviews and bug reports are welcome.
 	[Team Name]
 [Name 1]
 [Name 2]
-[Name 3]
+[Yijun Wang]
 [Yuan Jiale]
 
 # License 
