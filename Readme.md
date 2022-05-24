@@ -36,7 +36,7 @@ Other ways of contribution, such as reviews and bug reports are welcome.
 # Author team 
 	[Team Name]
 [Name 1]
-[Name 2]
+[Jovan Yap]
 [Yijun Wang]
 [Yuan Jiale]
 
