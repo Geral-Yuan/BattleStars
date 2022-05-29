@@ -1,44 +1,62 @@
-[ProjectName]: [Short Project Description]
+Breakout Game (Milestone1): Model and draw the bricks as well as the paddle without Elm Playground
 
 # README
-This file contains relevant information about installation and startup.
+
 
 ## Installation
-	[Operating System]
 
-[Comments/Instructions]
-```
-[Code]
-```
+You can install `Elm` by downloading the installer with the links below and run them directly.
 
-[Comments/Instructions]
-```
-[Code]
-```
+[Linux](https://github.com/elm/compiler/blob/master/installers/linux/README.md)/
+[Mac](https://github.com/elm/compiler/releases/download/0.19.1/installer-for-mac.pkg)/
+[Windows](https://github.com/elm/compiler/releases/download/0.19.1/installer-for-windows.exe)
 
-[Comments/Instructions]
-```
-[Code]
-```
+More information can be found in [Official Guide](https://guide.elm-lang.org/install/elm.html), 
 
 ## Usage
+First, please use ``` cd ``` commands to enter the m1 folder of the project. 
 
-[Comments/Instructions]
-```
-[Code]
-```
+Next, run ```elm make src/Milestone1.elm``` to compile it into index.html file.
+
+Finally, open the index.html file.
+
+# Detailed information
+
+## Complete
+
+### Milestone1 ###
+
+- Determine the basic Model and draw the static (not moving) bricks, ball and the paddle.
+
+## To-do
+
+### Milestone2 ###
+
+- Implement `update` to make the bricks broken after coming into contact with the ball
+- make the ball bounce 
+- make the paddle moved by the player
 
 # Contributing
-Due to the rules and regulation of the SilverFocs incubator, pushing code to this project by people other than assigned members of the group is prohibited. 
 
-Other ways of contribution, such as reviews and bug reports are welcome.
+### Milestone1 ###
 
-# Author team 
-	[Team Name]
-[Ekkanat Tanchavalit]
-[Jovan Yap]
-[Yijun Wang]
-[Yuan Jiale]
+- Codes: Ekkanat Tanchavalit, Jovan Yap
+- Logo design: Jovan Yap
+- Readme: Wang Yijun
+- Changelog: Yuan Jiale
+- Code review: All group members
+
+# Author team: **ACE Corps**
+
+**Team menbers:**
+
+Ekkanat Tanchavalit
+
+Jovan Yap
+
+Wang Yijun
+
+Yuan Jiale
 
 # License 
-[SilverFocs Incubator Licence] (Link to it on silverfocs website) 
+[SilverFocs Incubator Licence](https://focs.ji.sjtu.edu.cn/silverfocs/markdown/license)
