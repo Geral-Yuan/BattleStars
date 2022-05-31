@@ -1,4 +1,4 @@
-module Milestone1 exposing (..)
+module Milestone2 exposing (..)
 
 import Debug exposing (toString)
 import Html exposing (..)
@@ -7,14 +7,29 @@ import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 
 
+
+
+
+type alias Scoreboard =
+    {
+        player_score : Int
+        , player_lives : Int
+    }
+
+type Dir
+    =  Left
+    | Right
+
 type alias Brick =
     { pos : ( Float, Float )
-    , exist : Bool
+      , brick_lives : Int   -- (minus for infinite; >=0 for finite), when 0, delete the brick!
+      , brick_score : Int
     }
 
 
 type alias Paddle =
     { pos : ( Float, Float )
+    , dir : Dir
     , height : Float
     , width : Float
     }
@@ -23,7 +38,8 @@ type alias Paddle =
 type alias Ball =
     { pos : ( Float, Float )
     , radius : Float
-    , dir : ( Float, Float )
+    , theta : Float
+    , speed : Float
     }
 
 
@@ -32,6 +48,7 @@ type alias Model =
     , paddle : Paddle
     , ball : Ball
     , time : Float
+    , scoreboard : Scoreboard 
     }
 
 
@@ -49,29 +66,33 @@ init _ =
 
 initModel : Model
 initModel =
-    { list_brick = initBrick ( 5, 10 )
-    , paddle = Paddle ( 50, 90 ) 2 15
-    , ball = Ball ( 50, 50 ) 1.5 ( 1, -1 )
+    { list_brick = initBrick ( 5, 10 ) 1 10 --one life for each brick; 10 points for each brick
+    , paddle = Paddle ( 50, 90 ) Left 2 15  
+    , ball = Ball ( 50, 50 ) 1.5 (pi/4) 1   --initial theta = pi/4; --initial speed = 1, adjust it if too fast or slow!! 
     , time = 0
+    , scoreboard = initScoreboard 3     --three lives for a player
     }
 
+initScoreboard : Int -> Scoreboard
+initScoreboard lives = 
+    Scoreboard 0 lives
 
-initBrick : ( Float, Float ) -> List Brick
-initBrick ( row, col ) =
+initBrick : ( Float, Float ) -> Int -> Int -> List Brick
+initBrick ( row, col ) lives score=
     if row == 1 then
-        initBrickRow ( row, col )
+        initBrickRow ( row, col ) lives score
 
     else
-        initBrickRow ( row, col ) ++ initBrick ( row - 1, col )
+        initBrickRow ( row, col ) lives score ++ initBrick ( row - 1, col ) lives score
 
 
-initBrickRow : ( Float, Float ) -> List Brick
-initBrickRow ( row, col ) =
+initBrickRow : ( Float, Float ) -> Int -> Int -> List Brick
+initBrickRow ( row, col ) lives score=
     if col == 1 then
-        [ Brick ( row, col ) True ]
+        [ Brick ( row, col ) lives score ]
 
     else
-        Brick ( row, col ) True :: initBrickRow ( row, col - 1 )
+        Brick ( row, col ) lives score :: initBrickRow ( row, col - 1 ) lives score
 
 
 
