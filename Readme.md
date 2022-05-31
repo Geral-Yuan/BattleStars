@@ -16,23 +16,25 @@ More information can be found in [Official Guide](https://guide.elm-lang.org/ins
 ## Usage
 First, please use ``` cd ``` commands to enter the m1 folder of the project. 
 
-Next, run ```elm make Milestone1``` to compile it into index.html file.
+Next, run ```elm make src/Milestone1.elm``` to compile it into index.html file.
 
 Finally, open the index.html file.
 
-# Detail information
+# Detailed information
 
 ## Complete
 
 ### Milestone1 ###
 
-- Determine the basic Model and draw the bricks, ball the paddle (not moving).
+- Determine the basic Model and draw the static (not moving) bricks, ball and the paddle.
 
 ## To-do
 
 ### Milestone2 ###
 
-- Implement `update` to make the bricks broken, make the ball bounced and make the paddle moved by the player
+- Implement `update` to make the bricks broken after coming into contact with the ball
+- make the ball bounce 
+- make the paddle moved by the player
 
 # Contributing
 
@@ -44,8 +46,7 @@ Finally, open the index.html file.
 - Changelog: Yuan Jiale
 - Code review: All group members
 
-# Author team 
-###ACE###
+# Author team: **ACE Corps**
 
 **Team menbers:**
 
