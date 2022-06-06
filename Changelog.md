@@ -6,6 +6,23 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [m2.4] -- 2022-06-04
+
+### Added
+- Type Bounce with Back
+- Check the bounce more in detail
+- Color type
+- Colorful ball
+### Changed
+- merge the parts of the paddle and the bounce (ball and bricks)
+- Rename `checkBounce` function as `bounceFunc`
+- Rename `Kick` into `Hit`
+- Split Milestone2.elm into sub .elm files to follow the layer programming
+
+### Fixed
+- Make the motion of paddle more smooth
+- Sometimes unexpected result appear when the bounce happens, like stuking in the wall or the paddle
+
 ## [m2.3] -- 2022-06-04
 
 ### Added
