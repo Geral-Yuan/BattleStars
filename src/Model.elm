@@ -1,11 +1,12 @@
 module Model exposing (..)
 
-import Browser.Dom exposing (getViewport)
 import Bounce exposing (..)
+import Browser.Dom exposing (getViewport)
+import Messages exposing (..)
 import Paddle exposing (..)
 import Scoreboard exposing (..)
-import Messages exposing (..)
 import Task
+
 
 type alias Model =
     { list_brick : List Brick
@@ -20,14 +21,14 @@ init : () -> ( Model, Cmd Msg )
 init _ =
     ( initModel
     , Task.perform GetViewport getViewport
-     )
+    )
 
 
 initModel : Model
 initModel =
     { list_brick = initBrick ( 5, 10 ) 1 10 --one life for each brick; 10 points for each brick
-    , paddle = { pos =( 500, 900 ), dir = Still, height = 20, width = 150, speed = 500}
-    , ball = { pos = ( 500, 500 ), radius = 15, v_x = 200, v_y = -200, color = { red = 0, green = 0, blue = 0}}   
+    , paddle = { pos = ( 500, 900 ), dir = Still, height = 20, width = 150, speed = 500 }
+    , ball = { pos = ( 500, 500 ), radius = 15, v_x = 200, v_y = -200, color = { red = 0, green = 0, blue = 0 } }
     , time = 0
     , scoreboard = initScoreboard 3 --three lives for a player
     }
