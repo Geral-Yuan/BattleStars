@@ -12,6 +12,7 @@ type Msg
     | Tick Float
     | GetViewport Viewport
     | Hit ( Int, Int )
+    | Start
 
 brickwidth : Float
 brickwidth =

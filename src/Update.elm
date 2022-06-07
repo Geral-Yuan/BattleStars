@@ -9,12 +9,16 @@ import Scoreboard exposing (..)
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model
-    , Cmd.none
-    )
-        |> updatePaddle msg
-        |> updateBall msg
-        |> updateTime msg
+    case msg of
+        Start ->
+            ( initModel, Cmd.none )
+
+        _ ->
+            ( model, Cmd.none )
+                |> updatePaddle msg
+                |> updateBall msg
+                |> updateTime msg
+                |> checkEnd
 
 
 updatePaddle : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
@@ -255,3 +259,47 @@ updateTime msg ( model, cmd ) =
 
         _ ->
             ( model, cmd )
+
+
+checkEnd : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+checkEnd ( model, cmd ) =
+    let
+        prev_ball =
+            model.ball
+
+        ( x, y ) =
+            prev_ball.pos
+
+        prev_sb =
+            model.scoreboard
+
+        prev_pl =
+            prev_sb.player_lives
+    in
+    if y >= 1000 then
+        if prev_pl <= 1 then
+            ( { model | scoreboard = { prev_sb | player_lives = prev_pl - 1 }, state = Gameover }, cmd )
+
+        else
+            ( { model | ball = { prev_ball | pos = ( x, 500 ) }, scoreboard = { prev_sb | player_lives = prev_pl - 1 } }, cmd )
+
+    else if countBricks model == 0 then
+        ( { model | ball = { prev_ball | v_x = 0, v_y = 0 }, state = Gameover }, cmd )
+
+    else
+        ( model, cmd )
+
+
+countBricks : Model -> Int
+countBricks model =
+    List.length (List.filter brickExist model.list_brick)
+
+
+brickExist : Brick -> Bool
+brickExist brick =
+    case brick.brick_lives of
+        0 ->
+            False
+
+        _ ->
+            True
