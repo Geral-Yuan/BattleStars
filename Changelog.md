@@ -6,6 +6,53 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [m2.4] -- 2022-06-04
+
+### Added
+- Type Bounce with Back
+- Check the bounce more in detail
+- Color type
+- Colorful ball
+### Changed
+- merge the parts of the paddle and the bounce (ball and bricks)
+- Rename `checkBounce` function as `bounceFunc`
+- Rename `Kick` into `Hit`
+- Split Milestone2.elm into sub .elm files to follow the layer programming
+
+### Fixed
+- Make the motion of paddle more smooth
+- Sometimes unexpected result appear when the bounce happens, like stuking in the wall or the paddle
+
+## [m2.3] -- 2022-06-04
+
+### Added
+
+- Type Bounce with Horizontal, Vertical and None
+
+- New varient of type `Msg`: `Kick ( Int, Int )`
+
+- Functions `changePos`, `moveBall`, `bounceVelocity` and `checkBounceBrickList`
+
+### Changed
+
+- Use the horizontal and vertical components `v_x` and `v_y` of velocity of the ball rather than its speed `speed` and the angel of its speed `theta` with the horizontal direction.
+
+- Rename `checkBounce` function as `bounceFunc`
+
+- Split `checkBouncePaddle` into `bouncePaddle` and `checkBouncePaddle` and so does `checkBounceScreen` and `checkBounceBrick`.
+
+### Fixed
+
+- Realize the bounce between ball and paddle, ball and brick, as well as ball and the edge of the screen except the bottom.
+
+- Make the move of paddle independent with time
+
+### Bugs
+
+- To make the motion of paddle more smooth, we are going to adjust the `Msg` to detect the press down state of "Key Left" and "Key Right"
+
+- Sometimes unexpected result appear when the bounce happens, "Bounce" part is to be improved in detail later.
+
 ## [m2.2] -- 2022-06-01
 
 ### Added 
