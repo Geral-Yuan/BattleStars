@@ -8,12 +8,18 @@ import Scoreboard exposing (..)
 import Task
 
 
+type State
+    = Playing
+    | Gameover    
+
+
 type alias Model =
     { list_brick : List Brick
     , paddle : Paddle
     , ball : Ball
     , time : Float
     , scoreboard : Scoreboard
+    , state : State
     }
 
 
@@ -31,6 +37,7 @@ initModel =
     , ball = { pos = ( 500, 500 ), radius = 15, v_x = 200, v_y = -200, color = { red = 0, green = 0, blue = 0 } }
     , time = 0
     , scoreboard = initScoreboard 3 --three lives for a player
+    , state = Playing
     }
 
 
