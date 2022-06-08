@@ -6,6 +6,20 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [m2.6] -- 2022-06-07
+
+### Changed
+
+- Move the codes that check the velocity of ball during the bounce into specific `checkBounceXXX` functions to simplify the implementation of `newBounceVelocity` function and make the layer of the structure clearer.
+
+### Fixed
+
+- Bugs of unexpected result of bounce with bricks and the top edge of the screen are fixed.
+
+## [m2.5] -- 2022-06-xx
+
+<!-- To be added by Jovan and Ekkanat -->
+
 ## [m2.4] -- 2022-06-04
 
 ### Added
