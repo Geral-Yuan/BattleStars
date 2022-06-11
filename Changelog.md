@@ -6,6 +6,37 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [m2.6] -- 2022-06-07
+
+### Changed
+
+- Move the codes that check the velocity of ball during the bounce into specific `checkBounceXXX` functions to simplify the implementation of `newBounceVelocity` function and make the layer of the structure clearer.
+
+### Fixed
+
+- Bugs of unexpected result of bounce with bricks and the top edge of the screen are fixed.
+
+## [m2.5] -- 2022-06-07
+
+### Added
+- getBrick_Score function in Scoreboard.elm 
+- This function takes in list brick to acquire the brick_score that player will acquire by destroying brick
+- getBrick_Score function will then output the score of the brick
+- added Start in type Msg
+- added type State including Playing, and Gameover
+- added state in Model type alias
+- added state = Playing in initModel function
+- added case msg: when receive Start -> initModel, _ -> same
+- added checkEnd function to reduce player's lives whenever the ball is dropped, and when lives = 0 or there is no brick, win the game.
+- added countBrick function to count existed brick
+- added brickExist function as a helper function for countBrick function
+- in viewLife function SvgAttr.fill random color corresponded to the ball by using functions in Color.elm
+- added newGameButton function to draw a button that send Start message.
+- added if model.state == Gameover then show new game button, else same.
+
+### Changed
+- Edited the bounceBrick function to update the scoreboard in the model 
+
 ## [m2.4] -- 2022-06-04
 
 ### Added
