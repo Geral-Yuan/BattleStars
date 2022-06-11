@@ -33,25 +33,17 @@ changePos ( x, y ) ( dx, dy ) =
     ( x + dx, y + dy )
 
 
-newBounceVelocity : Ball -> Bounce -> Paddle -> Ball
-newBounceVelocity ball bounce paddle =
+newBounceVelocity : Ball -> Bounce -> Ball
+newBounceVelocity ball bounce =
     case bounce of
         Back ->
             { ball | v_y = -ball.v_y, v_x = -ball.v_x }
 
         Horizontal ->
-            if Tuple.second ball.pos + ball.radius >= Tuple.second paddle.pos && ball.v_y < 0 then
-                ball
-
-            else
-                { ball | v_y = -ball.v_y }
+            { ball | v_y = -ball.v_y }
 
         Vertical ->
-            if (ball.v_x < 0 && Tuple.first ball.pos + ball.radius > 10 * brickwidth) || (ball.v_x > 0 && Tuple.first ball.pos - ball.radius < 0) then
-                ball
-
-            else
-                { ball | v_x = -ball.v_x }
+            { ball | v_x = -ball.v_x }
 
         None ->
             ball
