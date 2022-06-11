@@ -20,8 +20,14 @@ type alias Model =
     , time : Float
     , scoreboard : Scoreboard
     , state : State
+    , size : (Float, Float)
     }
 
+pixelWidth : Float
+pixelWidth = 1000
+
+pixelHeight : Float
+pixelHeight = 950
 
 init : () -> ( Model, Cmd Msg )
 init _ =
@@ -38,6 +44,7 @@ initModel =
     , time = 0
     , scoreboard = initScoreboard 3 --three lives for a player
     , state = Playing
+    , size = (2000, 1000)
     }
 
 

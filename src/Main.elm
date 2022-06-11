@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Browser
-import Browser.Events exposing (onAnimationFrameDelta, onKeyDown, onKeyUp)
+import Browser.Events exposing (onAnimationFrameDelta, onKeyDown, onKeyUp, onResize)
 import Html.Events exposing (keyCode)
 import Json.Decode as Decode
 
@@ -24,6 +24,7 @@ subscriptions _ =
         onAnimationFrameDelta Tick
         , onKeyUp (Decode.map (key False) keyCode)
         , onKeyDown (Decode.map (key True) keyCode)
+        , onResize Resize
         ]
 
 
