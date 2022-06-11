@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [m2.7] -- 2022-06-11
+
+### Added
+
+- Resize according to the size of the player's windows. In `Update`, `View` and `Main`
+
 ## [m2.6] -- 2022-06-07
 
 ### Changed
