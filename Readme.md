@@ -1,4 +1,5 @@
-Breakout Game (Milestone1): Model and draw the bricks as well as the paddle without Elm Playground
+Breakout Game (Milestone2): Complete the basic game implementation, i.e. a keyboard driven paddle and a bouncing ball
+which breaks bricks when touching them
 
 # README
 
@@ -16,7 +17,7 @@ More information can be found in [Official Guide](https://guide.elm-lang.org/ins
 ## Usage
 First, please use ``` cd ``` commands to enter the m1 folder of the project. 
 
-Next, run ```elm make src/Milestone1.elm``` to compile it into index.html file.
+Next, run ```elm make src/Main.elm``` to compile it into index.html file.
 
 Finally, open the index.html file.
 
@@ -24,27 +25,18 @@ Finally, open the index.html file.
 
 ## Complete
 
-### Milestone1 ###
-
-- Determine the basic Model and draw the static (not moving) bricks, ball and the paddle.
-
-## To-do
-
 ### Milestone2 ###
 
-- Implement `update` to make the bricks broken after coming into contact with the ball
-- make the ball bounce 
-- make the paddle moved by the player
+### Game Rules
+- Use the paddle to bounce the ball. The goal is to break all the bricks. 
+- When the ball hits one brick, the ball will bounce, the brick will be broken and the player will get 10 points.
+- The player have three lives. After the lives are used up, the player loses.
 
-# Contributing
+### Paddle Feature
+- When the ball hits the front of the paddle, it will bounce following the reflection route. 
+- When the ball hits the sides of the paddle, it will bounce back with the same routes where it comes.
 
-### Milestone1 ###
 
-- Codes: Ekkanat Tanchavalit, Jovan Yap
-- Logo design: Jovan Yap
-- Readme: Wang Yijun
-- Changelog: Yuan Jiale
-- Code review: All group members
 
 # Author team: **ACE Corps**
 

@@ -103,13 +103,27 @@ newGameButton =
 
 view : Model -> Html Msg
 view model =
+    let
+        ( w, h ) =
+            model.size
+
+        r =
+            if w / h > pixelWidth / pixelHeight then
+                Basics.min 1 (h / pixelHeight)
+
+            else
+                Basics.min 1 (w / pixelWidth)
+    in
     if model.state == Gameover then
+        
         div
-            [ HtmlAttr.style "width" "100%"
-            , HtmlAttr.style "height" "100%"
-            , HtmlAttr.style "position" "fixed"
-            , HtmlAttr.style "left" "0"
-            , HtmlAttr.style "top" "0"
+            [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
+            , HtmlAttr.style "height" (String.fromFloat pixelHeight ++ "px")
+            , HtmlAttr.style "position" "absolute"
+            , HtmlAttr.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
+            , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
+            , HtmlAttr.style "transform-origin" "0 0"
+            , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
             ]
             ([ Svg.svg
                 [ SvgAttr.width "100%"
@@ -144,11 +158,13 @@ view model =
 
     else
         div
-            [ HtmlAttr.style "width" "100%"
-            , HtmlAttr.style "height" "100%"
-            , HtmlAttr.style "position" "fixed"
-            , HtmlAttr.style "left" "0"
-            , HtmlAttr.style "top" "0"
+            [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
+            , HtmlAttr.style "height" (String.fromFloat pixelHeight ++ "px")
+            , HtmlAttr.style "position" "absolute"
+            , HtmlAttr.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
+            , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
+            , HtmlAttr.style "transform-origin" "0 0"
+            , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
             ]
             ([ Svg.svg
                 [ SvgAttr.width "100%"

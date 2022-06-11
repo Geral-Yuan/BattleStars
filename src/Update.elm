@@ -12,6 +12,21 @@ update msg model =
     case msg of
         Start ->
             ( initModel, Cmd.none )
+        
+        Resize width height -> 
+            ( { model | size = ( toFloat width, toFloat height ) }
+            , Cmd.none
+            )
+
+        GetViewport { viewport } ->
+            ( { model
+                | size =
+                    ( viewport.width
+                    , viewport.height
+                    )
+              }
+            , Cmd.none
+            )
 
         _ ->
             ( model, Cmd.none )
