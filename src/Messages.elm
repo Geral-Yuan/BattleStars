@@ -11,6 +11,7 @@ type Msg
     | Key_None
     | Tick Float
     | GetViewport Viewport
+    | Resize Int Int
     | Hit ( Int, Int )
     | Start
 
