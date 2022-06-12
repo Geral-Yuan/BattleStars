@@ -6,6 +6,21 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [m3.1] -- 2022-06-1
+
+### Added
+
+- import Random module
+- Ball generator system including `generateBall`, `lowestBricks`, `lowestBrickCol`, and `sameColumn` functions to find the lowest brick of each column and randomly generate a ball under it
+- Add second ball and change the name to `ball1` and `ball2`
+
+### Changed
+- Modified `bouncePaddle`, `bounceScreen`, `bounceBrick`, and `moveBall` functions to be compatible with two balls
+- Modified `view` function to be able to view two balls.
+
+### Removed
+- Removed `countBricks` function because it can be simply replaced by `List.length model.list_brick`
+
 ## [m2.7] -- 2022-06-11
 
 ### Added
