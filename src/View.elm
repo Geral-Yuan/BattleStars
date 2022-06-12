@@ -132,19 +132,27 @@ view model =
                 -- draw bricks
                 (List.map viewBricks model.list_brick
                     ++ -- draw paddle
-                       Svg.rect
-                        [ SvgAttr.width (toString model.paddle.width)
-                        , SvgAttr.height (toString model.paddle.height)
-                        , SvgAttr.x (toString (Tuple.first model.paddle.pos))
-                        , SvgAttr.y (toString (Tuple.second model.paddle.pos))
-                        , SvgAttr.fill "rgb(30,144,255)"
-                        ]
-                        []
-                    :: -- draw ball
-                       [ Svg.circle
-                            [ SvgAttr.cx (toString (Tuple.first model.ball.pos))
-                            , SvgAttr.cy (toString (Tuple.second model.ball.pos))
-                            , SvgAttr.r (toString model.ball.radius)
+                       [ Svg.rect
+                            [ SvgAttr.width (toString model.paddle.width)
+                            , SvgAttr.height (toString model.paddle.height)
+                            , SvgAttr.x (toString (Tuple.first model.paddle.pos))
+                            , SvgAttr.y (toString (Tuple.second model.paddle.pos))
+                            , SvgAttr.fill "rgb(30,144,255)"
+                            ]
+                            []
+                       , -- draw ball 1
+                         Svg.circle
+                            [ SvgAttr.cx (toString (Tuple.first model.ball1.pos))
+                            , SvgAttr.cy (toString (Tuple.second model.ball1.pos))
+                            , SvgAttr.r (toString model.ball1.radius)
+                            , SvgAttr.fill (getcolor (getColorful model.time))
+                            ]
+                            []
+                       , -- draw ball 2
+                         Svg.circle
+                            [ SvgAttr.cx (toString (Tuple.first model.ball2.pos))
+                            , SvgAttr.cy (toString (Tuple.second model.ball2.pos))
+                            , SvgAttr.r (toString model.ball2.radius)
                             , SvgAttr.fill (getcolor (getColorful model.time))
                             ]
                             []
@@ -173,19 +181,27 @@ view model =
                 -- draw bricks
                 (List.map viewBricks model.list_brick
                     ++ -- draw paddle
-                       Svg.rect
-                        [ SvgAttr.width (toString model.paddle.width)
-                        , SvgAttr.height (toString model.paddle.height)
-                        , SvgAttr.x (toString (Tuple.first model.paddle.pos))
-                        , SvgAttr.y (toString (Tuple.second model.paddle.pos))
-                        , SvgAttr.fill "rgb(30,144,255)"
-                        ]
-                        []
-                    :: -- draw ball
-                       [ Svg.circle
-                            [ SvgAttr.cx (toString (Tuple.first model.ball.pos))
-                            , SvgAttr.cy (toString (Tuple.second model.ball.pos))
-                            , SvgAttr.r (toString model.ball.radius)
+                       [ Svg.rect
+                            [ SvgAttr.width (toString model.paddle.width)
+                            , SvgAttr.height (toString model.paddle.height)
+                            , SvgAttr.x (toString (Tuple.first model.paddle.pos))
+                            , SvgAttr.y (toString (Tuple.second model.paddle.pos))
+                            , SvgAttr.fill "rgb(30,144,255)"
+                            ]
+                            []
+                       , -- draw ball 1
+                         Svg.circle
+                            [ SvgAttr.cx (toString (Tuple.first model.ball1.pos))
+                            , SvgAttr.cy (toString (Tuple.second model.ball1.pos))
+                            , SvgAttr.r (toString model.ball1.radius)
+                            , SvgAttr.fill (getcolor (getColorful model.time))
+                            ]
+                            []
+                       , -- draw ball 2
+                         Svg.circle
+                            [ SvgAttr.cx (toString (Tuple.first model.ball2.pos))
+                            , SvgAttr.cy (toString (Tuple.second model.ball2.pos))
+                            , SvgAttr.r (toString model.ball2.radius)
                             , SvgAttr.fill (getcolor (getColorful model.time))
                             ]
                             []
