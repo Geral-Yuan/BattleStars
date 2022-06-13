@@ -3,6 +3,7 @@ module Bounce exposing (..)
 import Color exposing (Color)
 import Messages exposing (..)
 import Paddle exposing (..)
+import Random exposing (..)
 
 
 type Bounce
@@ -26,6 +27,44 @@ type alias Ball =
     , v_y : Float
     , color : Color
     }
+
+
+generateBall : List Brick -> Seed -> ( Ball, Seed )
+generateBall list_brick seed =
+    let
+        ( ( row, col ), nseed ) =
+            Random.step (Random.uniform ( 5, 9 ) (lowestBricks list_brick 10)) seed
+
+        ( x, y ) =
+            ( toFloat col * brickwidth - 50, toFloat (row + 1) * brickheight + 20 )
+    in
+    ( Ball ( x, y ) 15 200 200 { red = 0, green = 0, blue = 0 }, nseed )
+
+
+lowestBricks : List Brick -> Int -> List ( Int, Int )
+lowestBricks list_brick n =
+    if n == 1 then
+        [ lowestBrickCol list_brick n ]
+
+    else
+        lowestBrickCol list_brick n
+            :: lowestBricks list_brick (n - 1)
+
+
+lowestBrickCol : List Brick -> Int -> ( Int, Int )
+lowestBrickCol list_brick n =
+    let
+        llist_pos =
+            sameColumn list_brick n
+    in
+    Maybe.withDefault ( 1000, 1000 ) (List.head (List.reverse llist_pos))
+
+
+sameColumn : List Brick -> Int -> List ( Int, Int )
+sameColumn list_brick n =
+    List.filter (\{ pos } -> Tuple.second pos == n) list_brick
+        |> List.map .pos
+        |> List.sortBy Tuple.first
 
 
 changePos : ( Float, Float ) -> ( Float, Float ) -> ( Float, Float )
