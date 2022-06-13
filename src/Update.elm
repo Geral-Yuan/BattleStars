@@ -1,17 +1,19 @@
 module Update exposing (..)
 
 import Bounce exposing (..)
+import Browser.Dom exposing (getViewport)
 import Messages exposing (..)
 import Model exposing (..)
 import Paddle exposing (..)
 import Scoreboard exposing (..)
+import Task
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Start ->
-            ( initModel, Cmd.none )
+            ( restartModel, Task.perform GetViewport getViewport )
 
         Resize width height ->
             ( { model | size = ( toFloat width, toFloat height ) }
@@ -337,7 +339,7 @@ checkEnd ( model, cmd ) =
         prev_pl =
             prev_sb.player_lives
     in
-    if y1 >= 1000 then
+    if y1 >= 1100 then
         if prev_pl <= 1 then
             ( { model
                 | ball1 = { prev_ball1 | v_x = 0, v_y = 0 }
@@ -357,7 +359,7 @@ checkEnd ( model, cmd ) =
             , cmd
             )
 
-    else if y2 >= 1000 then
+    else if y2 >= 1100 then
         if prev_pl <= 1 then
             ( { model
                 | ball1 = { prev_ball1 | v_x = 0, v_y = 0 }
