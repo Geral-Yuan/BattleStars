@@ -1,7 +1,7 @@
 module Paddle exposing (..)
 
 import Messages exposing(..)
-
+import Data exposing (..)
 
 type alias Paddle =
     { pos : ( Float, Float )
@@ -9,6 +9,7 @@ type alias Paddle =
     , height : Float
     , width : Float
     , speed : Float
+    , move_range : Float
     }
 
 
@@ -30,8 +31,9 @@ movePaddle paddle dt=
                 { paddle | pos = newPaddlePos paddle.pos paddle.dir (paddle.speed * dt )}
              else
                 paddle
+--wyj
 isLegalMovePaddle : Paddle -> Bool
-isLegalMovePaddle { pos, dir, width} =
+isLegalMovePaddle { pos, dir, width, move_range} =
     case dir of 
         Left ->
             if ( Tuple.first pos <= 0) then
@@ -39,7 +41,7 @@ isLegalMovePaddle { pos, dir, width} =
             else
                 True
         Right ->
-            if ( Tuple.first pos + width >= 10 * brickwidth) then  --the right bound of the game screen
+            if ( Tuple.first pos + width >= move_range) then  --the right bound of the game screen
                 False
             else
                 True
@@ -54,3 +56,5 @@ newPaddlePos (px,py) dir ds=
             (px + ds , py)
         _ -> 
             (px,py)
+
+

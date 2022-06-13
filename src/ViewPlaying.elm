@@ -13,6 +13,7 @@ import Model exposing (..)
 import Paddle exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
+import Data exposing (..)
 
 
 viewPaddle : Model -> Svg Msg
@@ -38,7 +39,7 @@ viewBall model =
         ]
         []
 
-
+--wyj test the element
 viewBricks : Brick -> Svg Msg
 viewBricks brick =
     let
@@ -46,15 +47,27 @@ viewBricks brick =
             brick.pos
     in
     -- add if condition of bricks existence later
-    Svg.image
-        [ SvgAttr.width (toString brickwidth)
-        , SvgAttr.height (toString brickheight)
-        , SvgAttr.x (toString (toFloat (col - 1) * brickwidth))
-        , SvgAttr.y (toString (toFloat (row - 1) * brickheight + 50))
-        , SvgAttr.preserveAspectRatio "none"
-        , SvgAttr.xlinkHref "../assets/monster1.png"
-        ]
-        []
+    case brick.element of
+        Water ->
+            Svg.image
+                [ SvgAttr.width (toString brickwidth)
+                , SvgAttr.height (toString brickheight)
+                , SvgAttr.x (toString (toFloat (col - 1) * brickwidth))
+                , SvgAttr.y (toString (toFloat (row - 1) * brickheight + 50))
+                , SvgAttr.preserveAspectRatio "none"
+                , SvgAttr.xlinkHref "../assets/monster1.png"
+                ]
+                []
+        _ ->
+            Svg.image
+                [ SvgAttr.width (toString brickwidth)
+                , SvgAttr.height (toString brickheight)
+                , SvgAttr.x (toString (toFloat (col - 1) * brickwidth))
+                , SvgAttr.y (toString (toFloat (row - 1) * brickheight + 50))
+                , SvgAttr.preserveAspectRatio "none"
+                , SvgAttr.xlinkHref "../assets/logo.png"
+                ]
+                []
 
 
 viewScore : Model -> Html Msg
