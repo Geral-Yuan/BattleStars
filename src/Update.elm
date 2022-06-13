@@ -1,19 +1,21 @@
 module Update exposing (..)
 
 import Bounce exposing (..)
+import Browser.Dom exposing (getViewport)
 import Messages exposing (..)
 import Model exposing (..)
 import Paddle exposing (..)
 import Scoreboard exposing (..)
+import Task
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Start ->
-            ( initModel, Cmd.none )
-        
-        Resize width height -> 
+            ( restartModel, Task.perform GetViewport getViewport )
+
+        Resize width height ->
             ( { model | size = ( toFloat width, toFloat height ) }
             , Cmd.none
             )
@@ -80,13 +82,19 @@ updateBall msg ( model, cmd ) =
 moveBall : Model -> Float -> Model
 moveBall model dt =
     let
-        ball =
-            model.ball
+        ball1 =
+            model.ball1
 
-        nball =
-            { ball | pos = changePos ball.pos ( ball.v_x * dt, ball.v_y * dt ) }
+        ball2 =
+            model.ball2
+
+        nball1 =
+            { ball1 | pos = changePos ball1.pos ( ball1.v_x * dt, ball1.v_y * dt ) }
+
+        nball2 =
+            { ball2 | pos = changePos ball2.pos ( ball2.v_x * dt, ball2.v_y * dt ) }
     in
-    { model | ball = nball }
+    { model | ball1 = nball1, ball2 = nball2 }
 
 
 bounceAll :
@@ -102,19 +110,28 @@ bounceAll ( model, cmd ) =
 bouncePaddle : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 bouncePaddle ( model, cmd ) =
     let
-        ball =
-            model.ball
+        ball1 =
+            model.ball1
+
+        ball2 =
+            model.ball2
 
         paddle =
             model.paddle
 
-        bounce =
-            checkBouncePaddle ball paddle
+        bounce1 =
+            checkBouncePaddle ball1 paddle
 
-        new_ball =
-            newBounceVelocity ball bounce
+        bounce2 =
+            checkBouncePaddle ball2 paddle
+
+        new_ball1 =
+            newBounceVelocity ball1 bounce1
+
+        new_ball2 =
+            newBounceVelocity ball2 bounce2
     in
-    ( { model | ball = new_ball }, cmd )
+    ( { model | ball1 = new_ball1, ball2 = new_ball2 }, cmd )
 
 
 checkBouncePaddle : Ball -> Paddle -> Bounce
@@ -152,16 +169,25 @@ checkBouncePaddle ball paddle =
 bounceScreen : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 bounceScreen ( model, cmd ) =
     let
-        ball =
-            model.ball
+        ball1 =
+            model.ball1
 
-        bounce =
-            checkBounceScreen ball
+        ball2 =
+            model.ball2
 
-        nball =
-            newBounceVelocity ball bounce
+        bounce1 =
+            checkBounceScreen ball1
+
+        bounce2 =
+            checkBounceScreen ball2
+
+        nball1 =
+            newBounceVelocity ball1 bounce1
+
+        nball2 =
+            newBounceVelocity ball2 bounce2
     in
-    ( { model | ball = nball }, cmd )
+    ( { model | ball1 = nball1, ball2 = nball2 }, cmd )
 
 
 checkBounceScreen : Ball -> Bounce
@@ -187,8 +213,11 @@ checkBounceScreen ball =
 bounceBrick : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 bounceBrick ( model, cmd ) =
     let
-        ball =
-            model.ball
+        ball1 =
+            model.ball1
+
+        ball2 =
+            model.ball2
 
         list_brick =
             model.list_brick
@@ -198,7 +227,7 @@ bounceBrick ( model, cmd ) =
             model.scoreboard.player_score
 
         nScore =
-            oldScore + getBrick_score (Hit pos) list_brick
+            oldScore + getBrick_score (Hit pos1) list_brick
 
         oldScoreboard =
             model.scoreboard
@@ -206,13 +235,28 @@ bounceBrick ( model, cmd ) =
         nScoreboard =
             { oldScoreboard | player_score = nScore }
 
-        ( bounce, pos ) =
-            checkBounceBrickList ball list_brick
+        ( bounce1, pos1 ) =
+            checkBounceBrickList ball1 list_brick
 
-        nball =
-            newBounceVelocity ball bounce
+        nlist_brick =
+            updateBrick (Hit pos1) list_brick
+
+        nnScore =
+            nScore + getBrick_score (Hit pos2) nlist_brick
+
+        nnScoreboard =
+            { nScoreboard | player_score = nnScore }
+
+        ( bounce2, pos2 ) =
+            checkBounceBrickList ball2 nlist_brick
+
+        nball1 =
+            newBounceVelocity ball1 bounce1
+
+        nball2 =
+            newBounceVelocity ball2 bounce2
     in
-    ( { model | ball = nball, list_brick = updateBrick (Hit pos) list_brick, scoreboard = nScoreboard }, cmd )
+    ( { model | ball1 = nball1, ball2 = nball2, list_brick = updateBrick (Hit pos2) nlist_brick, scoreboard = nnScoreboard }, cmd )
 
 
 checkBounceBrickList : Ball -> List Brick -> ( Bounce, ( Int, Int ) )
@@ -277,11 +321,17 @@ updateTime msg ( model, cmd ) =
 checkEnd : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 checkEnd ( model, cmd ) =
     let
-        prev_ball =
-            model.ball
+        prev_ball1 =
+            model.ball1
 
-        ( x, y ) =
-            prev_ball.pos
+        prev_ball2 =
+            model.ball2
+
+        ( _, y1 ) =
+            prev_ball1.pos
+
+        ( _, y2 ) =
+            prev_ball2.pos
 
         prev_sb =
             model.scoreboard
@@ -289,30 +339,54 @@ checkEnd ( model, cmd ) =
         prev_pl =
             prev_sb.player_lives
     in
-    if y >= 1000 then
+    if y1 >= 1100 then
         if prev_pl <= 1 then
-            ( { model | scoreboard = { prev_sb | player_lives = prev_pl - 1 }, state = Gameover }, cmd )
+            ( { model
+                | ball1 = { prev_ball1 | v_x = 0, v_y = 0 }
+                , ball2 = { prev_ball2 | v_x = 0, v_y = 0 }
+                , scoreboard = { prev_sb | player_lives = prev_pl - 1 }
+                , state = Gameover
+              }
+            , cmd
+            )
 
         else
-            ( { model | ball = { prev_ball | pos = ( x, 500 ) }, scoreboard = { prev_sb | player_lives = prev_pl - 1 } }, cmd )
+            ( { model
+                | ball1 = generateBall model.list_brick model.seed |> Tuple.first
+                , scoreboard = { prev_sb | player_lives = prev_pl - 1 }
+                , seed = generateBall model.list_brick model.seed |> Tuple.second
+              }
+            , cmd
+            )
 
-    else if countBricks model == 0 then
-        ( { model | ball = { prev_ball | v_x = 0, v_y = 0 }, state = Gameover }, cmd )
+    else if y2 >= 1100 then
+        if prev_pl <= 1 then
+            ( { model
+                | ball1 = { prev_ball1 | v_x = 0, v_y = 0 }
+                , ball2 = { prev_ball2 | v_x = 0, v_y = 0 }
+                , scoreboard = { prev_sb | player_lives = prev_pl - 1 }
+                , state = Gameover
+              }
+            , cmd
+            )
+
+        else
+            ( { model
+                | ball2 = generateBall model.list_brick model.seed |> Tuple.first
+                , scoreboard = { prev_sb | player_lives = prev_pl - 1 }
+                , seed = generateBall model.list_brick model.seed |> Tuple.second
+              }
+            , cmd
+            )
+
+    else if List.length model.list_brick == 0 then
+        ( { model
+            | ball1 = { prev_ball1 | v_x = 0, v_y = 0 }
+            , ball2 = { prev_ball1 | v_x = 0, v_y = 0 }
+            , state = Gameover
+          }
+        , cmd
+        )
 
     else
         ( model, cmd )
-
-
-countBricks : Model -> Int
-countBricks model =
-    List.length (List.filter brickExist model.list_brick)
-
-
-brickExist : Brick -> Bool
-brickExist brick =
-    case brick.brick_lives of
-        0 ->
-            False
-
-        _ ->
-            True

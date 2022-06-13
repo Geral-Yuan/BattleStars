@@ -1,10 +1,13 @@
 module Messages exposing (..)
 
 import Browser.Dom exposing (Viewport)
+
+
 type Dir
     = Left
     | Right
     | Still --Still added because we are updating with Tick
+
 
 type Msg
     = Key Dir Bool
@@ -15,6 +18,7 @@ type Msg
     | Hit ( Int, Int )
     | Start
 
+
 brickwidth : Float
 brickwidth =
     100
@@ -22,4 +26,4 @@ brickwidth =
 
 brickheight : Float
 brickheight =
-    50
+    100

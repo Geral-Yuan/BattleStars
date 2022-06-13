@@ -38,7 +38,7 @@ Finally, open the index.html file.
 
 
 
-# Author team: **ACE Corps**
+# Author team: **ACE Studios**
 
 **Team menbers:**
 
