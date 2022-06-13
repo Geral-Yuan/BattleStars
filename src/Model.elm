@@ -10,8 +10,18 @@ import Task
 
 
 type State
-    = Playing
+    = Starting
+    | Playing -- Playing will be switched to Playing1, Playing2 (different levels)
+      -- | Scene Narrative
     | Gameover
+
+
+
+-- type Narrative
+--     = Logo
+--     | HowtoPlay
+--     | Level1
+--     | Level2
 
 
 type alias Model =
@@ -34,7 +44,7 @@ pixelWidth =
 
 pixelHeight : Float
 pixelHeight =
-    950
+    1200
 
 
 init : () -> ( Model, Cmd Msg )
@@ -46,12 +56,27 @@ init _ =
 
 initModel : Model
 initModel =
-    { list_brick = initBrick ( 5, 10 ) 1 10 --one life for each brick; 10 points for each brick
-    , paddle = { pos = ( 500, 900 ), dir = Still, height = 20, width = 150, speed = 500 }
+    { list_brick = initBrick ( 3, 10 ) 1 10 --one life for each brick; 10 points for each brick
+    , paddle = { pos = ( 500, 1000 ), dir = Still, height = 20, width = 150, speed = 500 }
     , ball1 = generateBall (initBrick ( 5, 10 ) 1 10) (Random.initialSeed 1234) |> Tuple.first
     , ball2 = generateBall (initBrick ( 5, 10 ) 1 10) (Random.initialSeed 4321) |> Tuple.first
     , time = 0
-    , scoreboard = initScoreboard 3 --three lives for a player
+    , scoreboard = initScoreboard 5 --five lives for a player
+    , state = Starting
+    , size = ( 2000, 1000 )
+    , seed = Random.initialSeed 1234
+    }
+
+
+restartModel : Model
+restartModel =
+    -- For players to select it when they click newGame
+    { list_brick = initBrick ( 3, 10 ) 1 10 --one life for each brick; 10 points for each brick
+    , paddle = { pos = ( 500, 1000 ), dir = Still, height = 20, width = 150, speed = 500 }
+    , ball1 = generateBall (initBrick ( 5, 10 ) 1 10) (Random.initialSeed 1234) |> Tuple.first
+    , ball2 = generateBall (initBrick ( 5, 10 ) 1 10) (Random.initialSeed 4321) |> Tuple.first
+    , time = 0
+    , scoreboard = initScoreboard 5 --five lives for a player
     , state = Playing
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
