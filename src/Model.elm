@@ -26,9 +26,10 @@ type State
 
 
 type alias Model =
-    { brick_list : List Brick
+    { monster_list : List Monster
     , paddle : Paddle
     , ball_list : List Ball
+    , ballnumber : Int
     , time : Float
     , lives : Int
     , scores : Int
@@ -47,12 +48,12 @@ init _ =
 
 initModel : Model
 initModel =
-    { brick_list = initBrick ( 3, 5 ) brickLives 10 Water ++ initBricktest ( 3, 5 ) brickLives 10 Fire --one life for each brick; 10 points for each brick
-    , paddle = { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
+    { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
+    , paddle = initpaddle
     , ball_list =
-        [ generateBall (initBrick ( 3, 5 ) brickLives 10 Water ++ initBricktest ( 3, 5 ) brickLives 10 Fire) (Random.initialSeed 1234) |> Tuple.first
-        , generateBall (initBrick ( 3, 5 ) brickLives 10 Water ++ initBricktest ( 3, 5 ) brickLives 10 Fire) (Random.initialSeed 4321) |> Tuple.first
+        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
         ]
+    , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
     , scores = 0
@@ -65,12 +66,12 @@ initModel =
 restartModel : Model
 restartModel =
     -- For players to select it when they click newGame
-    { brick_list = initBrick ( 3, 5 ) brickLives 10 Water ++ initBricktest ( 3, 5 ) brickLives 10 Fire --one life for each brick; 10 points for each brick
-    , paddle = { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
+    { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
+    , paddle = initpaddle
     , ball_list =
-        [ generateBall (initBrick ( 3, 5 ) brickLives 10 Water ++ initBricktest ( 3, 5 ) brickLives 10 Fire) (Random.initialSeed 1234) |> Tuple.first
-        , generateBall (initBrick ( 3, 5 ) brickLives 10 Water ++ initBricktest ( 3, 5 ) brickLives 10 Fire) (Random.initialSeed 4321) |> Tuple.first
+        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
         ]
+    , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
     , scores = 0
@@ -80,37 +81,42 @@ restartModel =
     }
 
 
-initBrick : ( Int, Int ) -> Int -> Int -> Element -> List Brick
-initBrick ( row, col ) lives score elem =
-    if row == 1 then
-        initBrickRow ( row, col ) lives score elem
+initMonsterList : Int -> List Monster
+initMonsterList n =
+    case n of
+        0 ->
+            []
+
+        _ ->
+            initMonsterList (n - 1) ++ [ initMonster n ]
+
+
+initpaddle : Paddle
+initpaddle =
+    { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
+
+
+initMonster : Int -> Monster
+initMonster idx =
+    Monster idx (detPosition idx) monsterLives 10 (detElem idx)
+
+
+detPosition : Int -> ( Float, Float )
+detPosition idx =
+    let
+        row =
+            (idx - 1) // 4
+
+        column =
+            modBy 4 idx + 1
+    in
+    ( toFloat column * 200 - 50, toFloat row * 200 + 50 )
+
+
+detElem : Int -> Element
+detElem idx =
+    if modBy 4 idx <= 1 then
+        Water
 
     else
-        initBrickRow ( row, col ) lives score elem ++ initBrick ( row - 1, col ) lives score elem
-
-
-initBrickRow : ( Int, Int ) -> Int -> Int -> Element -> List Brick
-initBrickRow ( row, col ) lives score elem =
-    if col == 1 then
-        [ Brick ( row, col ) lives score elem ]
-
-    else
-        Brick ( row, col ) lives score elem :: initBrickRow ( row, col - 1 ) lives score elem
-
-
-initBricktest : ( Int, Int ) -> Int -> Int -> Element -> List Brick
-initBricktest ( row, col ) lives score elem =
-    if row == 1 then
-        initBrickRowtest ( row, col + 5 ) lives score elem
-
-    else
-        initBrickRowtest ( row, col + 5 ) lives score elem ++ initBricktest ( row - 1, col + 5 ) lives score elem
-
-
-initBrickRowtest : ( Int, Int ) -> Int -> Int -> Element -> List Brick
-initBrickRowtest ( row, col ) lives score elem =
-    if col == 6 then
-        [ Brick ( row, col ) lives score elem ]
-
-    else
-        Brick ( row, col ) lives score elem :: initBrickRowtest ( row, col - 1 ) lives score elem
+        Fire

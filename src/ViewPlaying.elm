@@ -4,6 +4,7 @@ module ViewPlaying exposing (..)
 
 import Bounce exposing (..)
 import Color exposing (..)
+import Data exposing (..)
 import Debug exposing (toString)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
@@ -13,7 +14,6 @@ import Model exposing (..)
 import Paddle exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
-import Data exposing (..)
 
 
 viewPaddle : Model -> Svg Msg
@@ -39,31 +39,36 @@ viewBall ball =
         ]
         []
 
+
+
 --wyj test the element
-viewBricks : Brick -> Svg Msg
-viewBricks brick =
+
+
+viewMonsters : Monster -> Svg Msg
+viewMonsters monster =
     let
-        ( row, col ) =
-            brick.pos
+        ( x, y ) =
+            monster.pos
     in
-    -- add if condition of bricks existence later
-    case brick.element of
+    -- add if condition of monsters existence later
+    case monster.element of
         Water ->
             Svg.image
-                [ SvgAttr.width (toString brickwidth)
-                , SvgAttr.height (toString brickheight)
-                , SvgAttr.x (toString (toFloat (col - 1) * brickwidth))
-                , SvgAttr.y (toString (toFloat (row - 1) * brickheight + 50))
+                [ SvgAttr.width (toString monsterwidth)
+                , SvgAttr.height (toString monsterheight)
+                , SvgAttr.x (toString x)
+                , SvgAttr.y (toString y)
                 , SvgAttr.preserveAspectRatio "none"
                 , SvgAttr.xlinkHref "../assets/monster1.png"
                 ]
                 []
+
         _ ->
             Svg.image
-                [ SvgAttr.width (toString brickwidth)
-                , SvgAttr.height (toString brickheight)
-                , SvgAttr.x (toString (toFloat (col - 1) * brickwidth))
-                , SvgAttr.y (toString (toFloat (row - 1) * brickheight + 50))
+                [ SvgAttr.width (toString monsterwidth)
+                , SvgAttr.height (toString monsterheight)
+                , SvgAttr.x (toString x)
+                , SvgAttr.y (toString y)
                 , SvgAttr.preserveAspectRatio "none"
                 , SvgAttr.xlinkHref "../assets/logo.png"
                 ]

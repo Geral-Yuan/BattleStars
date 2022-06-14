@@ -17,7 +17,7 @@ type Msg
     | Tick Float
     | GetViewport Viewport
     | Resize Int Int
-    | Hit ( Int, Int ) Element
+    | Hit Int Element
     | New_Element Element
     | Start
 

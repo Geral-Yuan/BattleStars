@@ -1,17 +1,24 @@
 module Data exposing (..)
 
 import Color exposing (Color)
-brickwidth : Float
-brickwidth =
+import Svg.Attributes exposing (numOctaves, speed, y2)
+
+
+
+monsterwidth : Float
+monsterwidth =
     100
 
 
-brickheight : Float
-brickheight =
+monsterheight : Float
+monsterheight =
     100
 
-brickLives : Int
-brickLives = 4
+
+monsterLives : Int
+monsterLives =
+    4
+
 
 pixelWidth : Float
 pixelWidth =
@@ -22,30 +29,38 @@ pixelHeight : Float
 pixelHeight =
     1200
 
+
 paddleWidth : Float
-paddleWidth = 150
+paddleWidth =
+    150
+
 
 paddleSpeed : Float
-paddleSpeed = 800
+paddleSpeed =
+    800
 
 
 type Bounce
     = Horizontal
     | Vertical
     | Back
-    | Paddle_Bounce Float 
+    | Paddle_Bounce Float
     | None
-type Element =
-    Water
+
+
+type Element
+    = Water
     | Fire
     | Grass
     | Earth
     | Element_None
 
-type alias Brick =
-    { pos : ( Int, Int )
-    , brick_lives : Int -- (minus for infinite; >=0 for finite), when 0, delete the brick!
-    , brick_score : Int
+
+type alias Monster =
+    { idx : Int
+    , pos : ( Float, Float )
+    , monster_lives : Int
+    , monster_score : Int
     , element : Element
     }
 
@@ -59,40 +74,107 @@ type alias Ball =
     , element : Element
     }
 
-elementMatch : Element -> Element -> Int
-elementMatch ball_elem brick_elem =
-    let 
-        match = (ball_elem , brick_elem)
+
+type alias Vec =
+    ( Float, Float )
+
+
+type alias Mat =
+    ( Vec, Vec )
+
+
+addVec : Vec -> Vec -> Vec
+addVec ( x1, y1 ) ( x2, y2 ) =
+    ( x1 + x2, y1 + y2 )
+
+
+scaleVec : Float -> Vec -> Vec
+scaleVec k ( x, y ) =
+    ( k * x, k * y )
+
+
+innerVec : Vec -> Vec -> Float
+innerVec ( x1, y1 ) ( x2, y2 ) =
+    x1 * y1 + x2 * y2
+
+
+reflectVec : Vec -> Vec -> Vec
+reflectVec ( bx, by ) v =
+    let
+        t =
+            ( ( bx, -by ), ( by, bx ) )
+
+        a =
+            ( ( 1, 0 ), ( 0, -1 ) )
+
+        t_ =
+            ( ( bx, by ), ( -by, bx ) )
+
+        l =
+            multiMatMat (multiMatMat t a) t_
     in
-    case match of 
-        (Water, Fire) ->
+    multiMatVec l v
+
+
+multiMatVec : Mat -> Vec -> Vec
+multiMatVec ( a1, a2 ) v =
+    ( innerVec a1 v, innerVec a2 v )
+
+
+multiMatMat : Mat -> Mat -> Mat
+multiMatMat ( ( a11, a12 ), ( a21, a22 ) ) ( ( b11, b12 ), ( b21, b22 ) ) =
+    ( ( a11 * b11 + a12 * b21, a11 * b12 + a12 * b22 ), ( a21 * b11 + a22 * b21, a21 * b12 + a21 * b22 ) )
+
+
+elementMatch : Element -> Element -> Int
+elementMatch ball_elem monster_elem =
+    let
+        match =
+            ( ball_elem, monster_elem )
+    in
+    case match of
+        ( Water, Fire ) ->
             4
-        (Fire, Grass) ->
+
+        ( Fire, Grass ) ->
             4
-        (Grass, Earth) ->
+
+        ( Grass, Earth ) ->
             4
-        (Earth, Water) ->
+
+        ( Earth, Water ) ->
             4
-        (Fire, Water) ->
+
+        ( Fire, Water ) ->
             1
-        (Grass, Fire) ->
+
+        ( Grass, Fire ) ->
             1
-        (Earth, Grass) ->
+
+        ( Earth, Grass ) ->
             1
-        (Water, Earth) ->
+
+        ( Water, Earth ) ->
             1
+
         _ ->
             2
+
+
 element2ColorString : Element -> String
 element2ColorString elem =
     case elem of
-            Water ->
-                "blue"
-            Fire ->
-                "red"
-            Grass ->
-                "green"
-            Earth ->
-                "yellow"
-            Element_None ->
-                "white"
+        Water ->
+            "blue"
+
+        Fire ->
+            "red"
+
+        Grass ->
+            "green"
+
+        Earth ->
+            "brown"
+
+        Element_None ->
+            "white"

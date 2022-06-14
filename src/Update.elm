@@ -162,7 +162,7 @@ bounceAll ( model, cmd ) =
     ( model, cmd )
         |> bouncePaddle
         |> bounceScreen
-        |> bounceBrick
+        |> bounceMonster
 
 
 bouncePaddle : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
@@ -232,27 +232,27 @@ checkBounceScreen ball =
         --chayan
         Horizontal
 
-    else if (x - r <= 0 && ball.v_x < 0) || (x + r >= 10 * brickwidth && ball.v_x > 0) then
+    else if (x - r <= 0 && ball.v_x < 0) || (x + r >= 10 * monsterwidth && ball.v_x > 0) then
         Vertical
 
     else
         None
 
 
-findHitBrick : List Brick -> Msg -> Maybe Brick
-findHitBrick brick_list msg =
+findHitMonster : List Monster -> Msg -> Maybe Monster
+findHitMonster monster_list msg =
     case msg of
-        Hit ( x, y ) _ ->
-            Tuple.first (List.partition (\{ pos } -> pos == ( x, y )) brick_list)
+        Hit k _ ->
+            Tuple.first (List.partition (\{ idx } -> idx == k) monster_list)
                 |> List.head
 
         _ ->
             Nothing
 
 
-changeElement : Ball -> Maybe Brick -> Ball
-changeElement ball brick =
-    case brick of
+changeElement : Ball -> Maybe Monster -> Ball
+changeElement ball monster =
+    case monster of
         Just bk ->
             { ball
                 | element = bk.element
@@ -262,88 +262,81 @@ changeElement ball brick =
             ball
 
 
-bounceBrick : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
-bounceBrick ( model, cmd ) =
+bounceMonster : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+bounceMonster ( model, cmd ) =
     let
-        bouncepos_list =
-            List.map (checkBounceBrickList model.brick_list) model.ball_list
+        bounceidx_list =
+            List.map (checkBounceMonsterList model.monster_list) model.ball_list
 
         bounce_list =
-            List.map Tuple.first bouncepos_list
+            List.map Tuple.first bounceidx_list
 
-        pos_list =
-            List.map Tuple.second bouncepos_list
+        idx_list =
+            List.map Tuple.second bounceidx_list
 
         elem_list =
             List.map (\ball -> ball.element) model.ball_list
 
         msg_list =
-            List.map2 Hit pos_list elem_list
+            List.map2 Hit idx_list elem_list
 
-        nbrick_list =
-            List.foldr updateBrick model.brick_list msg_list
+        nmonster_list =
+            List.foldr updateMonster model.monster_list msg_list
 
         nscore =
-            List.foldr (+) model.scores (List.map (getBrick_score model.brick_list) msg_list)
+            List.foldr (+) model.scores (List.map (getMonster_score model.monster_list) msg_list)
 
         elemball_list =
-            List.map2 changeElement model.ball_list (List.map (findHitBrick model.brick_list) msg_list)
+            List.map2 changeElement model.ball_list (List.map (findHitMonster model.monster_list) msg_list)
 
         nball_list =
             List.map2 newBounceVelocity elemball_list bounce_list
     in
     ( { model
         | ball_list = nball_list
-        , brick_list = nbrick_list
+        , monster_list = nmonster_list
         , scores = nscore
       }
     , cmd
     )
 
 
-checkBounceBrickList : List Brick -> Ball -> ( Bounce, ( Int, Int ) )
-checkBounceBrickList brick_list ball =
+checkBounceMonsterList : List Monster -> Ball -> ( Bounce, Int )
+checkBounceMonsterList monster_list ball =
     let
-        kickedBrickList =
-            Tuple.first (List.partition (\brick -> List.member (checkBounceBrick ball brick) [ Horizontal, Vertical ]) brick_list)
+        kickedMonsterList =
+            Tuple.first (List.partition (\monster -> List.member (checkBounceMonster ball monster) [ Horizontal, Vertical ]) monster_list)
     in
-    case kickedBrickList of
+    case kickedMonsterList of
         [] ->
-            ( None, ( 0, 0 ) )
+            ( None, 0 )
 
-        kickedBrick :: _ ->
-            ( checkBounceBrick ball kickedBrick, kickedBrick.pos )
+        kickedMonster :: _ ->
+            ( checkBounceMonster ball kickedMonster, kickedMonster.idx )
 
 
-checkBounceBrick : Ball -> Brick -> Bounce
-checkBounceBrick ball brick =
+checkBounceMonster : Ball -> Monster -> Bounce
+checkBounceMonster ball monster =
     let
-        ( row, column ) =
-            brick.pos
+        ( x, y ) =
+            monster.pos
 
-        x =
-            toFloat (column - 1) * brickwidth
-
-        y =
-            toFloat (row - 1) * brickheight + 50
-
-        --? what's the meaning of 50????
         ( bx, by ) =
             ball.pos
 
         r =
             ball.radius
     in
-    if by >= y + brickheight && by - r <= y + brickheight && bx >= x && bx <= x + brickwidth && ball.v_y < 0 then
+    if by >= y + monsterheight && by - r <= y + monsterheight && bx >= x && bx <= x + monsterwidth && ball.v_y < 0 then
         Horizontal
 
-    else if by <= y && by + r >= y && bx >= x && bx <= x + brickwidth && ball.v_y > 0 then
+    else if by <= y && by + r >= y && bx >= x && bx <= x + monsterwidth && ball.v_y > 0 then
         Horizontal
 
-    else if bx <= x && bx + r >= x && by >= y && by <= y + brickheight && ball.v_x > 0 then
+    else if bx <= x && bx + r >= x && by >= y && by <= y + monsterheight && ball.v_x > 0 then
         Vertical
 
-    else if bx >= x + brickwidth && bx - r <= x + brickwidth && by >= y && by <= y + brickheight && ball.v_x < 0 then
+    else if bx >= x + monsterwidth && bx - r <= x + monsterwidth && by >= y && by <= y + monsterheight && ball.v_x < 0 then
         Vertical
 
     else
@@ -380,21 +373,12 @@ checkFail ( model, cmd ) =
 
 checkBallNumber : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 checkBallNumber ( model, cmd ) =
-    if List.length model.ball_list == 1 then
-        ( { model
-            | ball_list = (generateBall model.brick_list model.seed |> Tuple.first) :: model.ball_list
-            , lives = model.lives - 1
-            , seed = generateBall model.brick_list model.seed |> Tuple.second
-          }
-        , cmd
-        )
-
-    else if List.length model.ball_list < 1 then
+    if List.length model.ball_list < model.ballnumber then
         checkBallNumber
             ( { model
-                | ball_list = (generateBall model.brick_list model.seed |> Tuple.first) :: model.ball_list
+                | ball_list = (generateBall model.paddle model.seed |> Tuple.first) :: model.ball_list
                 , lives = model.lives - 1
-                , seed = generateBall model.brick_list model.seed |> Tuple.second
+                , seed = generateBall model.paddle model.seed |> Tuple.second
               }
             , cmd
             )
@@ -412,7 +396,7 @@ checkEnd ( model, cmd ) =
         , cmd
         )
 
-    else if List.isEmpty model.brick_list then
+    else if List.isEmpty model.monster_list then
         ( { model
             | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
             , state = Gameover

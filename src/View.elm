@@ -113,13 +113,13 @@ viewPlaying model =
             [ SvgAttr.width "100%"
             , SvgAttr.height "100%"
             ]
-            -- draw bricks
+            -- draw monsters
             ([ viewBase model
 
              -- , viewLife model
              ]
                 ++ viewLives model
-                ++ List.map viewBricks model.brick_list
+                ++ List.map viewMonsters model.monster_list
                 ++ List.map viewBall model.ball_list
                 ++ -- draw paddle
                    [ viewPaddle model ]
@@ -156,13 +156,13 @@ viewGameover model =
             [ SvgAttr.width "100%"
             , SvgAttr.height "100%"
             ]
-            -- draw bricks
+            -- draw monsters
             ([ viewBase model
 
              -- , viewLife model
              ]
                 ++ viewLives model
-                ++ List.map viewBricks model.brick_list
+                ++ List.map viewMonsters model.monster_list
                 ++ List.map viewBall model.ball_list
                 ++ -- draw paddle
                    [ viewPaddle model ]
