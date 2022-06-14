@@ -29,13 +29,13 @@ viewPaddle model =
         []
 
 
-viewBall : Model -> Svg Msg
-viewBall model =
+viewBall : Ball -> Svg Msg
+viewBall ball =
     Svg.circle
-        [ SvgAttr.cx (toString (Tuple.first model.ball1.pos))
-        , SvgAttr.cy (toString (Tuple.second model.ball1.pos))
-        , SvgAttr.r (toString model.ball1.radius)
-        , SvgAttr.fill (getcolor (getColorful model.time))
+        [ SvgAttr.cx (toString (Tuple.first ball.pos))
+        , SvgAttr.cy (toString (Tuple.second ball.pos))
+        , SvgAttr.r (toString ball.radius)
+        , SvgAttr.fill (element2ColorString ball.element)
         ]
         []
 
@@ -86,7 +86,7 @@ viewScore model =
 
         -- , style "color" (toString (getcolor (getColorful model.time)))
         ]
-        [ text (toString model.scoreboard.player_score) ]
+        [ text (toString model.scores) ]
 
 
 viewLife : Model -> Int -> Svg Msg
@@ -105,7 +105,7 @@ viewLife model x =
 
 viewLives : Model -> List (Svg Msg)
 viewLives model =
-    List.range 1 model.scoreboard.player_lives
+    List.range 1 model.lives
         |> List.map (\x -> (x - 1) * 205)
         |> List.map (viewLife model)
 

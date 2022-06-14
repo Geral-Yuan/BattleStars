@@ -1,22 +1,16 @@
 module Scoreboard exposing (..)
 
 import Bounce exposing (..)
-import Messages exposing (..)
 import Data exposing (Brick)
-
-
-type alias Scoreboard =
-    { player_score : Int
-    , player_lives : Int
-    }
+import Messages exposing (..)
 
 
 
 -- Scoreboard system done by Jovan
 
 
-getBrick_score : Msg -> List Brick -> Int
-getBrick_score msg list_brick =
+getBrick_score : List Brick -> Msg -> Int
+getBrick_score list_brick msg=
     case msg of
         Hit ( x, y ) ball_element ->
             -- extract the list from the tuple and then acquire the brick_score

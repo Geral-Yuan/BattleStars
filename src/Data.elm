@@ -60,9 +60,9 @@ type alias Ball =
     }
 
 elementMatch : Element -> Element -> Int
-elementMatch ball_ele brick_ele =
+elementMatch ball_elem brick_elem =
     let 
-        match = (ball_ele , brick_ele)
+        match = (ball_elem , brick_elem)
     in
     case match of 
         (Water, Fire) ->
@@ -84,8 +84,8 @@ elementMatch ball_ele brick_ele =
         _ ->
             2
 element2ColorString : Element -> String
-element2ColorString element =
-    case element of
+element2ColorString elem =
+    case elem of
             Water ->
                 "blue"
             Fire ->

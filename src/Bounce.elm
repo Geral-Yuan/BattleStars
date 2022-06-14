@@ -10,10 +10,10 @@ import Data exposing (..)
 
 
 generateBall : List Brick -> Seed -> ( Ball, Seed )
-generateBall list_brick seed =
+generateBall brick_list seed =
     let
         ( ( row, col ), nseed ) =
-            Random.step (Random.uniform ( 5, 9 ) (lowestBricks list_brick 10)) seed
+            Random.step (Random.uniform ( 5, 9 ) (lowestBricks brick_list 10)) seed
 
         ( x, y ) =
             ( toFloat col * brickwidth - 50, toFloat (row + 1) * brickheight + 20 )
@@ -21,27 +21,27 @@ generateBall list_brick seed =
     ( Ball ( x, y ) 15 200 200 { red = 0, green = 0, blue = 0 } Water, nseed )
 
 lowestBricks : List Brick -> Int -> List ( Int, Int )
-lowestBricks list_brick n =
+lowestBricks brick_list n =
     if n == 1 then
-        [ lowestBrickCol list_brick n ]
+        [ lowestBrickCol brick_list n ]
 
     else
-        lowestBrickCol list_brick n
-            :: lowestBricks list_brick (n - 1)
+        lowestBrickCol brick_list n
+            :: lowestBricks brick_list (n - 1)
 
 
 lowestBrickCol : List Brick -> Int -> ( Int, Int )
-lowestBrickCol list_brick n =
+lowestBrickCol brick_list n =
     let
         llist_pos =
-            sameColumn list_brick n
+            sameColumn brick_list n
     in
     Maybe.withDefault ( 1000, 1000 ) (List.head (List.reverse llist_pos))
 
 
 sameColumn : List Brick -> Int -> List ( Int, Int )
-sameColumn list_brick n =
-    List.filter (\{ pos } -> Tuple.second pos == n) list_brick
+sameColumn brick_list n =
+    List.filter (\{ pos } -> Tuple.second pos == n) brick_list
         |> List.map .pos
         |> List.sortBy Tuple.first
 
@@ -82,20 +82,20 @@ newPaddleBounceVelocity speed rel_x =
         
 --wyj--deductlife 1 means deduct only one life
 updateBrick : Msg -> List Brick -> List Brick
-updateBrick msg list_brick =
+updateBrick msg brick_list =
     case msg of
-        Hit ( x, y ) ball_element->
+        Hit ( x, y ) ball_elem->
             (
-            Tuple.second (List.partition (\{ pos } -> pos == ( x, y )) list_brick)
-            ++ List.map (deductBrickLife ball_element) (Tuple.first (List.partition (\{ pos } -> pos == ( x, y )) list_brick))
+            Tuple.second (List.partition (\{ pos } -> pos == ( x, y )) brick_list)
+            ++ List.map (deductBrickLife ball_elem) (Tuple.first (List.partition (\{ pos } -> pos == ( x, y )) brick_list))
             )
             |>clearDeadBrick
         _ ->
-            list_brick
+            brick_list
 
 deductBrickLife : Element -> Brick -> Brick
-deductBrickLife ball_ele brick =
-    {brick | brick_lives = brick.brick_lives - (elementMatch ball_ele brick.element)}
+deductBrickLife ball_elem brick =
+    {brick | brick_lives = brick.brick_lives - (elementMatch ball_elem brick.element)}
 
 isBrickLife : Brick -> Bool
 isBrickLife brick =
@@ -108,5 +108,5 @@ getBrickElement : Brick -> Element
 getBrickElement brick =
     brick.element
 clearDeadBrick : List(Brick) -> List(Brick)
-clearDeadBrick list_brick =
-    Tuple.first (List.partition (isBrickLife) list_brick)
+clearDeadBrick brick_list =
+    Tuple.first (List.partition (isBrickLife) brick_list)

@@ -1,20 +1,20 @@
 module View exposing (..)
 
 {- This file contains the view function for all the major game states -}
+-- import Html.Events exposing (onClick)
 
 import Bounce exposing (..)
 import Color exposing (..)
+import Data exposing (..)
 import Debug exposing (toString)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
--- import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Model exposing (..)
 import Paddle exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import ViewPlaying exposing (..)
-import Data exposing (..)
 
 
 view : Model -> Html Msg
@@ -97,8 +97,6 @@ viewPlaying model =
 
             else
                 Basics.min 1 (w / pixelWidth)
-        ball_ele1 = model.ball1.element
-        ball_ele2 = model.ball2.element
     in
     div
         [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
@@ -121,26 +119,10 @@ viewPlaying model =
              -- , viewLife model
              ]
                 ++ viewLives model
-                ++ List.map viewBricks model.list_brick
+                ++ List.map viewBricks model.brick_list
+                ++ List.map viewBall model.ball_list
                 ++ -- draw paddle
-                   [ viewPaddle model
-                   , -- draw ball 1
-                     Svg.circle
-                        [ SvgAttr.cx (toString (Tuple.first model.ball1.pos))
-                        , SvgAttr.cy (toString (Tuple.second model.ball1.pos))
-                        , SvgAttr.r (toString model.ball1.radius)
-                        , SvgAttr.fill (element2ColorString ball_ele1)
-                        ]
-                        []
-                   , -- draw ball 2
-                     Svg.circle
-                        [ SvgAttr.cx (toString (Tuple.first model.ball2.pos))
-                        , SvgAttr.cy (toString (Tuple.second model.ball2.pos))
-                        , SvgAttr.r (toString model.ball2.radius)
-                        , SvgAttr.fill (element2ColorString ball_ele2)
-                        ]
-                        []
-                   ]
+                   [ viewPaddle model ]
             )
         , viewScore model
         ]
@@ -176,28 +158,14 @@ viewGameover model =
             ]
             -- draw bricks
             ([ viewBase model
+
+             -- , viewLife model
              ]
                 ++ viewLives model
-                ++ List.map viewBricks model.list_brick
+                ++ List.map viewBricks model.brick_list
+                ++ List.map viewBall model.ball_list
                 ++ -- draw paddle
-                   [ viewPaddle model
-                   , -- draw ball 1
-                     Svg.circle
-                        [ SvgAttr.cx (toString (Tuple.first model.ball1.pos))
-                        , SvgAttr.cy (toString (Tuple.second model.ball1.pos))
-                        , SvgAttr.r (toString model.ball1.radius)
-                        , SvgAttr.fill (getcolor (getColorful model.time))
-                        ]
-                        []
-                   , -- draw ball 2
-                     Svg.circle
-                        [ SvgAttr.cx (toString (Tuple.first model.ball2.pos))
-                        , SvgAttr.cy (toString (Tuple.second model.ball2.pos))
-                        , SvgAttr.r (toString model.ball2.radius)
-                        , SvgAttr.fill (getcolor (getColorful model.time))
-                        ]
-                        []
-                   ]
+                   [ viewPaddle model ]
             )
         , viewScore model
         , newGameButton

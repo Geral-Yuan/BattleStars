@@ -2,12 +2,12 @@ module Model exposing (..)
 
 import Bounce exposing (..)
 import Browser.Dom exposing (getViewport)
+import Data exposing (..)
 import Messages exposing (..)
 import Paddle exposing (..)
 import Random exposing (..)
 import Scoreboard exposing (..)
 import Task
-import Data exposing (..)
 
 
 type State
@@ -26,19 +26,16 @@ type State
 
 
 type alias Model =
-    { list_brick : List Brick
+    { brick_list : List Brick
     , paddle : Paddle
-    , ball1 : Ball
-    , ball2 : Ball
+    , ball_list : List Ball
     , time : Float
-    , scoreboard : Scoreboard
+    , lives : Int
+    , scores : Int
     , state : State
     , size : ( Float, Float )
     , seed : Seed
     }
-
-
-
 
 
 init : () -> ( Model, Cmd Msg )
@@ -47,71 +44,73 @@ init _ =
     , Task.perform GetViewport getViewport
     )
 
---wyj
+
 initModel : Model
 initModel =
-    { list_brick = (initBrick ( 3, 5 ) brickLives 10 Water ) ++ (initBricktest ( 3, 5 ) (brickLives) 10 Fire)--one life for each brick; 10 points for each brick
+    { brick_list = initBrick ( 3, 5 ) brickLives 10 Water ++ initBricktest ( 3, 5 ) brickLives 10 Fire --one life for each brick; 10 points for each brick
     , paddle = { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
-    , ball1 = generateBall ((initBrick ( 3, 5 ) brickLives 10 Water ) ++ (initBricktest ( 3, 5 ) brickLives 10 Fire)) (Random.initialSeed 1234) |> Tuple.first
-    , ball2 = generateBall ((initBrick ( 3, 5 ) brickLives 10 Water ) ++ (initBricktest ( 3, 5 ) brickLives 10 Fire)) (Random.initialSeed 4321) |> Tuple.first
+    , ball_list =
+        [ generateBall (initBrick ( 3, 5 ) brickLives 10 Water ++ initBricktest ( 3, 5 ) brickLives 10 Fire) (Random.initialSeed 1234) |> Tuple.first
+        , generateBall (initBrick ( 3, 5 ) brickLives 10 Water ++ initBricktest ( 3, 5 ) brickLives 10 Fire) (Random.initialSeed 4321) |> Tuple.first
+        ]
     , time = 0
-    , scoreboard = initScoreboard 5 --five lives for a player
+    , lives = 5 --five lives for a player
+    , scores = 0
     , state = Starting
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
     }
 
---wyj
+
 restartModel : Model
 restartModel =
     -- For players to select it when they click newGame
-    { list_brick = (initBrick ( 3, 5 ) brickLives 10 Water ) ++ (initBricktest ( 3, 5 ) (brickLives) 10 Fire)--one life for each brick; 10 points for each brick
+    { brick_list = initBrick ( 3, 5 ) brickLives 10 Water ++ initBricktest ( 3, 5 ) brickLives 10 Fire --one life for each brick; 10 points for each brick
     , paddle = { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
-    , ball1 = generateBall ((initBrick ( 3, 5 ) brickLives 10 Water ) ++ (initBricktest ( 3, 5 ) brickLives 10 Fire)) (Random.initialSeed 1234) |> Tuple.first
-    , ball2 = generateBall ((initBrick ( 3, 5 ) brickLives 10 Water ) ++ (initBricktest ( 3, 5 ) brickLives 10 Fire)) (Random.initialSeed 4321) |> Tuple.first
+    , ball_list =
+        [ generateBall (initBrick ( 3, 5 ) brickLives 10 Water ++ initBricktest ( 3, 5 ) brickLives 10 Fire) (Random.initialSeed 1234) |> Tuple.first
+        , generateBall (initBrick ( 3, 5 ) brickLives 10 Water ++ initBricktest ( 3, 5 ) brickLives 10 Fire) (Random.initialSeed 4321) |> Tuple.first
+        ]
     , time = 0
-    , scoreboard = initScoreboard 5 --five lives for a player
+    , lives = 5 --five lives for a player
+    , scores = 0
     , state = Playing
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
     }
 
 
-initScoreboard : Int -> Scoreboard
-initScoreboard lives =
-    Scoreboard 0 lives
-
-
 initBrick : ( Int, Int ) -> Int -> Int -> Element -> List Brick
-initBrick ( row, col ) lives score element=
+initBrick ( row, col ) lives score elem =
     if row == 1 then
-        initBrickRow ( row, col ) lives score element
+        initBrickRow ( row, col ) lives score elem
 
     else
-        initBrickRow ( row, col ) lives score element ++ initBrick ( row - 1, col ) lives score element
+        initBrickRow ( row, col ) lives score elem ++ initBrick ( row - 1, col ) lives score elem
 
 
 initBrickRow : ( Int, Int ) -> Int -> Int -> Element -> List Brick
-initBrickRow ( row, col ) lives score element=
+initBrickRow ( row, col ) lives score elem =
     if col == 1 then
-        [ Brick ( row, col ) lives score element]
+        [ Brick ( row, col ) lives score elem ]
 
     else
-        Brick ( row, col ) lives score element :: initBrickRow ( row, col - 1 ) lives score element
+        Brick ( row, col ) lives score elem :: initBrickRow ( row, col - 1 ) lives score elem
+
 
 initBricktest : ( Int, Int ) -> Int -> Int -> Element -> List Brick
-initBricktest ( row, col ) lives score element=
+initBricktest ( row, col ) lives score elem =
     if row == 1 then
-        initBrickRowtest ( row, col+5 ) lives score element
+        initBrickRowtest ( row, col + 5 ) lives score elem
 
     else
-        initBrickRowtest ( row, col+5 ) lives score element ++ initBricktest ( row - 1, col+5 ) lives score element
+        initBrickRowtest ( row, col + 5 ) lives score elem ++ initBricktest ( row - 1, col + 5 ) lives score elem
 
 
 initBrickRowtest : ( Int, Int ) -> Int -> Int -> Element -> List Brick
-initBrickRowtest ( row, col ) lives score element=
+initBrickRowtest ( row, col ) lives score elem =
     if col == 6 then
-        [ Brick ( row, col ) lives score element]
+        [ Brick ( row, col ) lives score elem ]
 
     else
-        Brick ( row, col ) lives score element :: initBrickRowtest ( row, col - 1 ) lives score element
+        Brick ( row, col ) lives score elem :: initBrickRowtest ( row, col - 1 ) lives score elem
