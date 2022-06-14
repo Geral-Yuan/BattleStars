@@ -33,7 +33,8 @@ key on keycode =
     case keycode of
         37 ->
             Key Left on
-
+        38 ->
+            Trans
         39 ->
             Key Right on
 

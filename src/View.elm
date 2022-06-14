@@ -7,13 +7,14 @@ import Color exposing (..)
 import Debug exposing (toString)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
-import Html.Events exposing (onClick)
+-- import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Model exposing (..)
 import Paddle exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import ViewPlaying exposing (..)
+import Data exposing (..)
 
 
 view : Model -> Html Msg
@@ -96,6 +97,8 @@ viewPlaying model =
 
             else
                 Basics.min 1 (w / pixelWidth)
+        ball_ele1 = model.ball1.element
+        ball_ele2 = model.ball2.element
     in
     div
         [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
@@ -126,7 +129,7 @@ viewPlaying model =
                         [ SvgAttr.cx (toString (Tuple.first model.ball1.pos))
                         , SvgAttr.cy (toString (Tuple.second model.ball1.pos))
                         , SvgAttr.r (toString model.ball1.radius)
-                        , SvgAttr.fill (getcolor (getColorful model.time))
+                        , SvgAttr.fill (element2ColorString ball_ele1)
                         ]
                         []
                    , -- draw ball 2
@@ -134,7 +137,7 @@ viewPlaying model =
                         [ SvgAttr.cx (toString (Tuple.first model.ball2.pos))
                         , SvgAttr.cy (toString (Tuple.second model.ball2.pos))
                         , SvgAttr.r (toString model.ball2.radius)
-                        , SvgAttr.fill (getcolor (getColorful model.time))
+                        , SvgAttr.fill (element2ColorString ball_ele2)
                         ]
                         []
                    ]

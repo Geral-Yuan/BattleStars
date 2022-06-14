@@ -7,6 +7,7 @@ import Model exposing (..)
 import Paddle exposing (..)
 import Scoreboard exposing (..)
 import Task
+import Data exposing (..)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -29,7 +30,7 @@ update msg model =
               }
             , Cmd.none
             )
-
+        
         _ ->
             ( model, Cmd.none )
                 |> updatePaddle msg
@@ -37,7 +38,7 @@ update msg model =
                 |> updateTime msg
                 |> checkEnd
 
-
+--wyj
 updatePaddle : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 updatePaddle msg ( model, cmd ) =
     case msg of
@@ -48,7 +49,13 @@ updatePaddle msg ( model, cmd ) =
               }
             , cmd
             )
-
+        Trans ->
+            ( { model
+                | paddle = transPaddle model }
+                    
+              
+            , cmd
+            )
         Key dir on ->
             ( { model
                 | paddle =
@@ -60,8 +67,61 @@ updatePaddle msg ( model, cmd ) =
         _ ->
             ( model, cmd )
 
+--wyj
+-- getTerminal : Model -> Float
+-- getTerminal  model =
+--     let
+--         nmodel =
+--             bounceAll ( model, Cmd.none )
+--             |> Tuple.first
+--         ball = model.ball       --找更下面的ball
+--         cy = Tuple.second (ball.pos)
+--         paddle = model.paddle
+--         py=Tuple.second (paddle.pos)
 
+--     in
+--     if cy + ball.radius <= py then
+--         getTerminal (moveBall nmodel (0.01) )
+--     else
+--         (model.ball.pos
+--         |> Tuple.first)
+--         - paddle.width /2
+--wyj
+getTerminal : Model -> Float
+getTerminal  model =
+    let
+        nmodel =
+            bounceAll ( model, Cmd.none )
+            |> Tuple.first
+        ball1 = model.ball1       --找更下面的ball
+        cy1 = Tuple.second (ball1.pos)
+        ball2 = model.ball2       --找更下面的ball
+        cy2 = Tuple.second (ball2.pos)
+        paddle = model.paddle
+        py=Tuple.second (paddle.pos)
 
+    in
+    if (cy1 + ball1.radius <= py) && (cy2 + ball2.radius <= py) then
+        getTerminal (moveBall nmodel (0.01) )
+    else
+
+        if (cy1 + ball1.radius > py) then
+            (model.ball1.pos
+            |> Tuple.first)
+            - paddle.width /2
+        else
+            (model.ball2.pos
+            |> Tuple.first)
+            - paddle.width /2
+
+transPaddle : Model -> Paddle
+transPaddle model = 
+    let
+        paddle = model.paddle
+        py = Tuple.second (paddle.pos)
+        
+    in
+    { paddle | pos = (getTerminal model, py)}
 -- By Yuan Jiale, update ball
 
 
@@ -133,7 +193,7 @@ bouncePaddle ( model, cmd ) =
     in
     ( { model | ball1 = new_ball1, ball2 = new_ball2 }, cmd )
 
-
+--wyj
 checkBouncePaddle : Ball -> Paddle -> Bounce
 checkBouncePaddle ball paddle =
     let
@@ -151,7 +211,7 @@ checkBouncePaddle ball paddle =
     in
     if ball.v_y > 0 then
         if by <= py && by + r >= py && bx >= px && bx <= px + wid then
-            Horizontal
+            Paddle_Bounce (bx - px)
 
         else if bx <= px && bx + r >= px && by >= py && by <= py + paddle.height then
             Back
@@ -208,8 +268,26 @@ checkBounceScreen ball =
 
     else
         None
+findHitBrick : Msg -> List(Brick) -> Maybe Brick
+findHitBrick msg list_brick=
+    case msg of
+        Hit (x,y) element ->
+            Tuple.first (List.partition (\{ pos } -> pos == ( x, y )) list_brick)
+            |> List.head
+        _ ->
+            Nothing
+changeElement : Ball -> Maybe Brick -> Ball
+changeElement  ball brick  = 
+    case brick of
+        Just bk ->
+            {ball| element = bk.element
+            }
+        Nothing ->
+            ball
+    
+    
 
-
+--wyj改的有问题
 bounceBrick : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 bounceBrick ( model, cmd ) =
     let
@@ -219,6 +297,9 @@ bounceBrick ( model, cmd ) =
         ball2 =
             model.ball2
 
+        ele1 = ball1.element
+
+        ele2 = ball2.element
         list_brick =
             model.list_brick
 
@@ -227,7 +308,7 @@ bounceBrick ( model, cmd ) =
             model.scoreboard.player_score
 
         nScore =
-            oldScore + getBrick_score (Hit pos1) list_brick
+            oldScore + getBrick_score (Hit pos1 ele1) list_brick
 
         oldScoreboard =
             model.scoreboard
@@ -239,24 +320,37 @@ bounceBrick ( model, cmd ) =
             checkBounceBrickList ball1 list_brick
 
         nlist_brick =
-            updateBrick (Hit pos1) list_brick
+            updateBrick (Hit pos1 ele1) list_brick
 
         nnScore =
-            nScore + getBrick_score (Hit pos2) nlist_brick
+            nScore + getBrick_score (Hit pos2 ele2) nlist_brick
 
         nnScoreboard =
             { nScoreboard | player_score = nnScore }
 
         ( bounce2, pos2 ) =
             checkBounceBrickList ball2 nlist_brick
-
+        
+        eleball1 = (findHitBrick (Hit pos1 ele1) nlist_brick
+                |> changeElement ball1)
+        eleball2 = (findHitBrick (Hit pos2 ele2) nlist_brick
+                |> changeElement ball2)
+        
         nball1 =
-            newBounceVelocity ball1 bounce1
+            newBounceVelocity
+                eleball1
+                bounce1
+            
 
         nball2 =
-            newBounceVelocity ball2 bounce2
+            newBounceVelocity
+                eleball2
+                bounce2
     in
-    ( { model | ball1 = nball1, ball2 = nball2, list_brick = updateBrick (Hit pos2) nlist_brick, scoreboard = nnScoreboard }, cmd )
+    ( { model | ball1 = 
+                 nball1
+                , ball2 =  nball2
+                , list_brick = updateBrick (Hit pos2 ele2) nlist_brick, scoreboard = nnScoreboard }, cmd )
 
 
 checkBounceBrickList : Ball -> List Brick -> ( Bounce, ( Int, Int ) )
