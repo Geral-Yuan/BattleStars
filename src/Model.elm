@@ -2,6 +2,7 @@ module Model exposing (..)
 
 import Bounce exposing (..)
 import Browser.Dom exposing (getViewport)
+import Data exposing (..)
 import Messages exposing (..)
 import Paddle exposing (..)
 import Random exposing (..)
@@ -25,26 +26,17 @@ type State
 
 
 type alias Model =
-    { list_brick : List Brick
+    { monster_list : List Monster
     , paddle : Paddle
-    , ball1 : Ball
-    , ball2 : Ball
+    , ball_list : List Ball
+    , ballnumber : Int
     , time : Float
-    , scoreboard : Scoreboard
+    , lives : Int
+    , scores : Int
     , state : State
     , size : ( Float, Float )
     , seed : Seed
     }
-
-
-pixelWidth : Float
-pixelWidth =
-    1000
-
-
-pixelHeight : Float
-pixelHeight =
-    1200
 
 
 init : () -> ( Model, Cmd Msg )
@@ -56,12 +48,15 @@ init _ =
 
 initModel : Model
 initModel =
-    { list_brick = initBrick ( 3, 10 ) 1 10 --one life for each brick; 10 points for each brick
-    , paddle = { pos = ( 500, 1000 ), dir = Still, height = 20, width = 150, speed = 500 }
-    , ball1 = generateBall (initBrick ( 5, 10 ) 1 10) (Random.initialSeed 1234) |> Tuple.first
-    , ball2 = generateBall (initBrick ( 5, 10 ) 1 10) (Random.initialSeed 4321) |> Tuple.first
+    { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
+    , paddle = initpaddle
+    , ball_list =
+        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
+        ]
+    , ballnumber = 1
     , time = 0
-    , scoreboard = initScoreboard 5 --five lives for a player
+    , lives = 5 --five lives for a player
+    , scores = 0
     , state = Starting
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
@@ -71,36 +66,57 @@ initModel =
 restartModel : Model
 restartModel =
     -- For players to select it when they click newGame
-    { list_brick = initBrick ( 3, 10 ) 1 10 --one life for each brick; 10 points for each brick
-    , paddle = { pos = ( 500, 1000 ), dir = Still, height = 20, width = 150, speed = 500 }
-    , ball1 = generateBall (initBrick ( 5, 10 ) 1 10) (Random.initialSeed 1234) |> Tuple.first
-    , ball2 = generateBall (initBrick ( 5, 10 ) 1 10) (Random.initialSeed 4321) |> Tuple.first
+    { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
+    , paddle = initpaddle
+    , ball_list =
+        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
+        ]
+    , ballnumber = 1
     , time = 0
-    , scoreboard = initScoreboard 5 --five lives for a player
+    , lives = 5 --five lives for a player
+    , scores = 0
     , state = Playing
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
     }
 
 
-initScoreboard : Int -> Scoreboard
-initScoreboard lives =
-    Scoreboard 0 lives
+initMonsterList : Int -> List Monster
+initMonsterList n =
+    case n of
+        0 ->
+            []
+
+        _ ->
+            initMonsterList (n - 1) ++ [ initMonster n ]
 
 
-initBrick : ( Int, Int ) -> Int -> Int -> List Brick
-initBrick ( row, col ) lives score =
-    if row == 1 then
-        initBrickRow ( row, col ) lives score
+initpaddle : Paddle
+initpaddle =
+    { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
+
+-- radius of monster is likely to be adjust to a suitable size later
+initMonster : Int -> Monster
+initMonster idx =
+    Monster idx (detPosition idx) monsterLives 10 80 (detElem idx)
+
+
+detPosition : Int -> ( Float, Float )
+detPosition idx =
+    let
+        row =
+            (idx - 1) // 4
+
+        column =
+            modBy 4 idx + 1
+    in
+    ( toFloat column * 200, toFloat row * 200 + 100 )
+
+
+detElem : Int -> Element
+detElem idx =
+    if modBy 4 idx <= 1 then
+        Water
 
     else
-        initBrickRow ( row, col ) lives score ++ initBrick ( row - 1, col ) lives score
-
-
-initBrickRow : ( Int, Int ) -> Int -> Int -> List Brick
-initBrickRow ( row, col ) lives score =
-    if col == 1 then
-        [ Brick ( row, col ) lives score ]
-
-    else
-        Brick ( row, col ) lives score :: initBrickRow ( row, col - 1 ) lives score
+        Fire
