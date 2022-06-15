@@ -11,17 +11,19 @@ import Task
 
 type State
     = Starting
-    | Playing -- Playing will be switched to Playing1, Playing2 (different levels)
-      -- | Scene Narrative
+    | Playing1 -- Playing will be switched to Playing1, Playing2 (different levels)
+    | Playing2
+    | Playing3
+    | Playing4
+    | Playing5
+    | Scene11
+    | Scene12
+    | Scene2
+    | Scene3
+    | Scene4
+    | Scene5
+    | Victory
     | Gameover
-
-
-
--- type Narrative
---     = Logo
---     | HowtoPlay
---     | Level1
---     | Level2
 
 
 type alias Model =
@@ -62,8 +64,8 @@ initModel =
     }
 
 
-restartModel : Model
-restartModel =
+playModel : Model -> State -> Model
+playModel model state =
     -- For players to select it when they click newGame
     { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
     , paddle = initpaddle
@@ -74,7 +76,25 @@ restartModel =
     , time = 0
     , lives = 5 --five lives for a player
     , scores = 0
-    , state = Playing
+    , state = state
+    , size = ( 2000, 1000 )
+    , seed = Random.initialSeed 1234
+    }
+
+
+sceneModel : Model -> State -> Model
+sceneModel model state =
+    -- to change scenes
+    { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
+    , paddle = initpaddle
+    , ball_list =
+        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
+        ]
+    , ballnumber = 1
+    , time = 0
+    , lives = 5 --five lives for a player
+    , scores = 0
+    , state = state
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
     }

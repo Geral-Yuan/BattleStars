@@ -59,7 +59,7 @@ viewMonsters monster =
                 , SvgAttr.x (toString (x - monsterwidth / 2))
                 , SvgAttr.y (toString (y - monsterheight / 2))
                 , SvgAttr.preserveAspectRatio "none"
-                , SvgAttr.xlinkHref "../assets/monster1.png"
+                , SvgAttr.xlinkHref "../assets/waterMonster.png"
                 ]
                 []
 
@@ -70,9 +70,10 @@ viewMonsters monster =
                 , SvgAttr.x (toString (x - monsterwidth / 2))
                 , SvgAttr.y (toString (y - monsterheight / 2))
                 , SvgAttr.preserveAspectRatio "none"
-                , SvgAttr.xlinkHref "../assets/logo.png"
+                , SvgAttr.xlinkHref "../assets/fireMonster.png"
                 ]
                 []
+
 
 viewCover : Monster -> Svg Msg
 viewCover monster =
@@ -85,7 +86,6 @@ viewCover monster =
         , SvgAttr.stroke (element2ColorString monster.element)
         ]
         []
-
 
 
 viewScore : Model -> Html Msg
@@ -165,7 +165,7 @@ newGameButton =
         , style "padding" "0"
         , style "position" "absolute"
         , style "width" "120px"
-        , onClick Start
+        , onClick Restart
         ]
         [ text "New Game" ]
 
