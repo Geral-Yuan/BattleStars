@@ -4,6 +4,7 @@ module ViewPlaying exposing (..)
 
 import Bounce exposing (..)
 import Color exposing (..)
+import Data exposing (..)
 import Debug exposing (toString)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
@@ -13,7 +14,6 @@ import Model exposing (..)
 import Paddle exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
-import Data exposing (..)
 
 
 viewPaddle : Model -> Svg Msg
@@ -29,45 +29,63 @@ viewPaddle model =
         []
 
 
-viewBall : Model -> Svg Msg
-viewBall model =
+viewBall : Ball -> Svg Msg
+viewBall ball =
     Svg.circle
-        [ SvgAttr.cx (toString (Tuple.first model.ball1.pos))
-        , SvgAttr.cy (toString (Tuple.second model.ball1.pos))
-        , SvgAttr.r (toString model.ball1.radius)
-        , SvgAttr.fill (getcolor (getColorful model.time))
+        [ SvgAttr.cx (toString (Tuple.first ball.pos))
+        , SvgAttr.cy (toString (Tuple.second ball.pos))
+        , SvgAttr.r (toString ball.radius)
+        , SvgAttr.fill (element2ColorString ball.element)
         ]
         []
 
+
+
 --wyj test the element
-viewBricks : Brick -> Svg Msg
-viewBricks brick =
+
+
+viewMonsters : Monster -> Svg Msg
+viewMonsters monster =
     let
-        ( row, col ) =
-            brick.pos
+        ( x, y ) =
+            monster.pos
     in
-    -- add if condition of bricks existence later
-    case brick.element of
+    -- add if condition of monsters existence later
+    case monster.element of
         Water ->
             Svg.image
-                [ SvgAttr.width (toString brickwidth)
-                , SvgAttr.height (toString brickheight)
-                , SvgAttr.x (toString (toFloat (col - 1) * brickwidth))
-                , SvgAttr.y (toString (toFloat (row - 1) * brickheight + 50))
+                [ SvgAttr.width (toString monsterwidth)
+                , SvgAttr.height (toString monsterheight)
+                , SvgAttr.x (toString (x - monsterwidth / 2))
+                , SvgAttr.y (toString (y - monsterheight / 2))
                 , SvgAttr.preserveAspectRatio "none"
-                , SvgAttr.xlinkHref "../assets/monster1.png"
+                , SvgAttr.xlinkHref "../assets/waterMonster.png"
                 ]
                 []
+
         _ ->
             Svg.image
-                [ SvgAttr.width (toString brickwidth)
-                , SvgAttr.height (toString brickheight)
-                , SvgAttr.x (toString (toFloat (col - 1) * brickwidth))
-                , SvgAttr.y (toString (toFloat (row - 1) * brickheight + 50))
+                [ SvgAttr.width (toString monsterwidth)
+                , SvgAttr.height (toString monsterheight)
+                , SvgAttr.x (toString (x - monsterwidth / 2))
+                , SvgAttr.y (toString (y - monsterheight / 2))
                 , SvgAttr.preserveAspectRatio "none"
-                , SvgAttr.xlinkHref "../assets/logo.png"
+                , SvgAttr.xlinkHref "../assets/fireMonster.png"
                 ]
                 []
+
+
+viewCover : Monster -> Svg Msg
+viewCover monster =
+    Svg.circle
+        [ SvgAttr.cx (toString (Tuple.first monster.pos))
+        , SvgAttr.cy (toString (Tuple.second monster.pos))
+        , SvgAttr.r (toString (monster.monster_radius - 3))
+        , SvgAttr.fill "transparent"
+        , SvgAttr.strokeWidth "3"
+        , SvgAttr.stroke (element2ColorString monster.element)
+        ]
+        []
 
 
 viewScore : Model -> Html Msg
@@ -86,7 +104,7 @@ viewScore model =
 
         -- , style "color" (toString (getcolor (getColorful model.time)))
         ]
-        [ text (toString model.scoreboard.player_score) ]
+        [ text (toString model.scores) ]
 
 
 viewLife : Model -> Int -> Svg Msg
@@ -105,7 +123,7 @@ viewLife model x =
 
 viewLives : Model -> List (Svg Msg)
 viewLives model =
-    List.range 1 model.scoreboard.player_lives
+    List.range 1 model.lives
         |> List.map (\x -> (x - 1) * 205)
         |> List.map (viewLife model)
 
@@ -147,7 +165,7 @@ newGameButton =
         , style "padding" "0"
         , style "position" "absolute"
         , style "width" "120px"
-        , onClick Start
+        , onClick Restart
         ]
         [ text "New Game" ]
 

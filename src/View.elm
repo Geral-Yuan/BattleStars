@@ -1,20 +1,21 @@
 module View exposing (..)
 
 {- This file contains the view function for all the major game states -}
+-- import Html.Events exposing (onClick)
 
 import Bounce exposing (..)
 import Color exposing (..)
+import Data exposing (..)
 import Debug exposing (toString)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
--- import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Model exposing (..)
 import Paddle exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import ViewPlaying exposing (..)
-import Data exposing (..)
+import ViewScenes exposing (..)
 
 
 view : Model -> Html Msg
@@ -22,11 +23,44 @@ view model =
     let
         viewAll =
             case model.state of
-                Playing ->
-                    viewPlaying model
-
                 Starting ->
                     viewStarting model
+
+                Playing1 ->
+                    viewPlaying1 model
+
+                Playing2 ->
+                    viewPlaying1 model
+
+                Playing3 ->
+                    viewPlaying1 model
+
+                Playing4 ->
+                    viewPlaying1 model
+
+                Playing5 ->
+                    viewPlaying1 model
+
+                Scene11 ->
+                    viewScene11 model
+
+                Scene12 ->
+                    viewScene11 model
+
+                Scene2 ->
+                    viewScene11 model
+
+                Scene3 ->
+                    viewScene11 model
+
+                Scene4 ->
+                    viewScene11 model
+
+                Scene5 ->
+                    viewScene11 model
+
+                Victory ->
+                    viewGameover model
 
                 Gameover ->
                     viewGameover model
@@ -66,7 +100,7 @@ viewStarting model =
         , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
-        , HtmlAttr.style "background" "black"
+        , HtmlAttr.style "background" "url('../assets/Start.png')"
         , HtmlAttr.style "outline" "medium white solid"
         ]
         [ renderButton "Start"
@@ -81,12 +115,12 @@ viewStarting model =
             , style "font-size" "120px"
             , style "font-weight" "bold"
             ]
-            [ text "COSMIC\nWARRIORS" ]
+            []
         ]
 
 
-viewPlaying : Model -> Html Msg
-viewPlaying model =
+viewPlaying1 : Model -> Html Msg
+viewPlaying1 model =
     let
         ( w, h ) =
             model.size
@@ -97,8 +131,6 @@ viewPlaying model =
 
             else
                 Basics.min 1 (w / pixelWidth)
-        ball_ele1 = model.ball1.element
-        ball_ele2 = model.ball2.element
     in
     div
         [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
@@ -115,32 +147,193 @@ viewPlaying model =
             [ SvgAttr.width "100%"
             , SvgAttr.height "100%"
             ]
-            -- draw bricks
+            -- draw monsters
             ([ viewBase model
 
              -- , viewLife model
              ]
                 ++ viewLives model
-                ++ List.map viewBricks model.list_brick
+                ++ List.map viewMonsters model.monster_list
+                ++ List.map viewCover model.monster_list
+                ++ List.map viewBall model.ball_list
                 ++ -- draw paddle
-                   [ viewPaddle model
-                   , -- draw ball 1
-                     Svg.circle
-                        [ SvgAttr.cx (toString (Tuple.first model.ball1.pos))
-                        , SvgAttr.cy (toString (Tuple.second model.ball1.pos))
-                        , SvgAttr.r (toString model.ball1.radius)
-                        , SvgAttr.fill (element2ColorString ball_ele1)
-                        ]
-                        []
-                   , -- draw ball 2
-                     Svg.circle
-                        [ SvgAttr.cx (toString (Tuple.first model.ball2.pos))
-                        , SvgAttr.cy (toString (Tuple.second model.ball2.pos))
-                        , SvgAttr.r (toString model.ball2.radius)
-                        , SvgAttr.fill (element2ColorString ball_ele2)
-                        ]
-                        []
-                   ]
+                   [ viewPaddle model ]
+            )
+        , viewScore model
+        ]
+
+
+viewPlaying2 : Model -> Html Msg
+viewPlaying2 model =
+    let
+        ( w, h ) =
+            model.size
+
+        r =
+            if w / h > pixelWidth / pixelHeight then
+                Basics.min 1 (h / pixelHeight)
+
+            else
+                Basics.min 1 (w / pixelWidth)
+    in
+    div
+        [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
+        , HtmlAttr.style "height" (String.fromFloat pixelHeight ++ "px")
+        , HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
+        , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
+        , HtmlAttr.style "transform-origin" "0 0"
+        , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
+        , HtmlAttr.style "background" "url('../assets/background.png')"
+        , HtmlAttr.style "outline" "medium white solid"
+        ]
+        [ Svg.svg
+            [ SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            ]
+            -- draw monsters
+            ([ viewBase model
+
+             -- , viewLife model
+             ]
+                ++ viewLives model
+                ++ List.map viewMonsters model.monster_list
+                ++ List.map viewCover model.monster_list
+                ++ List.map viewBall model.ball_list
+                ++ -- draw paddle
+                   [ viewPaddle model ]
+            )
+        , viewScore model
+        ]
+
+
+viewPlaying3 : Model -> Html Msg
+viewPlaying3 model =
+    let
+        ( w, h ) =
+            model.size
+
+        r =
+            if w / h > pixelWidth / pixelHeight then
+                Basics.min 1 (h / pixelHeight)
+
+            else
+                Basics.min 1 (w / pixelWidth)
+    in
+    div
+        [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
+        , HtmlAttr.style "height" (String.fromFloat pixelHeight ++ "px")
+        , HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
+        , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
+        , HtmlAttr.style "transform-origin" "0 0"
+        , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
+        , HtmlAttr.style "background" "url('../assets/background.png')"
+        , HtmlAttr.style "outline" "medium white solid"
+        ]
+        [ Svg.svg
+            [ SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            ]
+            -- draw monsters
+            ([ viewBase model
+
+             -- , viewLife model
+             ]
+                ++ viewLives model
+                ++ List.map viewMonsters model.monster_list
+                ++ List.map viewCover model.monster_list
+                ++ List.map viewBall model.ball_list
+                ++ -- draw paddle
+                   [ viewPaddle model ]
+            )
+        , viewScore model
+        ]
+
+
+viewPlaying4 : Model -> Html Msg
+viewPlaying4 model =
+    let
+        ( w, h ) =
+            model.size
+
+        r =
+            if w / h > pixelWidth / pixelHeight then
+                Basics.min 1 (h / pixelHeight)
+
+            else
+                Basics.min 1 (w / pixelWidth)
+    in
+    div
+        [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
+        , HtmlAttr.style "height" (String.fromFloat pixelHeight ++ "px")
+        , HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
+        , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
+        , HtmlAttr.style "transform-origin" "0 0"
+        , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
+        , HtmlAttr.style "background" "url('../assets/background.png')"
+        , HtmlAttr.style "outline" "medium white solid"
+        ]
+        [ Svg.svg
+            [ SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            ]
+            -- draw monsters
+            ([ viewBase model
+
+             -- , viewLife model
+             ]
+                ++ viewLives model
+                ++ List.map viewMonsters model.monster_list
+                ++ List.map viewCover model.monster_list
+                ++ List.map viewBall model.ball_list
+                ++ -- draw paddle
+                   [ viewPaddle model ]
+            )
+        , viewScore model
+        ]
+
+
+viewPlaying5 : Model -> Html Msg
+viewPlaying5 model =
+    let
+        ( w, h ) =
+            model.size
+
+        r =
+            if w / h > pixelWidth / pixelHeight then
+                Basics.min 1 (h / pixelHeight)
+
+            else
+                Basics.min 1 (w / pixelWidth)
+    in
+    div
+        [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
+        , HtmlAttr.style "height" (String.fromFloat pixelHeight ++ "px")
+        , HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
+        , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
+        , HtmlAttr.style "transform-origin" "0 0"
+        , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
+        , HtmlAttr.style "background" "url('../assets/background.png')"
+        , HtmlAttr.style "outline" "medium white solid"
+        ]
+        [ Svg.svg
+            [ SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            ]
+            -- draw monsters
+            ([ viewBase model
+
+             -- , viewLife model
+             ]
+                ++ viewLives model
+                ++ List.map viewMonsters model.monster_list
+                ++ List.map viewCover model.monster_list
+                ++ List.map viewBall model.ball_list
+                ++ -- draw paddle
+                   [ viewPaddle model ]
             )
         , viewScore model
         ]
@@ -174,30 +367,17 @@ viewGameover model =
             [ SvgAttr.width "100%"
             , SvgAttr.height "100%"
             ]
-            -- draw bricks
+            -- draw monsters
             ([ viewBase model
+
+             -- , viewLife model
              ]
                 ++ viewLives model
-                ++ List.map viewBricks model.list_brick
+                ++ List.map viewMonsters model.monster_list
+                ++ List.map viewCover model.monster_list
+                ++ List.map viewBall model.ball_list
                 ++ -- draw paddle
-                   [ viewPaddle model
-                   , -- draw ball 1
-                     Svg.circle
-                        [ SvgAttr.cx (toString (Tuple.first model.ball1.pos))
-                        , SvgAttr.cy (toString (Tuple.second model.ball1.pos))
-                        , SvgAttr.r (toString model.ball1.radius)
-                        , SvgAttr.fill (getcolor (getColorful model.time))
-                        ]
-                        []
-                   , -- draw ball 2
-                     Svg.circle
-                        [ SvgAttr.cx (toString (Tuple.first model.ball2.pos))
-                        , SvgAttr.cy (toString (Tuple.second model.ball2.pos))
-                        , SvgAttr.r (toString model.ball2.radius)
-                        , SvgAttr.fill (getcolor (getColorful model.time))
-                        ]
-                        []
-                   ]
+                   [ viewPaddle model ]
             )
         , viewScore model
         , newGameButton

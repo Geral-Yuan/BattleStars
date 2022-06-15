@@ -1,44 +1,43 @@
 module Model exposing (..)
 
-import Bounce exposing (..)
 import Browser.Dom exposing (getViewport)
+import Data exposing (..)
 import Messages exposing (..)
 import Paddle exposing (..)
 import Random exposing (..)
 import Scoreboard exposing (..)
 import Task
-import Data exposing (..)
 
 
 type State
     = Starting
-    | Playing -- Playing will be switched to Playing1, Playing2 (different levels)
-      -- | Scene Narrative
+    | Playing1 -- Playing will be switched to Playing1, Playing2 (different levels)
+    | Playing2
+    | Playing3
+    | Playing4
+    | Playing5
+    | Scene11
+    | Scene12
+    | Scene2
+    | Scene3
+    | Scene4
+    | Scene5
+    | Victory
     | Gameover
 
 
-
--- type Narrative
---     = Logo
---     | HowtoPlay
---     | Level1
---     | Level2
-
-
 type alias Model =
-    { list_brick : List Brick
+    { monster_list : List Monster
     , paddle : Paddle
-    , ball1 : Ball
-    , ball2 : Ball
+    , ball_list : List Ball
+    , ballnumber : Int
     , time : Float
-    , scoreboard : Scoreboard
+    , lives : Int
+    , scores : Int
     , state : State
     , size : ( Float, Float )
     , seed : Seed
     }
-
-
-
 
 
 init : () -> ( Model, Cmd Msg )
@@ -47,71 +46,128 @@ init _ =
     , Task.perform GetViewport getViewport
     )
 
---wyj
+
 initModel : Model
 initModel =
-    { list_brick = (initBrick ( 3, 5 ) brickLives 10 Water ) ++ (initBricktest ( 3, 5 ) (brickLives) 10 Fire)--one life for each brick; 10 points for each brick
-    , paddle = { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
-    , ball1 = generateBall ((initBrick ( 3, 5 ) brickLives 10 Water ) ++ (initBricktest ( 3, 5 ) brickLives 10 Fire)) (Random.initialSeed 1234) |> Tuple.first
-    , ball2 = generateBall ((initBrick ( 3, 5 ) brickLives 10 Water ) ++ (initBricktest ( 3, 5 ) brickLives 10 Fire)) (Random.initialSeed 4321) |> Tuple.first
+    { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
+    , paddle = initpaddle
+    , ball_list =
+        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
+        ]
+    , ballnumber = 1
     , time = 0
-    , scoreboard = initScoreboard 5 --five lives for a player
+    , lives = 5 --five lives for a player
+    , scores = 0
     , state = Starting
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
     }
 
---wyj
-restartModel : Model
-restartModel =
+
+playModel : Model -> State -> Model
+playModel model state =
     -- For players to select it when they click newGame
-    { list_brick = (initBrick ( 3, 5 ) brickLives 10 Water ) ++ (initBricktest ( 3, 5 ) (brickLives) 10 Fire)--one life for each brick; 10 points for each brick
-    , paddle = { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
-    , ball1 = generateBall ((initBrick ( 3, 5 ) brickLives 10 Water ) ++ (initBricktest ( 3, 5 ) brickLives 10 Fire)) (Random.initialSeed 1234) |> Tuple.first
-    , ball2 = generateBall ((initBrick ( 3, 5 ) brickLives 10 Water ) ++ (initBricktest ( 3, 5 ) brickLives 10 Fire)) (Random.initialSeed 4321) |> Tuple.first
+    { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
+    , paddle = initpaddle
+    , ball_list =
+        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
+        ]
+    , ballnumber = 1
     , time = 0
-    , scoreboard = initScoreboard 5 --five lives for a player
-    , state = Playing
+    , lives = 5 --five lives for a player
+    , scores = 0
+    , state = state
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
     }
 
 
-initScoreboard : Int -> Scoreboard
-initScoreboard lives =
-    Scoreboard 0 lives
+sceneModel : Model -> State -> Model
+sceneModel model state =
+    -- to change scenes
+    { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
+    , paddle = initpaddle
+    , ball_list =
+        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
+        ]
+    , ballnumber = 1
+    , time = 0
+    , lives = 5 --five lives for a player
+    , scores = 0
+    , state = state
+    , size = ( 2000, 1000 )
+    , seed = Random.initialSeed 1234
+    }
 
 
-initBrick : ( Int, Int ) -> Int -> Int -> Element -> List Brick
-initBrick ( row, col ) lives score element=
-    if row == 1 then
-        initBrickRow ( row, col ) lives score element
+generateBall : Paddle -> Seed -> ( Ball, Seed )
+generateBall paddle seed =
+    let
+        ( elem, nseed ) =
+            Random.step
+                (Random.uniform Water
+                    [ Fire
+
+                    {- , Grass, Earth -}
+                    ]
+                )
+                seed
+
+        ( x, y ) =
+            addVec paddle.pos ( paddle.width / 2, -15 )
+    in
+    ( Ball ( x, y ) 15 0 -300 { red = 0, green = 0, blue = 0 } elem, nseed )
+
+
+initMonsterList : Int -> List Monster
+initMonsterList n =
+    case n of
+        0 ->
+            []
+
+        _ ->
+            initMonsterList (n - 1) ++ [ initMonster n ]
+
+
+initpaddle : Paddle
+initpaddle =
+    { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
+
+
+
+-- radius of monster is likely to be adjust to a suitable size later
+
+
+initMonster : Int -> Monster
+initMonster idx =
+    Monster idx (detPosition idx) monsterLives 10 80 (detElem idx)
+
+
+detPosition : Int -> ( Float, Float )
+detPosition idx =
+    let
+        row =
+            (idx - 1) // 4
+
+        column =
+            modBy 4 idx + 1
+    in
+    ( toFloat column * 200, toFloat row * 200 + 100 )
+
+
+detElem : Int -> Element
+detElem idx =
+    if modBy 4 idx <= 1 then
+        Water
 
     else
-        initBrickRow ( row, col ) lives score element ++ initBrick ( row - 1, col ) lives score element
+        Fire
 
 
-initBrickRow : ( Int, Int ) -> Int -> Int -> Element -> List Brick
-initBrickRow ( row, col ) lives score element=
-    if col == 1 then
-        [ Brick ( row, col ) lives score element]
-
-    else
-        Brick ( row, col ) lives score element :: initBrickRow ( row, col - 1 ) lives score element
-
-initBricktest : ( Int, Int ) -> Int -> Int -> Element -> List Brick
-initBricktest ( row, col ) lives score element=
-    if row == 1 then
-        initBrickRowtest ( row, col+5 ) lives score element
+detVelocity : Monster -> ( Float, Float )
+detVelocity monster =
+    if Tuple.second monster.pos <= 700 then
+        ( 0, 15 )
 
     else
-        initBrickRowtest ( row, col+5 ) lives score element ++ initBricktest ( row - 1, col+5 ) lives score element
-
-
-initBrickRowtest : ( Int, Int ) -> Int -> Int -> Element -> List Brick
-initBrickRowtest ( row, col ) lives score element=
-    if col == 6 then
-        [ Brick ( row, col ) lives score element]
-
-    else
-        Brick ( row, col ) lives score element :: initBrickRowtest ( row, col - 1 ) lives score element
+        ( 0, 10 )
