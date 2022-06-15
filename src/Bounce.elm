@@ -2,20 +2,12 @@ module Bounce exposing (..)
 
 import Data exposing (..)
 import Messages exposing (..)
+import Model exposing (..)
 import Paddle exposing (..)
 import Random exposing (..)
 
 
-generateBall : Paddle -> Seed -> ( Ball, Seed )
-generateBall paddle seed =
-    let
-        ( elem, nseed ) =
-            Random.step (Random.uniform Water [ Fire {-, Grass, Earth-} ]) seed
 
-        ( x, y ) =
-            addVec paddle.pos ( paddle.width / 2, -15 )
-    in
-    ( Ball ( x, y ) 15 0 -300 { red = 0, green = 0, blue = 0 } elem, nseed )
 
 
 changePos : ( Float, Float ) -> ( Float, Float ) -> ( Float, Float )
@@ -79,6 +71,15 @@ newPaddleBounceVelocity speed rel_x =
 
 
 --wyj--deductlife 1 means deduct only one life
+
+
+moveMonster : Model -> Float -> Model
+moveMonster model dt =
+    let
+        nmonster_list =
+            List.map (\monster -> { monster | pos = addVec monster.pos (scaleVec dt (detVelocity monster)) }) model.monster_list
+    in
+    { model | monster_list = nmonster_list }
 
 
 updateMonster : Msg -> List Monster -> List Monster
