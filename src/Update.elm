@@ -15,13 +15,16 @@ import Task
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Start ->
-            ( restartModel, Task.perform GetViewport getViewport )
+        Restart ->
+            ( playModel model model.state, Task.perform GetViewport getViewport )
 
         Resize width height ->
             ( { model | size = ( toFloat width, toFloat height ) }
             , Cmd.none
             )
+
+        Start ->
+            ( sceneModel model Scene11, Task.perform GetViewport getViewport )
 
         GetViewport { viewport } ->
             ( { model
@@ -33,6 +36,9 @@ update msg model =
             , Cmd.none
             )
 
+        Enter ->
+            updateScene model
+
         _ ->
             ( model, Cmd.none )
                 |> updatePaddle msg
@@ -41,6 +47,62 @@ update msg model =
                 |> checkFail
                 |> checkBallNumber
                 |> checkEnd
+
+
+updateScene : Model -> ( Model, Cmd Msg )
+updateScene model =
+    case model.state of
+        Scene11 ->
+            let
+                nModel =
+                    initModel
+            in
+            ( { nModel | state = Scene12 }, Task.perform GetViewport getViewport )
+
+        Scene12 ->
+            let
+                nModel =
+                    initModel
+            in
+            ( { nModel | state = Playing1 }, Task.perform GetViewport getViewport )
+
+        Scene2 ->
+            let
+                nModel =
+                    initModel
+            in
+            ( { nModel | state = Playing2 }, Task.perform GetViewport getViewport )
+
+        Scene3 ->
+            let
+                nModel =
+                    initModel
+            in
+            ( { nModel | state = Playing3 }, Task.perform GetViewport getViewport )
+
+        Scene4 ->
+            let
+                nModel =
+                    initModel
+            in
+            ( { nModel | state = Playing4 }, Task.perform GetViewport getViewport )
+
+        Scene5 ->
+            let
+                nModel =
+                    initModel
+            in
+            ( { nModel | state = Playing5 }, Task.perform GetViewport getViewport )
+
+        Victory ->
+            let
+                nModel =
+                    initModel
+            in
+            ( { nModel | state = Gameover }, Task.perform GetViewport getViewport )
+
+        _ ->
+            ( model, Task.perform GetViewport getViewport )
 
 
 

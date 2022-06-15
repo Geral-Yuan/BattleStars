@@ -1,9 +1,7 @@
 module Data exposing (..)
 
 import Color exposing (Color)
-import Svg.Attributes exposing (numOctaves, speed, y2)
-import Svg.Attributes exposing (y1)
-import Svg.Attributes exposing (x2)
+import Svg.Attributes exposing (numOctaves, speed, x2, y1, y2)
 
 
 monsterwidth : Float
