@@ -120,6 +120,7 @@ viewPlaying model =
              ]
                 ++ viewLives model
                 ++ List.map viewMonsters model.monster_list
+                ++ List.map viewCover model.monster_list
                 ++ List.map viewBall model.ball_list
                 ++ -- draw paddle
                    [ viewPaddle model ]
@@ -163,6 +164,7 @@ viewGameover model =
              ]
                 ++ viewLives model
                 ++ List.map viewMonsters model.monster_list
+                ++ List.map viewCover model.monster_list
                 ++ List.map viewBall model.ball_list
                 ++ -- draw paddle
                    [ viewPaddle model ]

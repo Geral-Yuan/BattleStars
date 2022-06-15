@@ -95,10 +95,10 @@ initpaddle : Paddle
 initpaddle =
     { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
 
-
+-- radius of monster is likely to be adjust to a suitable size later
 initMonster : Int -> Monster
 initMonster idx =
-    Monster idx (detPosition idx) monsterLives 10 (detElem idx)
+    Monster idx (detPosition idx) monsterLives 10 80 (detElem idx)
 
 
 detPosition : Int -> ( Float, Float )
@@ -110,7 +110,7 @@ detPosition idx =
         column =
             modBy 4 idx + 1
     in
-    ( toFloat column * 200 - 50, toFloat row * 200 + 50 )
+    ( toFloat column * 200, toFloat row * 200 + 100 )
 
 
 detElem : Int -> Element

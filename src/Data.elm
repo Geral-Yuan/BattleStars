@@ -2,7 +2,8 @@ module Data exposing (..)
 
 import Color exposing (Color)
 import Svg.Attributes exposing (numOctaves, speed, y2)
-
+import Svg.Attributes exposing (y1)
+import Svg.Attributes exposing (x2)
 
 
 monsterwidth : Float
@@ -61,6 +62,7 @@ type alias Monster =
     , pos : ( Float, Float )
     , monster_lives : Int
     , monster_score : Int
+    , monster_radius : Float
     , element : Element
     }
 
@@ -83,6 +85,11 @@ type alias Mat =
     ( Vec, Vec )
 
 
+identityMat : Mat
+identityMat =
+    ( ( 1, 0 ), ( 0, 1 ) )
+
+
 addVec : Vec -> Vec -> Vec
 addVec ( x1, y1 ) ( x2, y2 ) =
     ( x1 + x2, y1 + y2 )
@@ -95,11 +102,11 @@ scaleVec k ( x, y ) =
 
 innerVec : Vec -> Vec -> Float
 innerVec ( x1, y1 ) ( x2, y2 ) =
-    x1 * y1 + x2 * y2
+    x1 * x2 + y1 * y2
 
 
-reflectVec : Vec -> Vec -> Vec
-reflectVec ( bx, by ) v =
+reflectionMat : Vec -> Mat
+reflectionMat ( bx, by ) =
     let
         t =
             ( ( bx, -by ), ( by, bx ) )
@@ -107,13 +114,13 @@ reflectVec ( bx, by ) v =
         a =
             ( ( 1, 0 ), ( 0, -1 ) )
 
-        t_ =
-            ( ( bx, by ), ( -by, bx ) )
+        br2 =
+            bx ^ 2 + by ^ 2
 
-        l =
-            multiMatMat (multiMatMat t a) t_
+        t_ =
+            ( ( bx / br2, by / br2 ), ( -by / br2, bx / br2 ) )
     in
-    multiMatVec l v
+    multiMatMat (multiMatMat t a) t_
 
 
 multiMatVec : Mat -> Vec -> Vec
@@ -123,7 +130,7 @@ multiMatVec ( a1, a2 ) v =
 
 multiMatMat : Mat -> Mat -> Mat
 multiMatMat ( ( a11, a12 ), ( a21, a22 ) ) ( ( b11, b12 ), ( b21, b22 ) ) =
-    ( ( a11 * b11 + a12 * b21, a11 * b12 + a12 * b22 ), ( a21 * b11 + a22 * b21, a21 * b12 + a21 * b22 ) )
+    ( ( a11 * b11 + a12 * b21, a11 * b12 + a12 * b22 ), ( a21 * b11 + a22 * b21, a21 * b12 + a22 * b22 ) )
 
 
 elementMatch : Element -> Element -> Int

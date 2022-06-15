@@ -56,8 +56,8 @@ viewMonsters monster =
             Svg.image
                 [ SvgAttr.width (toString monsterwidth)
                 , SvgAttr.height (toString monsterheight)
-                , SvgAttr.x (toString x)
-                , SvgAttr.y (toString y)
+                , SvgAttr.x (toString (x - monsterwidth / 2))
+                , SvgAttr.y (toString (y - monsterheight / 2))
                 , SvgAttr.preserveAspectRatio "none"
                 , SvgAttr.xlinkHref "../assets/monster1.png"
                 ]
@@ -67,12 +67,25 @@ viewMonsters monster =
             Svg.image
                 [ SvgAttr.width (toString monsterwidth)
                 , SvgAttr.height (toString monsterheight)
-                , SvgAttr.x (toString x)
-                , SvgAttr.y (toString y)
+                , SvgAttr.x (toString (x - monsterwidth / 2))
+                , SvgAttr.y (toString (y - monsterheight / 2))
                 , SvgAttr.preserveAspectRatio "none"
                 , SvgAttr.xlinkHref "../assets/logo.png"
                 ]
                 []
+
+viewCover : Monster -> Svg Msg
+viewCover monster =
+    Svg.circle
+        [ SvgAttr.cx (toString (Tuple.first monster.pos))
+        , SvgAttr.cy (toString (Tuple.second monster.pos))
+        , SvgAttr.r (toString monster.monster_radius)
+        , SvgAttr.fill "transparent"
+        , SvgAttr.strokeWidth "3"
+        , SvgAttr.stroke (element2ColorString monster.element)
+        ]
+        []
+
 
 
 viewScore : Model -> Html Msg

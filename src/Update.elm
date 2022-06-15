@@ -3,10 +3,12 @@ module Update exposing (..)
 import Bounce exposing (..)
 import Browser.Dom exposing (getViewport)
 import Data exposing (..)
+import Html.Attributes exposing (multiple)
 import Messages exposing (..)
 import Model exposing (..)
 import Paddle exposing (..)
 import Scoreboard exposing (..)
+import Svg.Attributes exposing (by)
 import Task
 
 
@@ -265,14 +267,14 @@ changeElement ball monster =
 bounceMonster : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 bounceMonster ( model, cmd ) =
     let
-        bounceidx_list =
+        matidx_list =
             List.map (checkBounceMonsterList model.monster_list) model.ball_list
 
-        bounce_list =
-            List.map Tuple.first bounceidx_list
+        mat_list =
+            List.map Tuple.first matidx_list
 
         idx_list =
-            List.map Tuple.second bounceidx_list
+            List.map Tuple.second matidx_list
 
         elem_list =
             List.map (\ball -> ball.element) model.ball_list
@@ -290,7 +292,7 @@ bounceMonster ( model, cmd ) =
             List.map2 changeElement model.ball_list (List.map (findHitMonster model.monster_list) msg_list)
 
         nball_list =
-            List.map2 newBounceVelocity elemball_list bounce_list
+            List.map2 newReflectedVelocity elemball_list mat_list
     in
     ( { model
         | ball_list = nball_list
@@ -301,21 +303,21 @@ bounceMonster ( model, cmd ) =
     )
 
 
-checkBounceMonsterList : List Monster -> Ball -> ( Bounce, Int )
+checkBounceMonsterList : List Monster -> Ball -> ( Mat, Int )
 checkBounceMonsterList monster_list ball =
     let
         kickedMonsterList =
-            Tuple.first (List.partition (\monster -> List.member (checkBounceMonster ball monster) [ Horizontal, Vertical ]) monster_list)
+            List.filter (\monster -> checkBounceMonster ball monster /= identityMat) monster_list
     in
     case kickedMonsterList of
         [] ->
-            ( None, 0 )
+            ( identityMat, 0 )
 
         kickedMonster :: _ ->
             ( checkBounceMonster ball kickedMonster, kickedMonster.idx )
 
 
-checkBounceMonster : Ball -> Monster -> Bounce
+checkBounceMonster : Ball -> Monster -> Mat
 checkBounceMonster ball monster =
     let
         ( x, y ) =
@@ -324,23 +326,17 @@ checkBounceMonster ball monster =
         ( bx, by ) =
             ball.pos
 
-        r =
+        br =
             ball.radius
+
+        mr =
+            monster.monster_radius
     in
-    if by >= y + monsterheight && by - r <= y + monsterheight && bx >= x && bx <= x + monsterwidth && ball.v_y < 0 then
-        Horizontal
-
-    else if by <= y && by + r >= y && bx >= x && bx <= x + monsterwidth && ball.v_y > 0 then
-        Horizontal
-
-    else if bx <= x && bx + r >= x && by >= y && by <= y + monsterheight && ball.v_x > 0 then
-        Vertical
-
-    else if bx >= x + monsterwidth && bx - r <= x + monsterwidth && by >= y && by <= y + monsterheight && ball.v_x < 0 then
-        Vertical
+    if (x - bx) ^ 2 + (y - by) ^ 2 <= (br + mr) ^ 2 && innerVec ( x - bx, y - by ) ( ball.v_x, ball.v_y ) >= 0 then
+        reflectionMat ( -(y - by), x - bx )
 
     else
-        None
+        identityMat
 
 
 updateTime : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )

@@ -10,12 +10,12 @@ generateBall : Paddle -> Seed -> ( Ball, Seed )
 generateBall paddle seed =
     let
         ( elem, nseed ) =
-            Random.step (Random.uniform Water [ Fire, Grass, Earth ]) seed
+            Random.step (Random.uniform Water [ Fire {-, Grass, Earth-} ]) seed
 
         ( x, y ) =
-            addVec paddle.pos ( paddle.width / 2, 0 )
+            addVec paddle.pos ( paddle.width / 2, -15 )
     in
-    ( Ball ( x, y ) 15 0 300 { red = 0, green = 0, blue = 0 } elem, nseed )
+    ( Ball ( x, y ) 15 0 -300 { red = 0, green = 0, blue = 0 } elem, nseed )
 
 
 changePos : ( Float, Float ) -> ( Float, Float ) -> ( Float, Float )
@@ -23,8 +23,13 @@ changePos ( x, y ) ( dx, dy ) =
     ( x + dx, y + dy )
 
 
-
---wyj
+newReflectedVelocity : Ball -> Mat -> Ball
+newReflectedVelocity ball l =
+    let
+        ( nv_x, nv_y ) =
+            multiMatVec l ( ball.v_x, ball.v_y )
+    in
+    { ball | v_x = nv_x, v_y = nv_y }
 
 
 newBounceVelocity : Ball -> Bounce -> Ball
@@ -81,7 +86,7 @@ updateMonster msg monster_list =
     case msg of
         Hit idx_ ball_elem ->
             (Tuple.second (List.partition (\{ idx } -> idx == idx_) monster_list)
-                ++ List.map (deductMonsterLife ball_elem) (Tuple.first (List.partition (\{ idx } -> idx == idx_) monster_list))
+                ++ List.map (deductMonsterLife ball_elem) (List.filter (\{ idx } -> idx == idx_) monster_list)
             )
                 |> clearDeadMonster
 
