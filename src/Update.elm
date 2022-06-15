@@ -142,7 +142,7 @@ updateBall msg ( model, cmd ) =
     in
     case msg of
         Tick elapsed ->
-            ( moveBall nmodel (elapsed / 1000), ncmd )
+            ( moveMonster (moveBall nmodel (elapsed / 1000)) (elapsed / 1000), ncmd )
 
         _ ->
             ( nmodel, ncmd )

@@ -1,6 +1,5 @@
 module Model exposing (..)
 
-import Bounce exposing (..)
 import Browser.Dom exposing (getViewport)
 import Data exposing (..)
 import Messages exposing (..)
@@ -81,6 +80,25 @@ restartModel =
     }
 
 
+generateBall : Paddle -> Seed -> ( Ball, Seed )
+generateBall paddle seed =
+    let
+        ( elem, nseed ) =
+            Random.step
+                (Random.uniform Water
+                    [ Fire
+
+                    {- , Grass, Earth -}
+                    ]
+                )
+                seed
+
+        ( x, y ) =
+            addVec paddle.pos ( paddle.width / 2, -15 )
+    in
+    ( Ball ( x, y ) 15 0 -300 { red = 0, green = 0, blue = 0 } elem, nseed )
+
+
 initMonsterList : Int -> List Monster
 initMonsterList n =
     case n of
@@ -95,7 +113,11 @@ initpaddle : Paddle
 initpaddle =
     { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
 
+
+
 -- radius of monster is likely to be adjust to a suitable size later
+
+
 initMonster : Int -> Monster
 initMonster idx =
     Monster idx (detPosition idx) monsterLives 10 80 (detElem idx)
@@ -120,3 +142,12 @@ detElem idx =
 
     else
         Fire
+
+
+detVelocity : Monster -> ( Float, Float )
+detVelocity monster =
+    if Tuple.second monster.pos <= 700 then
+        ( 0, 15 )
+
+    else
+        ( 0, 10 )

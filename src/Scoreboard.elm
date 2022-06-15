@@ -1,6 +1,5 @@
 module Scoreboard exposing (..)
 
-import Bounce exposing (..)
 import Data exposing (Monster)
 import Messages exposing (..)
 
