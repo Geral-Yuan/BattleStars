@@ -47,7 +47,7 @@ key on keycode =
 
         32 ->
             -- Space
-            Shoot
+            Shoot on
 
         _ ->
             Key_None
