@@ -56,6 +56,7 @@ viewBoss boss =
         ]
         []
 
+
 viewBossCover : Boss -> Svg Msg
 viewBossCover boss =
     Svg.circle
@@ -67,6 +68,8 @@ viewBossCover boss =
         , SvgAttr.stroke "white"
         ]
         []
+
+
 
 --wyj test the element
 
@@ -109,8 +112,30 @@ viewCover monster =
         , SvgAttr.cy (toString (Tuple.second monster.pos))
         , SvgAttr.r (toString (monster.monster_radius - 3))
         , SvgAttr.fill "transparent"
-        , SvgAttr.strokeWidth "3"
+        , SvgAttr.strokeWidth "10"
         , SvgAttr.stroke (element2ColorString monster.element)
+        , SvgAttr.opacity
+            (toString
+                (case monster.monster_lives of
+                    5 ->
+                        1.0
+
+                    4 ->
+                        0.8
+
+                    3 ->
+                        0.6
+
+                    2 ->
+                        0.4
+
+                    1 ->
+                        0.2
+
+                    _ ->
+                        0.0
+                )
+            )
         ]
         []
 
@@ -118,18 +143,15 @@ viewCover monster =
 viewScore : Model -> Html Msg
 viewScore model =
     div
-        [ style "top" "-15px"
+        [ style "top" "20px"
         , style "color" (getcolor (getColorful model.time))
         , style "font-family" "Helvetica, Arial, sans-serif"
         , style "font-size" "60px"
         , style "font-weight" "bold" -- Thickness of text
-        , style "left" "467px"
+        , style "left" "1020px"
         , style "text-align" "center"
-        , style "top" "10px"
         , style "line-height" "60px"
         , style "position" "absolute"
-
-        -- , style "color" (toString (getcolor (getColorful model.time)))
         ]
         [ text (toString model.scores) ]
 
@@ -197,25 +219,19 @@ newGameButton =
         [ text "New Game" ]
 
 
-renderButton : String -> Html Msg
-renderButton words =
+renderStartButton : Html Msg
+renderStartButton =
     button
-        [ style "background" "#34495f"
-        , style "border" "0"
-        , style "bottom" "300px" -- to be changed
-        , style "left" "440px" -- to be changed
-        , style "color" "#fff"
+        [ style "opacity" "0"
+        , style "bottom" "100px" -- to be changed
+        , style "left" "490px" -- to be changed
         , style "cursor" "pointer"
         , style "display" "block"
-        , style "font-family" "Helvetica, Arial, sans-serif"
-        , style "font-size" "18px"
-        , style "font-weight" "300"
-        , style "height" "60px"
+        , style "height" "140px"
         , style "line-height" "60px"
-        , style "outline" "none"
         , style "padding" "0"
         , style "position" "absolute"
-        , style "width" "120px"
+        , style "width" "220px"
         , onClick Start
         ]
-        [ text words ]
+        []
