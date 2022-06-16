@@ -9,6 +9,7 @@ import Data exposing (..)
 import Debug exposing (toString)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr exposing (..)
+import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Model exposing (..)
 import Paddle exposing (..)
@@ -33,26 +34,26 @@ view model =
                     viewScene1 model
 
                 Scene 2 ->
-                    viewScene1 model
+                    viewScene2 model
 
                 Scene 3 ->
-                    viewScene1 model
+                    viewScene3 model
 
                 Scene 4 ->
-                    viewScene1 model
+                    viewScene4 model
 
                 Scene 5 ->
-                    viewScene1 model
+                    viewScene5 model
 
                 Scene 6 ->
-                    viewScene1 model
+                    viewScene6 model
 
                 Scene _ ->
                     -- Last Scene to congratulate players
-                    viewScene1 model
+                    viewScene7 model
 
                 ClearLevel _ ->
-                    viewScene1 model
+                    viewClearLevel model
 
                 Gameover _ ->
                     viewGameover model
@@ -66,8 +67,6 @@ view model =
         , HtmlAttr.style "background" "black"
         ]
         [ viewAll
-
-        {- add audio controls here -}
         ]
 
 
@@ -98,17 +97,19 @@ viewStarting model =
         ]
         [ renderStartButton
         , div
-            [ style "width" (toString (pixelWidth / 4) ++ "px")
-            , style "height" (toString (pixelHeight / 4) ++ "px")
-            , style "position" "fixed"
-            , style "left" (toString (pixelWidth / 4) ++ "px")
-            , style "top" (toString (pixelHeight / 4) ++ "px")
-            , style "color" "white"
-            , style "font-family" "Helvetica, Arial, sans-serif"
-            , style "font-size" "120px"
-            , style "font-weight" "bold"
+            [ HtmlAttr.style "left" "-200px"
+            , HtmlAttr.style "top" "0px"
             ]
-            []
+            [ Html.audio
+                [ HtmlAttr.autoplay True
+                , HtmlAttr.loop True
+                , HtmlAttr.src "../assets/Music/Start.ogg"
+                , HtmlAttr.preload "True"
+                , HtmlAttr.id "start"
+                , HtmlAttr.controls True
+                ]
+                []
+            ]
         ]
 
 
@@ -136,7 +137,18 @@ viewPlaying1 model =
         , HtmlAttr.style "background" "url('../assets/background.png')"
         , HtmlAttr.style "outline" "medium white solid"
         ]
-        [ Svg.svg
+        [ div [ HtmlAttr.style "z-index" "99999999" ]
+            [ Html.audio
+                [ HtmlAttr.autoplay True
+                , HtmlAttr.loop True
+                , HtmlAttr.controls True
+                , HtmlAttr.src "../assets/Music/gamePlay.ogg"
+                , HtmlAttr.preload "True"
+                , HtmlAttr.id "game"
+                ]
+                []
+            ]
+        , Svg.svg
             [ SvgAttr.width "100%"
             , SvgAttr.height "100%"
             ]
@@ -155,6 +167,38 @@ viewPlaying1 model =
         ]
 
 
+viewClearLevel : Model -> Html Msg
+viewClearLevel model =
+    let
+        ( w, h ) =
+            model.size
+
+        r =
+            if w / h > pixelWidth / pixelHeight then
+                Basics.min 1 (h / pixelHeight)
+
+            else
+                Basics.min 1 (w / pixelWidth)
+    in
+    div
+        [ HtmlAttr.style "width" (String.fromFloat (pixelWidth + 2000) ++ "px")
+        , HtmlAttr.style "height" (String.fromFloat pixelHeight ++ "px")
+        , HtmlAttr.style "position" "absolute"
+
+        -- , HtmlAttr.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
+        -- , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
+        , HtmlAttr.style "transform-origin" "0 0"
+        , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
+        , HtmlAttr.style "background" "url('../assets/background.png')"
+        , HtmlAttr.style "outline" "medium white solid"
+        ]
+        [ nextSceneButton
+        , helperScene1 (getcolor (getColorful model.time)) model.time 1 "MISSION ACCOMPLISHED" ( 690, 450 ) 100
+        , helperScene1 (getcolor (getColorful model.time)) model.time 1 ("Level " ++ toString model.level ++ " cleared") ( 1010, 550 ) 100
+        , helperScene1 (getcolor (getColorful model.time)) model.time 2 ("Score: " ++ toString model.scores) ( 1150, 650 ) 100
+        ]
+
+
 viewGameover : Model -> Html Msg
 viewGameover model =
     let
@@ -169,30 +213,17 @@ viewGameover model =
                 Basics.min 1 (w / pixelWidth)
     in
     div
-        [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
+        [ HtmlAttr.style "width" (String.fromFloat (pixelWidth + 2000) ++ "px")
         , HtmlAttr.style "height" (String.fromFloat pixelHeight ++ "px")
         , HtmlAttr.style "position" "absolute"
-        , HtmlAttr.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
-        , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
+
+        -- , HtmlAttr.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
+        -- , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
         , HtmlAttr.style "background" "url('../assets/background.png')"
         , HtmlAttr.style "outline" "medium white solid"
         ]
-        [ Svg.svg
-            [ SvgAttr.width "100%"
-            , SvgAttr.height "100%"
-            ]
-            ([ viewBase model
-
-             -- , viewLife model
-             ]
-                ++ viewLives model
-                ++ List.map viewMonsters model.monster_list
-                ++ List.map viewCover model.monster_list
-                ++ List.map viewBall model.ball_list
-                ++ [ viewPaddle model, viewBoss model.boss, viewBossCover model.boss ]
-            )
-        , viewScore model
-        , newGameButton
+        [ newGameButton
+        , helperScene1 (getcolor (getColorful model.time)) model.time 1 "MISSION FAILED" ( 920, 450 ) 100
         ]

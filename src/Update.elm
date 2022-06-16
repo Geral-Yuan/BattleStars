@@ -24,11 +24,7 @@ update msg model =
             )
 
         Start ->
-            let
-                ( nmodel, _ ) =
-                    updateClearLevel model
-            in
-            updateScene nmodel
+            updateScene model
 
         GetViewport { viewport } ->
             ( { model
@@ -48,15 +44,11 @@ update msg model =
                     -- in
                     updateScene model
 
-                ClearLevel _ ->
-                    let
-                        ( nmodel, _ ) =
-                            updateClearLevel model
-                    in
-                    updateScene nmodel
-
                 _ ->
                     ( model, Cmd.none )
+
+        NextScene ->
+            updateClearLevel model
 
         Skip ->
             case model.state of
@@ -87,12 +79,19 @@ update msg model =
 updateScene : Model -> ( Model, Cmd Msg )
 updateScene model =
     case model.state of
+        Starting ->
+            let
+                nModel =
+                    model
+            in
+            ( { nModel | state = Scene 2, time = 0 }, Task.perform GetViewport getViewport )
+
         Scene 1 ->
             let
                 nModel =
                     model
             in
-            ( { nModel | state = Scene 2 }, Task.perform GetViewport getViewport )
+            ( { nModel | state = Starting, time = 0 }, Task.perform GetViewport getViewport )
 
         Scene 2 ->
             -- let
@@ -152,13 +151,6 @@ updateScene model =
 updateClearLevel : Model -> ( Model, Cmd Msg )
 updateClearLevel model =
     case model.state of
-        Starting ->
-            let
-                nModel =
-                    model
-            in
-            ( { nModel | state = Scene 1 }, Task.perform GetViewport getViewport )
-
         ClearLevel 1 ->
             let
                 nModel =
