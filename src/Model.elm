@@ -26,6 +26,7 @@ type alias Model =
     , time : Float
     , lives : Int
     , scores : Int
+    , level_scores : Int
     , state : State
     , size : ( Float, Float )
     , seed : Seed
@@ -50,6 +51,7 @@ initModel =
     , time = 0
     , lives = 5 --five lives for a player
     , scores = 0
+    , level_scores = 0
     , state = Starting
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
@@ -89,6 +91,7 @@ model_1 model =
     , time = 0
     , lives = 5 --five lives for a player
     , scores = model.scores
+    , level_scores = 0
     , state = Playing 1
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
@@ -106,6 +109,7 @@ model_2 model =
     , time = 0
     , lives = 5 --five lives for a player
     , scores = model.scores
+    , level_scores = 0
     , state = Playing 2
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
@@ -123,6 +127,7 @@ model_3 model =
     , time = 0
     , lives = 5 --five lives for a player
     , scores = model.scores
+    , level_scores = 0
     , state = Playing 3
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
@@ -140,6 +145,7 @@ model_4 model =
     , time = 0
     , lives = 5 --five lives for a player
     , scores = model.scores
+    , level_scores = 0
     , state = Playing 4
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
@@ -157,6 +163,7 @@ model_5 model =
     , time = 0
     , lives = 5 --five lives for a player
     , scores = model.scores
+    , level_scores = 0
     , state = Playing 5
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
@@ -174,6 +181,7 @@ model_boss model =
     , time = 0
     , lives = 5 --five lives for a player
     , scores = model.scores
+    , level_scores = 0
     , state = Playing 6
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
@@ -195,11 +203,12 @@ playModel model level =
     , ballnumber = 2
     , time = 0
     , lives = 5 --five lives for a player
-    , scores = 0
+    , scores = model.scores
+    , level_scores = 0
     , state = Playing level
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
-    , level = 0
+    , level = level
     }
 
 
@@ -214,6 +223,7 @@ sceneModel =
     , time = 0
     , lives = 5 --five lives for a player
     , scores = 0
+    , level_scores = 0
     , state = Scene 1
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
@@ -300,11 +310,21 @@ detElem idx =
         Fire
 
 
-detVelocity : Monster -> ( Float, Float )
-detVelocity monster =
-    ( 0, 10 )
+detVelocity : Monster -> State -> ( Float, Float )
+detVelocity monster state =
+    case state of
+        Gameover _ ->
+            ( 0, 0 )
+
+        _ ->
+            ( 0, 10 )
 
 
-detVelocityBoss : Boss -> ( Float, Float )
-detVelocityBoss boss =
-    ( 0, 10 )
+detVelocityBoss : Boss -> State -> ( Float, Float )
+detVelocityBoss boss state =
+    case state of
+        Gameover _ ->
+            ( 0, 0 )
+
+        _ ->
+            ( 0, 10 )
