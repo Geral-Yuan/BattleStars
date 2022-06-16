@@ -155,7 +155,7 @@ viewScore model =
         , style "line-height" "60px"
         , style "position" "absolute"
         ]
-        [ text (toString model.scores) ]
+        [ text (toString (model.scores + model.level_scores)) ]
 
 
 viewLife : Model -> Int -> Svg Msg
@@ -218,7 +218,7 @@ newGameButton =
         , style "width" "120px"
         , onClick Restart
         ]
-        [ text "New Game" ]
+        [ text "Restart" ]
 
 
 renderStartButton : Html Msg
