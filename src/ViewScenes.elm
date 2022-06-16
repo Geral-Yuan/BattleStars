@@ -16,8 +16,8 @@ import Svg.Attributes as SvgAttr
 import ViewPlaying exposing (..)
 
 
-viewScene11 : Model -> Html Msg
-viewScene11 model =
+viewScene1 : Model -> Html Msg
+viewScene1 model =
     div
         [ HtmlAttr.style "width" (toString pixelWidth ++ "px")
         , HtmlAttr.style "height" (toString pixelHeight ++ "px")

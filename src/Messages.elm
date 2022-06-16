@@ -24,5 +24,7 @@ type Msg
     | Resize Int Int
     | Hit Int Element
     | New_Element Element
+      -- | VolumeAdjust Float
     | Restart -- Restart level if player loses
     | Start
+    | Skip -- For debugging
