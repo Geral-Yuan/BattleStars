@@ -74,35 +74,37 @@ viewBossCover boss =
 --wyj test the element
 
 
+element2String : Element -> String
+element2String elem =
+    case elem of
+        Water ->
+            "water"
+
+        Fire ->
+            "fire"
+
+        Grass ->
+            "grass"
+
+        Earth ->
+            "earth"
+
+
 viewMonsters : Monster -> Svg Msg
 viewMonsters monster =
     let
         ( x, y ) =
             monster.pos
     in
-    -- add if condition of monsters existence later
-    case monster.element of
-        Water ->
-            Svg.image
-                [ SvgAttr.width (toString monsterwidth)
-                , SvgAttr.height (toString monsterheight)
-                , SvgAttr.x (toString (x - monsterwidth / 2))
-                , SvgAttr.y (toString (y - monsterheight / 2))
-                , SvgAttr.preserveAspectRatio "none"
-                , SvgAttr.xlinkHref "../assets/waterMonster.png"
-                ]
-                []
-
-        _ ->
-            Svg.image
-                [ SvgAttr.width (toString monsterwidth)
-                , SvgAttr.height (toString monsterheight)
-                , SvgAttr.x (toString (x - monsterwidth / 2))
-                , SvgAttr.y (toString (y - monsterheight / 2))
-                , SvgAttr.preserveAspectRatio "none"
-                , SvgAttr.xlinkHref "../assets/fireMonster.png"
-                ]
-                []
+    Svg.image
+        [ SvgAttr.width (toString monsterwidth)
+        , SvgAttr.height (toString monsterheight)
+        , SvgAttr.x (toString (x - monsterwidth / 2))
+        , SvgAttr.y (toString (y - monsterheight / 2))
+        , SvgAttr.preserveAspectRatio "none"
+        , SvgAttr.xlinkHref ("../assets/" ++ element2String monster.element ++ "Monster.png")
+        ]
+        []
 
 
 viewCover : Monster -> Svg Msg
@@ -110,9 +112,9 @@ viewCover monster =
     Svg.circle
         [ SvgAttr.cx (toString (Tuple.first monster.pos))
         , SvgAttr.cy (toString (Tuple.second monster.pos))
-        , SvgAttr.r (toString (monster.monster_radius - 3))
+        , SvgAttr.r (toString (monster.monster_radius - 8))
         , SvgAttr.fill "transparent"
-        , SvgAttr.strokeWidth "10"
+        , SvgAttr.strokeWidth "8"
         , SvgAttr.stroke (element2ColorString monster.element)
         , SvgAttr.opacity
             (toString
@@ -153,7 +155,7 @@ viewScore model =
         , style "line-height" "60px"
         , style "position" "absolute"
         ]
-        [ text (toString model.scores) ]
+        [ text (toString (model.scores + model.level_scores)) ]
 
 
 viewLife : Model -> Int -> Svg Msg
@@ -200,23 +202,23 @@ newGameButton =
     button
         [ style "background" "#34495f"
         , style "border" "0"
-        , style "bottom" "300px"
-        , style "color" "#fff"
+        , style "top" "790px"
+        , style "color" "white"
         , style "cursor" "pointer"
         , style "display" "block"
         , style "font-family" "Helvetica, Arial, sans-serif"
         , style "font-size" "18px"
-        , style "font-weight" "300"
-        , style "height" "60px"
-        , style "left" "440px"
+        , style "font-weight" "500"
+        , style "height" "80px"
+        , style "left" "1250px"
         , style "line-height" "60px"
         , style "outline" "none"
         , style "padding" "0"
         , style "position" "absolute"
-        , style "width" "120px"
+        , style "width" "160px"
         , onClick Restart
         ]
-        [ text "New Game" ]
+        [ text "Try Again" ]
 
 
 renderStartButton : Html Msg
@@ -235,3 +237,27 @@ renderStartButton =
         , onClick Start
         ]
         []
+
+
+nextSceneButton : Html Msg
+nextSceneButton =
+    button
+        [ style "background" "#34495f"
+        , style "border" "0"
+        , style "top" "790px"
+        , style "color" "white"
+        , style "cursor" "pointer"
+        , style "display" "block"
+        , style "font-family" "Helvetica, Arial, sans-serif"
+        , style "font-size" "18px"
+        , style "font-weight" "500"
+        , style "height" "80px"
+        , style "left" "1250px"
+        , style "line-height" "60px"
+        , style "outline" "none"
+        , style "padding" "0"
+        , style "position" "absolute"
+        , style "width" "160px"
+        , onClick NextScene
+        ]
+        [ text "Next Level" ]
