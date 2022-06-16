@@ -4,20 +4,19 @@ import Color exposing (Color)
 import Svg.Attributes exposing (numOctaves, speed, x2, y1, y2)
 
 
-
 monsterwidth : Float
 monsterwidth =
-    100
+    75
 
 
 monsterheight : Float
 monsterheight =
-    100
+    75
 
 
 monsterLives : Int
 monsterLives =
-    4
+    5
 
 
 pixelWidth : Float
@@ -54,9 +53,23 @@ type Element
     | Grass
     | Earth
 
+
 type Ball_state
     = Carryed
     | Free
+
+
+type Monster_state
+    = Stopped
+    | Slow
+    | Fast
+    | Oscillating
+
+
+type Boss_state
+    = BossStopped
+    | BossSlow
+    | BossFast
 
 
 type alias Monster =
@@ -66,12 +79,15 @@ type alias Monster =
     , monster_score : Int
     , monster_radius : Float
     , element : Element
+    , state : Monster_state
     }
 
+
 type alias Boss =
-    { pos : (Float,Float)
+    { pos : ( Float, Float )
     , boss_radius : Float
     , lives : Int -- Except in the Boss level, the lives of Boss will be initialized as -1 for infinity
+    , state : Boss_state
     }
 
 

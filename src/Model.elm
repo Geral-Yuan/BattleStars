@@ -43,16 +43,16 @@ init _ =
 
 initModel : Model
 initModel =
-    { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
-    , boss = initBoss
+    { monster_list = initMonsterList 1 8 --one life for each monster; 10 points for each monster
+    , boss = initBoss 1
     , paddle = initpaddle
-    , ball_list = List.map Tuple.first (generateBallList initpaddle 1)
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 1 1)
     , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
     , scores = 0
     , level_scores = 0
-    , state = Starting
+    , state = Scene 1
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
     , level = 1
@@ -74,19 +74,16 @@ initLevel k model =
         4 ->
             model_4 model
 
-        5 ->
-            model_5 model
-
         _ ->
             model_boss model
 
 
 model_1 : Model -> Model
 model_1 model =
-    { monster_list = initMonsterList 1 --one life for each monster; 10 points for each monster
-    , boss = initBoss
+    { monster_list = initMonsterList 1 8 --one life for each monster; 10 points for each monster
+    , boss = initBoss 1
     , paddle = initpaddle
-    , ball_list = List.map Tuple.first (generateBallList initpaddle 1)
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 1 1)
     , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
@@ -101,10 +98,10 @@ model_1 model =
 
 model_2 : Model -> Model
 model_2 model =
-    { monster_list = initMonsterList 2 --one life for each monster; 10 points for each monster
-    , boss = initBoss
+    { monster_list = initMonsterList 2 15 --one life for each monster; 10 points for each monster
+    , boss = initBoss 2
     , paddle = initpaddle
-    , ball_list = List.map Tuple.first (generateBallList initpaddle 1)
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 1 2)
     , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
@@ -119,10 +116,10 @@ model_2 model =
 
 model_3 : Model -> Model
 model_3 model =
-    { monster_list = initMonsterList 3 --one life for each monster; 10 points for each monster
-    , boss = initBoss
+    { monster_list = initMonsterList 3 16 --one life for each monster; 10 points for each monster
+    , boss = initBoss 3
     , paddle = initpaddle
-    , ball_list = List.map Tuple.first (generateBallList initpaddle 1)
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 1 4)
     , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
@@ -137,11 +134,11 @@ model_3 model =
 
 model_4 : Model -> Model
 model_4 model =
-    { monster_list = initMonsterList 4 --one life for each monster; 10 points for each monster
-    , boss = initBoss
+    { monster_list = initMonsterList 4 16 --one life for each monster; 10 points for each monster
+    , boss = initBoss 4
     , paddle = initpaddle
-    , ball_list = List.map Tuple.first (generateBallList initpaddle 1)
-    , ballnumber = 1
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 2 4)
+    , ballnumber = 2
     , time = 0
     , lives = 5 --five lives for a player
     , scores = model.scores
@@ -153,30 +150,12 @@ model_4 model =
     }
 
 
-model_5 : Model -> Model
-model_5 model =
-    { monster_list = initMonsterList 5 --one life for each monster; 10 points for each monster
-    , boss = initBoss
-    , paddle = initpaddle
-    , ball_list = List.map Tuple.first (generateBallList initpaddle 2)
-    , ballnumber = 2
-    , time = 0
-    , lives = 5 --five lives for a player
-    , scores = model.scores
-    , level_scores = 0
-    , state = Playing 5
-    , size = ( 2000, 1000 )
-    , seed = Random.initialSeed 1234
-    , level = 5
-    }
-
-
 model_boss : Model -> Model
 model_boss model =
-    { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
-    , boss = initBoss
+    { monster_list = initMonsterList 5 16 --one life for each monster; 10 points for each monster
+    , boss = initBoss 5
     , paddle = initpaddle
-    , ball_list = List.map Tuple.first (generateBallList initpaddle 2)
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 2 4)
     , ballnumber = 2
     , time = 0
     , lives = 5 --five lives for a player
@@ -189,68 +168,37 @@ model_boss model =
     }
 
 
-
---游戏关卡修改
-
-
-playModel : Model -> Int -> Model
-playModel model level =
-    -- For players to select it when they click newGame
-    { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
-    , boss = initBoss
-    , paddle = initpaddle
-    , ball_list = List.map Tuple.first (generateBallList initpaddle 2)
-    , ballnumber = 2
-    , time = 0
-    , lives = 5 --five lives for a player
-    , scores = model.scores
-    , level_scores = 0
-    , state = Playing level
-    , size = ( 2000, 1000 )
-    , seed = Random.initialSeed 1234
-    , level = level
-    }
-
-
-sceneModel : Model
-sceneModel =
-    -- to change scenes
-    { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
-    , boss = initBoss
-    , paddle = initpaddle
-    , ball_list = List.map Tuple.first (generateBallList initpaddle 2)
-    , ballnumber = 2
-    , time = 0
-    , lives = 5 --five lives for a player
-    , scores = 0
-    , level_scores = 0
-    , state = Scene 1
-    , size = ( 2000, 1000 )
-    , seed = Random.initialSeed 1234
-    , level = 1
-    }
-
-
-generateBallList : Paddle -> Int -> List ( Ball, Seed )
-generateBallList paddle n =
-    case n of
+generateBallList : Paddle -> Int -> Int -> List ( Ball, Seed )
+generateBallList paddle ballNum elemNum =
+    case ballNum of
         0 ->
             []
 
         _ ->
-            generateBall paddle (Random.initialSeed 1234) :: generateBallList paddle (n - 1)
+            generateBall paddle (Random.initialSeed 1234) elemNum :: generateBallList paddle (ballNum - 1) elemNum
 
 
-generateBall : Paddle -> Seed -> ( Ball, Seed )
-generateBall paddle seed =
+generateBall : Paddle -> Seed -> Int -> ( Ball, Seed )
+generateBall paddle seed elemNum =
     let
+        elemlist =
+            case elemNum of
+                1 ->
+                    []
+
+                2 ->
+                    [ Fire ]
+
+                3 ->
+                    [ Fire, Grass ]
+
+                _ ->
+                    [ Fire, Grass, Earth ]
+
         ( elem, nseed ) =
             Random.step
                 (Random.uniform Water
-                    [ Fire
-
-                    {- , Grass, Earth -}
-                    ]
+                    elemlist
                 )
                 seed
 
@@ -260,19 +208,27 @@ generateBall paddle seed =
     ( Ball ( x, y ) 15 0 0 { red = 0, green = 0, blue = 0 } elem Carryed, nseed )
 
 
-initMonsterList : Int -> List Monster
-initMonsterList n =
+initMonsterList : Int -> Int -> List Monster
+initMonsterList level n =
     case n of
         0 ->
             []
 
         _ ->
-            initMonsterList (n - 1) ++ [ initMonster n ]
+            initMonsterList level (n - 1) ++ [ initMonster level n ]
 
 
-initBoss : Boss
-initBoss =
-    Boss ( 500, -1250 ) 1250 -1
+initBoss : Int -> Boss
+initBoss level =
+    case level of
+        1 ->
+            Boss ( 500, -1250 ) 1250 -1 BossStopped
+
+        3 ->
+            Boss ( 500, -1250 ) 1250 -1 BossFast
+
+        _ ->
+            Boss ( 500, -1250 ) 1250 -1 BossSlow
 
 
 initpaddle : Paddle
@@ -284,40 +240,143 @@ initpaddle =
 -- radius of monster is likely to be adjust to a suitable size later
 
 
-initMonster : Int -> Monster
-initMonster idx =
-    Monster idx (detPosition idx) monsterLives 10 80 (detElem idx)
-
-
-detPosition : Int -> ( Float, Float )
-detPosition idx =
+initMonster : Int -> Int -> Monster
+initMonster level idx =
     let
-        row =
-            (idx - 1) // 4
+        state =
+            case level of
+                1 ->
+                    Stopped
 
-        column =
-            modBy 4 (idx - 1) + 1
+                2 ->
+                    Slow
+
+                3 ->
+                    Fast
+
+                _ ->
+                    Oscillating
     in
-    ( toFloat column * 200, toFloat row * 200 + 100 )
+    Monster idx (detPosition level idx) monsterLives 10 60 (detElem level idx) state
 
 
-detElem : Int -> Element
-detElem idx =
-    if modBy 4 idx <= 1 then
-        Water
+detPosition : Int -> Int -> ( Float, Float )
+detPosition level idx =
+    case level of
+        1 ->
+            let
+                row =
+                    (idx - 1) // 4
 
-    else
-        Fire
+                column =
+                    modBy 4 (idx - 1) + 1
+            in
+            ( toFloat column * 200, toFloat row * 200 + 100 )
+
+        2 ->
+            let
+                row =
+                    (idx - 1) // 5
+
+                column =
+                    modBy 5 (idx - 1) + 1
+            in
+            ( toFloat column * 166, toFloat row * 166 + 100 )
+
+        3 ->
+            let
+                row =
+                    (idx - 1) // 4
+
+                column =
+                    modBy 4 (idx - 1) + 1
+            in
+            case modBy 2 row of
+                0 ->
+                    ( toFloat column * 200 - 50, toFloat row * 173 + 100 )
+
+                _ ->
+                    ( 1000 - (toFloat column * 200 - 50), toFloat row * 173 + 100 )
+
+        4 ->
+            let
+                row =
+                    (idx - 1) // 4
+
+                column =
+                    modBy 4 (idx - 1) + 1
+            in
+            case modBy 2 row of
+                0 ->
+                    ( toFloat column * 200 - 50, toFloat row * 173 + 100 )
+
+                _ ->
+                    ( 1000 - (toFloat column * 200 - 50), toFloat row * 173 + 100 )
+
+        _ ->
+            let
+                row =
+                    (idx - 1) // 4
+
+                column =
+                    modBy 4 (idx - 1) + 1
+            in
+            case modBy 2 row of
+                0 ->
+                    ( toFloat column * 200 - 50, toFloat row * 173 + 100 )
+
+                _ ->
+                    ( 1000 - (toFloat column * 200 - 50), toFloat row * 173 + 100 )
 
 
-detVelocity : Monster -> State -> ( Float, Float )
-detVelocity monster state =
-    case state of
+detElem : Int -> Int -> Element
+detElem level idx =
+    case level of
+        1 ->
+            Water
+
+        2 ->
+            case modBy 2 idx of
+                1 ->
+                    Water
+
+                _ ->
+                    Fire
+
+        _ ->
+            case modBy 4 idx of
+                1 ->
+                    Water
+
+                2 ->
+                    Fire
+
+                3 ->
+                    Grass
+
+                _ ->
+                    Earth
+
+
+detVelocity : Monster -> Model -> ( Float, Float )
+detVelocity monster model =
+    case model.state of
         Gameover _ ->
             ( 0, 0 )
 
         _ ->
-            ( 0, 10 )
+            case monster.state of
+                Slow ->
+                    ( 0, 10 )
+
+                Fast ->
+                    ( 0, 15 )
+
+                Oscillating ->
+                    ( 80 * cos model.time, 10 )
+
+                _ ->
+                    ( 0, 0 )
 
 
 detVelocityBoss : Boss -> State -> ( Float, Float )
@@ -327,4 +386,12 @@ detVelocityBoss boss state =
             ( 0, 0 )
 
         _ ->
-            ( 0, 10 )
+            case boss.state of
+                BossSlow ->
+                    ( 0, 10 )
+
+                BossFast ->
+                    ( 0, 15 )
+
+                _ ->
+                    ( 0, 0 )

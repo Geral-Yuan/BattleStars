@@ -24,7 +24,7 @@ update msg model =
             )
 
         Start ->
-            ( sceneModel, Task.perform GetViewport getViewport )
+            updateScene model
 
         GetViewport { viewport } ->
             ( { model
@@ -44,15 +44,11 @@ update msg model =
                     -- in
                     updateScene model
 
-                ClearLevel _ ->
-                    let
-                        ( nmodel, _ ) =
-                            updateClearLevel model
-                    in
-                    updateScene nmodel
-
                 _ ->
                     ( model, Cmd.none )
+
+        NextScene ->
+            updateClearLevel model
 
         Skip ->
             case model.state of
@@ -83,12 +79,19 @@ update msg model =
 updateScene : Model -> ( Model, Cmd Msg )
 updateScene model =
     case model.state of
+        Starting ->
+            let
+                nModel =
+                    model
+            in
+            ( { nModel | state = Scene 2, time = 0 }, Task.perform GetViewport getViewport )
+
         Scene 1 ->
             let
                 nModel =
                     model
             in
-            ( { nModel | state = Scene 2 }, Task.perform GetViewport getViewport )
+            ( { nModel | state = Starting, time = 0 }, Task.perform GetViewport getViewport )
 
         Scene 2 ->
             -- let
@@ -337,7 +340,7 @@ moveMonster : Float -> Model -> Model
 moveMonster dt model =
     let
         nmonster_list =
-            List.map (\monster -> { monster | pos = addVec monster.pos (scaleVec dt (detVelocity monster model.state)) }) model.monster_list
+            List.map (\monster -> { monster | pos = addVec monster.pos (scaleVec dt (detVelocity monster model)) }) model.monster_list
     in
     monsterHitSurface { model | monster_list = nmonster_list }
 
@@ -445,7 +448,7 @@ checkBounceScreen ball =
     if y - r <= 0 && ball.v_y < 0 then
         Horizontal
 
-    else if (x - r <= 0 && ball.v_x < 0) || (x + r >= 10 * monsterwidth && ball.v_x > 0) then
+    else if (x - r <= 0 && ball.v_x < 0) || (x + r >= 1000 && ball.v_x > 0) then
         Vertical
 
     else
@@ -605,12 +608,24 @@ checkFail ( model, cmd ) =
 
 checkBallNumber : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 checkBallNumber ( model, cmd ) =
+    let
+        elemNum =
+            case model.level of
+                1 ->
+                    1
+
+                2 ->
+                    2
+
+                _ ->
+                    4
+    in
     if List.length model.ball_list < model.ballnumber then
         checkBallNumber
             ( { model
-                | ball_list = (generateBall model.paddle model.seed |> Tuple.first) :: model.ball_list
+                | ball_list = (generateBall model.paddle model.seed elemNum |> Tuple.first) :: model.ball_list
                 , lives = model.lives - 1
-                , seed = generateBall model.paddle model.seed |> Tuple.second
+                , seed = generateBall model.paddle model.seed elemNum |> Tuple.second
               }
             , cmd
             )
