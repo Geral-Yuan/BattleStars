@@ -45,9 +45,7 @@ initModel =
     { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
     , boss = initBoss
     , paddle = initpaddle
-    , ball_list =
-        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
-        ]
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 1)
     , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
@@ -67,22 +65,26 @@ initLevel k model =
 
         2 ->
             model_2 model
+
         3 ->
             model_3 model
+
         4 ->
             model_4 model
+
         5 ->
             model_5 model
+
         _ ->
             model_boss model
+
+
 model_1 : Model -> Model
-model_1 model = 
+model_1 model =
     { monster_list = initMonsterList 1 --one life for each monster; 10 points for each monster
     , boss = initBoss
     , paddle = initpaddle
-    , ball_list =
-        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
-        ]
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 1)
     , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
@@ -93,14 +95,13 @@ model_1 model =
     , level = 1
     }
 
+
 model_2 : Model -> Model
-model_2 model = 
+model_2 model =
     { monster_list = initMonsterList 2 --one life for each monster; 10 points for each monster
     , boss = initBoss
     , paddle = initpaddle
-    , ball_list =
-        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
-        ]
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 1)
     , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
@@ -111,14 +112,13 @@ model_2 model =
     , level = 2
     }
 
+
 model_3 : Model -> Model
-model_3 model = 
+model_3 model =
     { monster_list = initMonsterList 3 --one life for each monster; 10 points for each monster
     , boss = initBoss
     , paddle = initpaddle
-    , ball_list =
-        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
-        ]
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 1)
     , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
@@ -129,14 +129,13 @@ model_3 model =
     , level = 3
     }
 
+
 model_4 : Model -> Model
-model_4 model = 
+model_4 model =
     { monster_list = initMonsterList 4 --one life for each monster; 10 points for each monster
     , boss = initBoss
     , paddle = initpaddle
-    , ball_list =
-        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
-        ]
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 1)
     , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
@@ -147,15 +146,14 @@ model_4 model =
     , level = 4
     }
 
+
 model_5 : Model -> Model
-model_5 model = 
+model_5 model =
     { monster_list = initMonsterList 5 --one life for each monster; 10 points for each monster
     , boss = initBoss
     , paddle = initpaddle
-    , ball_list =
-        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
-        ]
-    , ballnumber = 1
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 2)
+    , ballnumber = 2
     , time = 0
     , lives = 5 --five lives for a player
     , scores = model.scores
@@ -165,15 +163,14 @@ model_5 model =
     , level = 5
     }
 
+
 model_boss : Model -> Model
-model_boss model = 
+model_boss model =
     { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
     , boss = initBoss
     , paddle = initpaddle
-    , ball_list =
-        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
-        ]
-    , ballnumber = 1
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 2)
+    , ballnumber = 2
     , time = 0
     , lives = 5 --five lives for a player
     , scores = model.scores
@@ -184,17 +181,18 @@ model_boss model =
     }
 
 
+
 --游戏关卡修改
+
+
 playModel : Model -> Int -> Model
 playModel model level =
     -- For players to select it when they click newGame
     { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
     , boss = initBoss
     , paddle = initpaddle
-    , ball_list =
-        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
-        ]
-    , ballnumber = 1
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 2)
+    , ballnumber = 2
     , time = 0
     , lives = 5 --five lives for a player
     , scores = 0
@@ -211,10 +209,8 @@ sceneModel =
     { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
     , boss = initBoss
     , paddle = initpaddle
-    , ball_list =
-        [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
-        ]
-    , ballnumber = 1
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 2)
+    , ballnumber = 2
     , time = 0
     , lives = 5 --five lives for a player
     , scores = 0
@@ -223,6 +219,16 @@ sceneModel =
     , seed = Random.initialSeed 1234
     , level = 1
     }
+
+
+generateBallList : Paddle -> Int -> List ( Ball, Seed )
+generateBallList paddle n =
+    case n of
+        0 ->
+            []
+
+        _ ->
+            generateBall paddle (Random.initialSeed 1234) :: generateBallList paddle (n - 1)
 
 
 generateBall : Paddle -> Seed -> ( Ball, Seed )
@@ -241,7 +247,7 @@ generateBall paddle seed =
         ( x, y ) =
             addVec paddle.pos ( paddle.width / 2, -15 )
     in
-    ( Ball ( x, y ) 15 0 -600 { red = 0, green = 0, blue = 0 } elem, nseed )
+    ( Ball ( x, y ) 15 0 0 { red = 0, green = 0, blue = 0 } elem Carryed, nseed )
 
 
 initMonsterList : Int -> List Monster
@@ -261,7 +267,7 @@ initBoss =
 
 initpaddle : Paddle
 initpaddle =
-    { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
+    { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 1000, move_range = pixelWidth }
 
 
 

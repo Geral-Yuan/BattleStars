@@ -53,7 +53,10 @@ type Element
     | Fire
     | Grass
     | Earth
-    | Element_None
+
+type Ball_state
+    = Carryed
+    | Free
 
 
 type alias Monster =
@@ -79,6 +82,7 @@ type alias Ball =
     , v_y : Float
     , color : Color
     , element : Element
+    , state : Ball_state
     }
 
 
@@ -138,7 +142,6 @@ multiMatMat ( ( a11, a12 ), ( a21, a22 ) ) ( ( b11, b12 ), ( b21, b22 ) ) =
     ( ( a11 * b11 + a12 * b21, a11 * b12 + a12 * b22 ), ( a21 * b11 + a22 * b21, a21 * b12 + a22 * b22 ) )
 
 
-
 elementMatch : Element -> Element -> Int
 elementMatch ball_elem monster_elem =
     let
@@ -188,6 +191,3 @@ element2ColorString elem =
 
         Earth ->
             "brown"
-
-        Element_None ->
-            "white"

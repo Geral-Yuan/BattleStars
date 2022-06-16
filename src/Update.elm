@@ -68,6 +68,9 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        Shoot ->
+            ( shootBall model, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
                 |> updatePaddle msg
@@ -224,6 +227,26 @@ updatePaddle msg ( model, cmd ) =
             ( model, cmd )
 
 
+shootBall : Model -> Model
+shootBall model =
+    let
+        ( carryedBall, freeBall ) =
+            List.partition (\ball -> ball.state == Carryed) model.ball_list
+
+        shootedBall =
+            List.head carryedBall
+        
+        otherBall =
+            List.drop 1 carryedBall ++ freeBall
+    in
+    case shootedBall of
+        Just ball ->
+            { model | ball_list = { ball | state = Free, v_y = -600 } :: otherBall }
+
+        Nothing ->
+            model
+
+
 
 --wyj
 -- getTerminal : Model -> Float
@@ -301,9 +324,19 @@ moveBall : Float -> Model -> Model
 moveBall dt model =
     let
         nball_list =
-            List.map (\ball -> { ball | pos = changePos ball.pos ( ball.v_x * dt, ball.v_y * dt ) }) model.ball_list
+            List.map (moveEachBall dt model.paddle) model.ball_list
     in
     { model | ball_list = nball_list }
+
+
+moveEachBall : Float -> Paddle -> Ball -> Ball
+moveEachBall dt paddle ball =
+    case ball.state of
+        Free ->
+            { ball | pos = changePos ball.pos ( ball.v_x * dt, ball.v_y * dt ) }
+
+        Carryed ->
+            { ball | pos = addVec paddle.pos ( paddle.width / 2, -15 ) }
 
 
 moveMonster : Float -> Model -> Model
@@ -320,7 +353,7 @@ monsterHitSurface model =
     let
         ( dead, alive ) =
             model.monster_list
-                |> List.partition (\{ pos } -> Tuple.second pos >= 1100)
+                |> List.partition (\{ pos } -> Tuple.second pos >= 920)
 
         deducted_score =
             2 * List.length dead
@@ -415,8 +448,7 @@ checkBounceScreen ball =
         ( x, y ) =
             ball.pos
     in
-    if y - r <= 50 && ball.v_y < 0 then
-        --chayan
+    if y - r <= 0 && ball.v_y < 0 then
         Horizontal
 
     else if (x - r <= 0 && ball.v_x < 0) || (x + r >= 10 * monsterwidth && ball.v_x > 0) then
@@ -426,15 +458,7 @@ checkBounceScreen ball =
         None
 
 
-findHitMonster : List Monster -> Msg -> Maybe Monster
-findHitMonster monster_list msg =
-    case msg of
-        Hit k _ ->
-            Tuple.first (List.partition (\{ idx } -> idx == k) monster_list)
-                |> List.head
 
-        _ ->
-            Nothing
 
 
 changeElement : Ball -> Maybe Monster -> Ball
@@ -517,7 +541,7 @@ checkBounceMonster ball monster =
         r =
             monster.monster_radius
     in
-    if (x - bx) ^ 2 + (y - by) ^ 2 <= (br + r) ^ 2 && innerVec ( x - bx, y - by ) ( ball.v_x, ball.v_y ) >= 0 then
+    if (x - bx) ^ 2 + (y - by) ^ 2 <= (br + r) ^ 2 && innerVec ( x - bx, y - by ) ( ball.v_x, ball.v_y ) >= 0 && ball.state == Free then
         reflectionMat ( -(y - by), x - bx )
 
     else
