@@ -175,7 +175,7 @@ getTerminal model =
     in
     case List.filter (\ball -> Tuple.second ball.pos + ball.radius > py) model.ball_list |> List.head of
         Nothing ->
-            getTerminal (moveBall 0.01 nmodel )
+            getTerminal (moveBall 0.01 nmodel)
 
         Just ball ->
             Tuple.first ball.pos - model.paddle.width / 2
@@ -228,7 +228,23 @@ moveMonster dt model =
         nmonster_list =
             List.map (\monster -> { monster | pos = addVec monster.pos (scaleVec dt (detVelocity monster)) }) model.monster_list
     in
-    { model | monster_list = nmonster_list }
+    monsterHitSurface { model | monster_list = nmonster_list }
+
+
+monsterHitSurface : Model -> Model
+monsterHitSurface model =
+    let
+        ( dead, alive ) =
+            model.monster_list
+                |> List.partition (\{ pos } -> Tuple.second pos >= 1100)
+
+        deducted_score =
+            2 * List.length dead
+
+        prev_lives =
+            model.lives
+    in
+    { model | monster_list = alive, lives = prev_lives - deducted_score }
 
 
 moveBoss : Float -> Model -> Model
