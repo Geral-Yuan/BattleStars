@@ -73,13 +73,7 @@ newPaddleBounceVelocity speed rel_x =
 --wyj--deductlife 1 means deduct only one life
 
 
-moveMonster : Model -> Float -> Model
-moveMonster model dt =
-    let
-        nmonster_list =
-            List.map (\monster -> { monster | pos = addVec monster.pos (scaleVec dt (detVelocity monster)) }) model.monster_list
-    in
-    { model | monster_list = nmonster_list }
+
 
 
 updateMonster : Msg -> List Monster -> List Monster
