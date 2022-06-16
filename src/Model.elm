@@ -28,6 +28,7 @@ type State
 
 type alias Model =
     { monster_list : List Monster
+    , boss : Boss
     , paddle : Paddle
     , ball_list : List Ball
     , ballnumber : Int
@@ -37,6 +38,7 @@ type alias Model =
     , state : State
     , size : ( Float, Float )
     , seed : Seed
+    , level : Int
     }
 
 
@@ -50,6 +52,7 @@ init _ =
 initModel : Model
 initModel =
     { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
+    , boss = initBoss
     , paddle = initpaddle
     , ball_list =
         [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
@@ -61,13 +64,26 @@ initModel =
     , state = Starting
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
+    , level = 0
     }
+
+
+initLevel : Int -> Model -> Model
+initLevel k model =
+    case k of
+        1 ->
+            model
+        2 ->
+            model
+        _ ->
+            model
 
 
 playModel : Model -> State -> Model
 playModel model state =
     -- For players to select it when they click newGame
     { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
+    , boss = initBoss
     , paddle = initpaddle
     , ball_list =
         [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
@@ -79,6 +95,7 @@ playModel model state =
     , state = state
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
+    , level = 0
     }
 
 
@@ -86,6 +103,7 @@ sceneModel : Model -> State -> Model
 sceneModel model state =
     -- to change scenes
     { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
+    , boss = initBoss
     , paddle = initpaddle
     , ball_list =
         [ generateBall initpaddle (Random.initialSeed 1234) |> Tuple.first
@@ -97,6 +115,7 @@ sceneModel model state =
     , state = state
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
+    , level = 0
     }
 
 
@@ -129,6 +148,11 @@ initMonsterList n =
             initMonsterList (n - 1) ++ [ initMonster n ]
 
 
+initBoss : Boss
+initBoss =
+    Boss ( 500, -1250 ) 1250 -1
+
+
 initpaddle : Paddle
 initpaddle =
     { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 500, move_range = pixelWidth }
@@ -150,7 +174,7 @@ detPosition idx =
             (idx - 1) // 4
 
         column =
-            modBy 4 idx + 1
+            modBy 4 (idx - 1) + 1
     in
     ( toFloat column * 200, toFloat row * 200 + 100 )
 
@@ -166,8 +190,9 @@ detElem idx =
 
 detVelocity : Monster -> ( Float, Float )
 detVelocity monster =
-    if Tuple.second monster.pos <= 700 then
-        ( 0, 15 )
+    ( 0, 10 )
 
-    else
-        ( 0, 10 )
+
+detVelocityBoss : Boss -> ( Float, Float )
+detVelocityBoss boss =
+    ( 0, 10 )

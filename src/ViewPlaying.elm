@@ -40,6 +40,33 @@ viewBall ball =
         []
 
 
+viewBoss : Boss -> Svg Msg
+viewBoss boss =
+    let
+        ( x, y ) =
+            boss.pos
+    in
+    Svg.image
+        [ SvgAttr.width "1000"
+        , SvgAttr.height "500"
+        , SvgAttr.x (toString (x - 500))
+        , SvgAttr.y (toString (y + 700))
+        , SvgAttr.preserveAspectRatio "none"
+        , SvgAttr.xlinkHref "../assets/bossMonster.png"
+        ]
+        []
+
+viewBossCover : Boss -> Svg Msg
+viewBossCover boss =
+    Svg.circle
+        [ SvgAttr.cx (toString (Tuple.first boss.pos))
+        , SvgAttr.cy (toString (Tuple.second boss.pos))
+        , SvgAttr.r (toString (boss.boss_radius - 3))
+        , SvgAttr.fill "transparent"
+        , SvgAttr.strokeWidth "3"
+        , SvgAttr.stroke "white"
+        ]
+        []
 
 --wyj test the element
 
