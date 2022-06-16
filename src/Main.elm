@@ -8,6 +8,7 @@ import Messages exposing (..)
 import Model exposing (Model, init)
 import Update exposing (..)
 import View exposing (..)
+import Data exposing (Ball)
 
 
 main : Program () Model Msg
@@ -43,6 +44,9 @@ key on keycode =
         83 ->
             -- for debugging
             Skip
+
+        32 ->
+            Shoot
 
         _ ->
             Key_None

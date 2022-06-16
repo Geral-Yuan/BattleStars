@@ -8,34 +8,33 @@ import Messages exposing (..)
 -- Scoreboard system done by Jovan
 
 
+findHitMonster : List Monster -> Msg -> Maybe Monster
+findHitMonster monster_list msg =
+    case msg of
+        Hit k _ ->
+            Tuple.first (List.partition (\{ idx } -> idx == k) monster_list)
+                |> List.head
+
+        _ ->
+            Nothing
+
+
 getMonster_score : List Monster -> Msg -> Int
 getMonster_score list_monster msg =
     case msg of
-        Hit idx_ ball_element ->
-            -- extract the list from the tuple and then acquire the monster_score
-            (hitMonster idx_ list_monster
-                |> .monster_score
-            )
-                * (hitMonster idx_ list_monster
-                    |> .element
-                    |> elementMatch ball_element
-                    |> bonusScore
-                  )
+        Hit _ ball_element ->
+            case findHitMonster list_monster msg of
+                Just monster ->
+                    monster.monster_score
+                        * ((monster.element |> elementMatch ball_element)
+                            |> bonusScore
+                          )
+
+                Nothing ->
+                    0
 
         _ ->
             0
-
-
-hitMonster : Int -> List Monster -> Monster
-hitMonster idx_ list_monster =
-    let
-        sample_monster =
-            Monster 100 ( -1, -1 ) -1 0 0 Element_None
-    in
-    List.partition (\{ idx } -> idx == idx_) list_monster
-        |> Tuple.first
-        |> List.head
-        |> Maybe.withDefault sample_monster
 
 
 bonusScore : Int -> Int

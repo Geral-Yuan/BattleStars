@@ -74,35 +74,37 @@ viewBossCover boss =
 --wyj test the element
 
 
+element2String : Element -> String
+element2String elem =
+    case elem of
+        Water ->
+            "water"
+
+        Fire ->
+            "fire"
+
+        Grass ->
+            "grass"
+
+        Earth ->
+            "earth"
+
+
 viewMonsters : Monster -> Svg Msg
 viewMonsters monster =
     let
         ( x, y ) =
             monster.pos
     in
-    -- add if condition of monsters existence later
-    case monster.element of
-        Water ->
-            Svg.image
-                [ SvgAttr.width (toString monsterwidth)
-                , SvgAttr.height (toString monsterheight)
-                , SvgAttr.x (toString (x - monsterwidth / 2))
-                , SvgAttr.y (toString (y - monsterheight / 2))
-                , SvgAttr.preserveAspectRatio "none"
-                , SvgAttr.xlinkHref "../assets/waterMonster.png"
-                ]
-                []
-
-        _ ->
-            Svg.image
-                [ SvgAttr.width (toString monsterwidth)
-                , SvgAttr.height (toString monsterheight)
-                , SvgAttr.x (toString (x - monsterwidth / 2))
-                , SvgAttr.y (toString (y - monsterheight / 2))
-                , SvgAttr.preserveAspectRatio "none"
-                , SvgAttr.xlinkHref "../assets/fireMonster.png"
-                ]
-                []
+    Svg.image
+        [ SvgAttr.width (toString monsterwidth)
+        , SvgAttr.height (toString monsterheight)
+        , SvgAttr.x (toString (x - monsterwidth / 2))
+        , SvgAttr.y (toString (y - monsterheight / 2))
+        , SvgAttr.preserveAspectRatio "none"
+        , SvgAttr.xlinkHref ("../assets/" ++ element2String monster.element ++ "Monster.png")
+        ]
+        []
 
 
 viewCover : Monster -> Svg Msg
@@ -112,7 +114,7 @@ viewCover monster =
         , SvgAttr.cy (toString (Tuple.second monster.pos))
         , SvgAttr.r (toString (monster.monster_radius - 3))
         , SvgAttr.fill "transparent"
-        , SvgAttr.strokeWidth "10"
+        , SvgAttr.strokeWidth "3"
         , SvgAttr.stroke (element2ColorString monster.element)
         , SvgAttr.opacity
             (toString
