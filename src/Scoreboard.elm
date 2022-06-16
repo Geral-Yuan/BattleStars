@@ -1,25 +1,53 @@
 module Scoreboard exposing (..)
 
-import Bounce exposing (..)
+import Data exposing (..)
 import Messages exposing (..)
-
-
-type alias Scoreboard =
-    { player_score : Int
-    , player_lives : Int
-    }
 
 
 
 -- Scoreboard system done by Jovan
 
 
-getBrick_score : Msg -> List Brick -> Int
-getBrick_score msg list_brick =
+findHitMonster : List Monster -> Msg -> Maybe Monster
+findHitMonster monster_list msg =
     case msg of
-        Hit ( x, y ) ->
-            -- extract the list from the tuple and then acquire the brick_score
-            Maybe.withDefault 0 (List.head (List.map .brick_score (Tuple.first (List.partition (\{ pos } -> pos == ( x, y )) list_brick))))
+        Hit k _ ->
+            Tuple.first (List.partition (\{ idx } -> idx == k) monster_list)
+                |> List.head
+
+        _ ->
+            Nothing
+
+
+getMonster_score : List Monster -> Msg -> Int
+getMonster_score list_monster msg =
+    case msg of
+        Hit _ ball_element ->
+            case findHitMonster list_monster msg of
+                Just monster ->
+                    monster.monster_score
+                        * ((monster.element |> elementMatch ball_element)
+                            |> bonusScore
+                          )
+
+                Nothing ->
+                    0
+
+        _ ->
+            0
+
+
+bonusScore : Int -> Int
+bonusScore eff =
+    case eff of
+        1 ->
+            1
+
+        2 ->
+            2
+
+        4 ->
+            5
 
         _ ->
             0
