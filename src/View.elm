@@ -26,43 +26,35 @@ view model =
                 Starting ->
                     viewStarting model
 
-                Playing1 ->
+                Playing _ ->
                     viewPlaying1 model
 
-                Playing2 ->
-                    viewPlaying1 model
+                Scene 1 ->
+                    viewScene1 model
 
-                Playing3 ->
-                    viewPlaying1 model
+                Scene 2 ->
+                    viewScene1 model
 
-                Playing4 ->
-                    viewPlaying1 model
+                Scene 3 ->
+                    viewScene1 model
 
-                Playing5 ->
-                    viewPlaying1 model
+                Scene 4 ->
+                    viewScene1 model
 
-                Scene11 ->
-                    viewScene11 model
+                Scene 5 ->
+                    viewScene1 model
 
-                Scene12 ->
-                    viewScene11 model
+                Scene 6 ->
+                    viewScene1 model
 
-                Scene2 ->
-                    viewScene11 model
+                Scene _ ->
+                    -- Last Scene to congratulate players
+                    viewScene1 model
 
-                Scene3 ->
-                    viewScene11 model
+                ClearLevel _ ->
+                    viewScene1 model
 
-                Scene4 ->
-                    viewScene11 model
-
-                Scene5 ->
-                    viewScene11 model
-
-                Victory ->
-                    viewGameover model
-
-                Gameover ->
+                Gameover _ ->
                     viewGameover model
     in
     div
@@ -93,17 +85,18 @@ viewStarting model =
                 Basics.min 1 (w / pixelWidth)
     in
     div
-        [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
+        [ HtmlAttr.style "width" "1200px"
         , HtmlAttr.style "height" (String.fromFloat pixelHeight ++ "px")
         , HtmlAttr.style "position" "absolute"
-        , HtmlAttr.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
+        , HtmlAttr.style "left" (String.fromFloat (((w - pixelWidth * r) / 2) - 50) ++ "px")
         , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
-        , HtmlAttr.style "background" "url('../assets/Start.png')"
+        , HtmlAttr.style "background" ("url('../assets/Start.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ (toString 1200 ++ "px " ++ (toString 1200 ++ "px")))
+        , HtmlAttr.style "background-attachment" "fixed"
         , HtmlAttr.style "outline" "medium white solid"
         ]
-        [ renderButton "Start"
+        [ renderStartButton
         , div
             [ style "width" (toString (pixelWidth / 4) ++ "px")
             , style "height" (toString (pixelHeight / 4) ++ "px")
