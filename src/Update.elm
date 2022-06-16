@@ -42,7 +42,8 @@ update msg model =
         _ ->
             ( model, Cmd.none )
                 |> updatePaddle msg
-                |> updateBall msg
+                |> updateBall
+                |> moveStuff msg
                 |> updateTime msg
                 |> checkFail
                 |> checkBallNumber
@@ -174,7 +175,7 @@ getTerminal model =
     in
     case List.filter (\ball -> Tuple.second ball.pos + ball.radius > py) model.ball_list |> List.head of
         Nothing ->
-            getTerminal (moveBall nmodel 0.01)
+            getTerminal (moveBall 0.01 nmodel )
 
         Just ball ->
             Tuple.first ball.pos - model.paddle.width / 2
@@ -192,26 +193,28 @@ transPaddle model =
     { paddle | pos = ( getTerminal model, py ) }
 
 
+updateBall : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+updateBall ( model, cmd ) =
+    bounceAll ( model, cmd )
 
--- By Yuan Jiale, update ball
 
-
-updateBall : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
-updateBall msg ( model, cmd ) =
-    let
-        ( nmodel, ncmd ) =
-            bounceAll ( model, cmd )
-    in
+moveStuff : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+moveStuff msg ( model, cmd ) =
     case msg of
         Tick elapsed ->
-            ( moveMonster (moveBall nmodel (elapsed / 1000)) (elapsed / 1000), ncmd )
+            ( model
+                |> moveBall (elapsed / 1000)
+                |> moveMonster (elapsed / 1000)
+                |> moveBoss (elapsed / 1000)
+            , cmd
+            )
 
         _ ->
-            ( nmodel, ncmd )
+            ( model, cmd )
 
 
-moveBall : Model -> Float -> Model
-moveBall model dt =
+moveBall : Float -> Model -> Model
+moveBall dt model =
     let
         nball_list =
             List.map (\ball -> { ball | pos = changePos ball.pos ( ball.v_x * dt, ball.v_y * dt ) }) model.ball_list
@@ -219,14 +222,34 @@ moveBall model dt =
     { model | ball_list = nball_list }
 
 
-bounceAll :
-    ( Model, Cmd Msg )
-    -> ( Model, Cmd Msg ) --generate the model after bouncing
+moveMonster : Float -> Model -> Model
+moveMonster dt model =
+    let
+        nmonster_list =
+            List.map (\monster -> { monster | pos = addVec monster.pos (scaleVec dt (detVelocity monster)) }) model.monster_list
+    in
+    { model | monster_list = nmonster_list }
+
+
+moveBoss : Float -> Model -> Model
+moveBoss dt model =
+    let
+        boss =
+            model.boss
+
+        nboss =
+            { boss | pos = addVec boss.pos (scaleVec dt (detVelocityBoss boss)) }
+    in
+    { model | boss = nboss }
+
+
+bounceAll : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 bounceAll ( model, cmd ) =
     ( model, cmd )
         |> bouncePaddle
         |> bounceScreen
         |> bounceMonster
+        |> bounceBoss
 
 
 bouncePaddle : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
@@ -391,10 +414,46 @@ checkBounceMonster ball monster =
         br =
             ball.radius
 
-        mr =
+        r =
             monster.monster_radius
     in
-    if (x - bx) ^ 2 + (y - by) ^ 2 <= (br + mr) ^ 2 && innerVec ( x - bx, y - by ) ( ball.v_x, ball.v_y ) >= 0 then
+    if (x - bx) ^ 2 + (y - by) ^ 2 <= (br + r) ^ 2 && innerVec ( x - bx, y - by ) ( ball.v_x, ball.v_y ) >= 0 then
+        reflectionMat ( -(y - by), x - bx )
+
+    else
+        identityMat
+
+
+bounceBoss : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+bounceBoss ( model, cmd ) =
+    let
+        mat_list =
+            List.map (checkBounceBoss model.boss) model.ball_list
+
+        nball_list =
+            List.map2 newReflectedVelocity model.ball_list mat_list
+    in
+    ( { model | ball_list = nball_list }
+    , cmd
+    )
+
+
+checkBounceBoss : Boss -> Ball -> Mat
+checkBounceBoss boss ball =
+    let
+        ( x, y ) =
+            boss.pos
+
+        ( bx, by ) =
+            ball.pos
+
+        br =
+            ball.radius
+
+        r =
+            boss.boss_radius
+    in
+    if (x - bx) ^ 2 + (y - by) ^ 2 <= (br + r) ^ 2 && innerVec ( x - bx, y - by ) ( ball.v_x, ball.v_y ) >= 0 then
         reflectionMat ( -(y - by), x - bx )
 
     else

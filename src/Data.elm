@@ -64,6 +64,12 @@ type alias Monster =
     , element : Element
     }
 
+type alias Boss =
+    { pos : (Float,Float)
+    , boss_radius : Float
+    , lives : Int -- Except in the Boss level, the lives of Boss will be initialized as -1 for infinity
+    }
+
 
 type alias Ball =
     { pos : ( Float, Float )
