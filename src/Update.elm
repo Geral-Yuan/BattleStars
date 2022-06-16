@@ -62,7 +62,7 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        Shoot ->
+        Shoot False->
             ( shootBall model, Cmd.none )
 
         _ ->
