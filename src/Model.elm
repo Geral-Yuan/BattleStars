@@ -52,7 +52,7 @@ initModel =
     , lives = 5 --five lives for a player
     , scores = 0
     , level_scores = 0
-    , state = Starting
+    , state = Scene 1
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
     , level = 1
@@ -223,8 +223,10 @@ initBoss level =
     case level of
         1 ->
             Boss ( 500, -1250 ) 1250 -1 BossStopped
+
         3 ->
             Boss ( 500, -1250 ) 1250 -1 BossFast
+
         _ ->
             Boss ( 500, -1250 ) 1250 -1 BossSlow
 
@@ -295,6 +297,7 @@ detPosition level idx =
 
                 _ ->
                     ( 1000 - (toFloat column * 200 - 50), toFloat row * 173 + 100 )
+
         4 ->
             let
                 row =
@@ -370,7 +373,7 @@ detVelocity monster model =
                     ( 0, 15 )
 
                 Oscillating ->
-                    ( 80* cos(model.time), 10)
+                    ( 80 * cos model.time, 10 )
 
                 _ ->
                     ( 0, 0 )

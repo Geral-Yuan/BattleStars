@@ -18,14 +18,14 @@ type Msg
     = Key Dir Bool
     | Key_None
     | Enter
-    | Shoot
+    | Shoot Bool
     | Trans
     | Tick Float
     | GetViewport Viewport
     | Resize Int Int
     | Hit Int Element
     | New_Element Element
-      -- | VolumeAdjust Float
     | Restart -- Restart level if player loses
     | Start
     | Skip -- For debugging
+    | NextScene

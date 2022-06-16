@@ -112,9 +112,9 @@ viewCover monster =
     Svg.circle
         [ SvgAttr.cx (toString (Tuple.first monster.pos))
         , SvgAttr.cy (toString (Tuple.second monster.pos))
-        , SvgAttr.r (toString (monster.monster_radius - 3))
+        , SvgAttr.r (toString (monster.monster_radius - 8))
         , SvgAttr.fill "transparent"
-        , SvgAttr.strokeWidth "3"
+        , SvgAttr.strokeWidth "8"
         , SvgAttr.stroke (element2ColorString monster.element)
         , SvgAttr.opacity
             (toString
@@ -202,23 +202,23 @@ newGameButton =
     button
         [ style "background" "#34495f"
         , style "border" "0"
-        , style "bottom" "300px"
-        , style "color" "#fff"
+        , style "top" "790px"
+        , style "color" "white"
         , style "cursor" "pointer"
         , style "display" "block"
         , style "font-family" "Helvetica, Arial, sans-serif"
         , style "font-size" "18px"
-        , style "font-weight" "300"
-        , style "height" "60px"
-        , style "left" "440px"
+        , style "font-weight" "500"
+        , style "height" "80px"
+        , style "left" "1250px"
         , style "line-height" "60px"
         , style "outline" "none"
         , style "padding" "0"
         , style "position" "absolute"
-        , style "width" "120px"
+        , style "width" "160px"
         , onClick Restart
         ]
-        [ text "Restart" ]
+        [ text "Try Again" ]
 
 
 renderStartButton : Html Msg
@@ -237,3 +237,27 @@ renderStartButton =
         , onClick Start
         ]
         []
+
+
+nextSceneButton : Html Msg
+nextSceneButton =
+    button
+        [ style "background" "#34495f"
+        , style "border" "0"
+        , style "top" "790px"
+        , style "color" "white"
+        , style "cursor" "pointer"
+        , style "display" "block"
+        , style "font-family" "Helvetica, Arial, sans-serif"
+        , style "font-size" "18px"
+        , style "font-weight" "500"
+        , style "height" "80px"
+        , style "left" "1250px"
+        , style "line-height" "60px"
+        , style "outline" "none"
+        , style "padding" "0"
+        , style "position" "absolute"
+        , style "width" "160px"
+        , onClick NextScene
+        ]
+        [ text "Next Level" ]
