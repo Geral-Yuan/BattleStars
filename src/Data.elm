@@ -4,6 +4,7 @@ import Color exposing (Color)
 import Svg.Attributes exposing (numOctaves, speed, x2, y1, y2)
 
 
+
 monsterwidth : Float
 monsterwidth =
     100
@@ -52,7 +53,10 @@ type Element
     | Fire
     | Grass
     | Earth
-    | Element_None
+
+type Ball_state
+    = Carryed
+    | Free
 
 
 type alias Monster =
@@ -78,6 +82,7 @@ type alias Ball =
     , v_y : Float
     , color : Color
     , element : Element
+    , state : Ball_state
     }
 
 
@@ -186,6 +191,3 @@ element2ColorString elem =
 
         Earth ->
             "brown"
-
-        Element_None ->
-            "white"

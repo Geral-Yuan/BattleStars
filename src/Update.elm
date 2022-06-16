@@ -39,13 +39,22 @@ update msg model =
         Enter ->
             case model.state of
                 Scene _ ->
-                    updateScene model
+                    -- let 
+                    --     (nmodel, _) = updateClearLevel model
+                    -- in
+                        updateScene model
 
                 ClearLevel _ ->
-                    updateClearLevel model
+                    
+                    let 
+                        (nmodel, _) = updateClearLevel model
+                    in
+                        updateScene nmodel
 
                 _ ->
-                    ( model, Cmd.none )
+
+                     ( model, Cmd.none )
+                
 
         Skip ->
             case model.state of
@@ -59,6 +68,9 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        Shoot ->
+            ( shootBall model, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
                 |> updatePaddle msg
@@ -68,7 +80,6 @@ update msg model =
                 |> checkFail
                 |> checkBallNumber
                 |> checkEnd
-
 
 updateScene : Model -> ( Model, Cmd Msg )
 updateScene model =
@@ -81,46 +92,60 @@ updateScene model =
             ( { nModel | state = Scene 2 }, Task.perform GetViewport getViewport )
 
         Scene 2 ->
-            let
-                nModel =
-                    model
-            in
-            ( { nModel | state = Playing 1 }, Task.perform GetViewport getViewport )
+            -- let
+            --     nModel =
+            --         model
+            -- in
 
+             ( initLevel 1 model, Task.perform GetViewport getViewport )
+            -- ( { nModel | state = Playing 1 }, Task.perform GetViewport getViewport )
+        
+        -- Playing 1 ->
+        --     ( initLevel 1 model , Task.perform GetViewport getViewport)
+        
+        -- Scene 3 ->
+        --     let
+        --         nModel =
+        --             model
+        --     in
+        --     ( { nModel | state = Playing 2 }, Task.perform GetViewport getViewport )
         Scene 3 ->
-            let
-                nModel =
-                    model
-            in
-            ( { nModel | state = Playing 2 }, Task.perform GetViewport getViewport )
+            
+            ( initLevel 2 model, Task.perform GetViewport getViewport )
+
+            
 
         Scene 4 ->
-            let
-                nModel =
-                    model
-            in
-            ( { nModel | state = Playing 3 }, Task.perform GetViewport getViewport )
+            -- let
+            --     nModel =
+            --         model
+            -- in
+            -- ( { nModel | state = Playing 3 }, Task.perform GetViewport getViewport )
+            ( initLevel 3 model, Task.perform GetViewport getViewport )
 
         Scene 5 ->
-            let
-                nModel =
-                    model
-            in
-            ( { nModel | state = Playing 4 }, Task.perform GetViewport getViewport )
+            -- let
+            --     nModel =
+            --         model
+            -- in
+            -- ( { nModel | state = Playing 4 }, Task.perform GetViewport getViewport )
+            ( initLevel 4 model, Task.perform GetViewport getViewport )
 
         Scene 6 ->
-            let
-                nModel =
-                    model
-            in
-            ( { nModel | state = Playing 5 }, Task.perform GetViewport getViewport )
+            -- let
+            --     nModel =
+            --         model
+            -- in
+            -- ( { nModel | state = Playing 5 }, Task.perform GetViewport getViewport )
+            ( initLevel 5 model, Task.perform GetViewport getViewport )
 
         Scene 7 ->
-            let
-                nModel =
-                    model
-            in
-            ( { nModel | state = Starting }, Task.perform GetViewport getViewport )
+            -- let
+            --     nModel =
+            --         model
+            -- in
+            -- ( { nModel | state = Starting }, Task.perform GetViewport getViewport )
+            ( initLevel 6 model, Task.perform GetViewport getViewport )
 
         _ ->
             ( model, Task.perform GetViewport getViewport )
@@ -202,6 +227,26 @@ updatePaddle msg ( model, cmd ) =
             ( model, cmd )
 
 
+shootBall : Model -> Model
+shootBall model =
+    let
+        ( carryedBall, freeBall ) =
+            List.partition (\ball -> ball.state == Carryed) model.ball_list
+
+        shootedBall =
+            List.head carryedBall
+        
+        otherBall =
+            List.drop 1 carryedBall ++ freeBall
+    in
+    case shootedBall of
+        Just ball ->
+            { model | ball_list = { ball | state = Free, v_y = -600 } :: otherBall }
+
+        Nothing ->
+            model
+
+
 
 --wyj
 -- getTerminal : Model -> Float
@@ -279,9 +324,19 @@ moveBall : Float -> Model -> Model
 moveBall dt model =
     let
         nball_list =
-            List.map (\ball -> { ball | pos = changePos ball.pos ( ball.v_x * dt, ball.v_y * dt ) }) model.ball_list
+            List.map (moveEachBall dt model.paddle) model.ball_list
     in
     { model | ball_list = nball_list }
+
+
+moveEachBall : Float -> Paddle -> Ball -> Ball
+moveEachBall dt paddle ball =
+    case ball.state of
+        Free ->
+            { ball | pos = changePos ball.pos ( ball.v_x * dt, ball.v_y * dt ) }
+
+        Carryed ->
+            { ball | pos = addVec paddle.pos ( paddle.width / 2, -15 ) }
 
 
 moveMonster : Float -> Model -> Model
@@ -298,7 +353,7 @@ monsterHitSurface model =
     let
         ( dead, alive ) =
             model.monster_list
-                |> List.partition (\{ pos } -> Tuple.second pos >= 1100)
+                |> List.partition (\{ pos } -> Tuple.second pos >= 920)
 
         deducted_score =
             2 * List.length dead
@@ -393,8 +448,7 @@ checkBounceScreen ball =
         ( x, y ) =
             ball.pos
     in
-    if y - r <= 50 && ball.v_y < 0 then
-        --chayan
+    if y - r <= 0 && ball.v_y < 0 then
         Horizontal
 
     else if (x - r <= 0 && ball.v_x < 0) || (x + r >= 10 * monsterwidth && ball.v_x > 0) then
@@ -404,15 +458,7 @@ checkBounceScreen ball =
         None
 
 
-findHitMonster : List Monster -> Msg -> Maybe Monster
-findHitMonster monster_list msg =
-    case msg of
-        Hit k _ ->
-            Tuple.first (List.partition (\{ idx } -> idx == k) monster_list)
-                |> List.head
 
-        _ ->
-            Nothing
 
 
 changeElement : Ball -> Maybe Monster -> Ball
@@ -495,7 +541,7 @@ checkBounceMonster ball monster =
         r =
             monster.monster_radius
     in
-    if (x - bx) ^ 2 + (y - by) ^ 2 <= (br + r) ^ 2 && innerVec ( x - bx, y - by ) ( ball.v_x, ball.v_y ) >= 0 then
+    if (x - bx) ^ 2 + (y - by) ^ 2 <= (br + r) ^ 2 && innerVec ( x - bx, y - by ) ( ball.v_x, ball.v_y ) >= 0 && ball.state == Free then
         reflectionMat ( -(y - by), x - bx )
 
     else
@@ -596,8 +642,10 @@ checkEnd ( model, cmd ) =
             | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
             , state = ClearLevel model.level
           }
-        , cmd
+        , Cmd.batch [cmd, Task.perform GetViewport getViewport]
         )
+
+        -- ( { nModel | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
         -- Add one more condition here to check for Victory
 
     else

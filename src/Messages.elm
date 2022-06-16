@@ -18,6 +18,7 @@ type Msg
     = Key Dir Bool
     | Key_None
     | Enter
+    | Shoot
     | Trans
     | Tick Float
     | GetViewport Viewport
