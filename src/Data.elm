@@ -4,6 +4,7 @@ import Color exposing (Color)
 import Svg.Attributes exposing (numOctaves, speed, x2, y1, y2)
 
 
+
 monsterwidth : Float
 monsterwidth =
     100
@@ -135,6 +136,7 @@ multiMatVec ( a1, a2 ) v =
 multiMatMat : Mat -> Mat -> Mat
 multiMatMat ( ( a11, a12 ), ( a21, a22 ) ) ( ( b11, b12 ), ( b21, b22 ) ) =
     ( ( a11 * b11 + a12 * b21, a11 * b12 + a12 * b22 ), ( a21 * b11 + a22 * b21, a21 * b12 + a22 * b22 ) )
+
 
 
 elementMatch : Element -> Element -> Int
