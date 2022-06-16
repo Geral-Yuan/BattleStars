@@ -16,7 +16,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Restart ->
-            ( playModel model model.level, Task.perform GetViewport getViewport )
+            ( initLevel model.level model, Task.perform GetViewport getViewport )
 
         Resize width height ->
             ( { model | size = ( toFloat width, toFloat height ) }
@@ -24,7 +24,11 @@ update msg model =
             )
 
         Start ->
-            ( sceneModel, Task.perform GetViewport getViewport )
+            let
+                ( nmodel, _ ) =
+                    updateClearLevel model
+            in
+            updateScene nmodel
 
         GetViewport { viewport } ->
             ( { model
@@ -39,22 +43,20 @@ update msg model =
         Enter ->
             case model.state of
                 Scene _ ->
-                    -- let 
+                    -- let
                     --     (nmodel, _) = updateClearLevel model
                     -- in
-                        updateScene model
+                    updateScene model
 
                 ClearLevel _ ->
-                    
-                    let 
-                        (nmodel, _) = updateClearLevel model
+                    let
+                        ( nmodel, _ ) =
+                            updateClearLevel model
                     in
-                        updateScene nmodel
+                    updateScene nmodel
 
                 _ ->
-
-                     ( model, Cmd.none )
-                
+                    ( model, Cmd.none )
 
         Skip ->
             case model.state of
@@ -81,6 +83,7 @@ update msg model =
                 |> checkBallNumber
                 |> checkEnd
 
+
 updateScene : Model -> ( Model, Cmd Msg )
 updateScene model =
     case model.state of
@@ -96,13 +99,11 @@ updateScene model =
             --     nModel =
             --         model
             -- in
+            ( initLevel 1 model, Task.perform GetViewport getViewport )
 
-             ( initLevel 1 model, Task.perform GetViewport getViewport )
-            -- ( { nModel | state = Playing 1 }, Task.perform GetViewport getViewport )
-        
+        -- ( { nModel | state = Playing 1 }, Task.perform GetViewport getViewport )
         -- Playing 1 ->
         --     ( initLevel 1 model , Task.perform GetViewport getViewport)
-        
         -- Scene 3 ->
         --     let
         --         nModel =
@@ -110,10 +111,7 @@ updateScene model =
         --     in
         --     ( { nModel | state = Playing 2 }, Task.perform GetViewport getViewport )
         Scene 3 ->
-            
             ( initLevel 2 model, Task.perform GetViewport getViewport )
-
-            
 
         Scene 4 ->
             -- let
@@ -154,6 +152,13 @@ updateScene model =
 updateClearLevel : Model -> ( Model, Cmd Msg )
 updateClearLevel model =
     case model.state of
+        Starting ->
+            let
+                nModel =
+                    model
+            in
+            ( { nModel | state = Scene 1 }, Task.perform GetViewport getViewport )
+
         ClearLevel 1 ->
             let
                 nModel =
@@ -235,7 +240,7 @@ shootBall model =
 
         shootedBall =
             List.head carryedBall
-        
+
         otherBall =
             List.drop 1 carryedBall ++ freeBall
     in
@@ -343,7 +348,7 @@ moveMonster : Float -> Model -> Model
 moveMonster dt model =
     let
         nmonster_list =
-            List.map (\monster -> { monster | pos = addVec monster.pos (scaleVec dt (detVelocity monster)) }) model.monster_list
+            List.map (\monster -> { monster | pos = addVec monster.pos (scaleVec dt (detVelocity monster model)) }) model.monster_list
     in
     monsterHitSurface { model | monster_list = nmonster_list }
 
@@ -355,13 +360,13 @@ monsterHitSurface model =
             model.monster_list
                 |> List.partition (\{ pos } -> Tuple.second pos >= 920)
 
-        deducted_score =
+        deducted_lives =
             2 * List.length dead
 
         prev_lives =
             model.lives
     in
-    { model | monster_list = alive, lives = prev_lives - deducted_score }
+    { model | monster_list = alive, lives = prev_lives - deducted_lives }
 
 
 moveBoss : Float -> Model -> Model
@@ -371,7 +376,7 @@ moveBoss dt model =
             model.boss
 
         nboss =
-            { boss | pos = addVec boss.pos (scaleVec dt (detVelocityBoss boss)) }
+            { boss | pos = addVec boss.pos (scaleVec dt (detVelocityBoss boss model.state)) }
     in
     { model | boss = nboss }
 
@@ -451,14 +456,11 @@ checkBounceScreen ball =
     if y - r <= 0 && ball.v_y < 0 then
         Horizontal
 
-    else if (x - r <= 0 && ball.v_x < 0) || (x + r >= 10 * monsterwidth && ball.v_x > 0) then
+    else if (x - r <= 0 && ball.v_x < 0) || (x + r >= 1000 && ball.v_x > 0) then
         Vertical
 
     else
         None
-
-
-
 
 
 changeElement : Ball -> Maybe Monster -> Ball
@@ -495,7 +497,7 @@ bounceMonster ( model, cmd ) =
             List.foldr updateMonster model.monster_list msg_list
 
         nscore =
-            List.foldr (+) model.scores (List.map (getMonster_score model.monster_list) msg_list)
+            List.foldr (+) model.level_scores (List.map (getMonster_score model.monster_list) msg_list)
 
         elemball_list =
             List.map2 changeElement model.ball_list (List.map (findHitMonster model.monster_list) msg_list)
@@ -506,7 +508,7 @@ bounceMonster ( model, cmd ) =
     ( { model
         | ball_list = nball_list
         , monster_list = nmonster_list
-        , scores = nscore
+        , level_scores = nscore
       }
     , cmd
     )
@@ -614,12 +616,24 @@ checkFail ( model, cmd ) =
 
 checkBallNumber : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 checkBallNumber ( model, cmd ) =
+    let
+        elemNum =
+            case model.level of
+                1 ->
+                    1
+
+                2 ->
+                    2
+
+                _ ->
+                    4
+    in
     if List.length model.ball_list < model.ballnumber then
         checkBallNumber
             ( { model
-                | ball_list = (generateBall model.paddle model.seed |> Tuple.first) :: model.ball_list
+                | ball_list = (generateBall model.paddle model.seed elemNum |> Tuple.first) :: model.ball_list
                 , lives = model.lives - 1
-                , seed = generateBall model.paddle model.seed |> Tuple.second
+                , seed = generateBall model.paddle model.seed elemNum |> Tuple.second
               }
             , cmd
             )
@@ -641,10 +655,11 @@ checkEnd ( model, cmd ) =
         ( { model
             | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
             , state = ClearLevel model.level
+            , scores = model.scores + model.level_scores
+            , level_scores = 0
           }
-        , Cmd.batch [cmd, Task.perform GetViewport getViewport]
+        , Cmd.batch [ cmd, Task.perform GetViewport getViewport ]
         )
-
         -- ( { nModel | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
         -- Add one more condition here to check for Victory
 
