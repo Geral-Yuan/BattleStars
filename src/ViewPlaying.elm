@@ -24,7 +24,7 @@ viewPaddle model =
         , SvgAttr.x (toString (Tuple.first model.paddle.pos))
         , SvgAttr.y (toString (Tuple.second model.paddle.pos))
         , SvgAttr.preserveAspectRatio "xMidYMid slice"
-        , SvgAttr.xlinkHref "../assets/ufo.png"
+        , SvgAttr.xlinkHref "../assets/image/ufo.png"
         ]
         []
 
@@ -52,7 +52,7 @@ viewBoss boss =
         , SvgAttr.x (toString (x - 500))
         , SvgAttr.y (toString (y + 700))
         , SvgAttr.preserveAspectRatio "none"
-        , SvgAttr.xlinkHref "../assets/bossMonster.png"
+        , SvgAttr.xlinkHref "../assets/image/bossMonster.png"
         ]
         []
 
@@ -102,7 +102,7 @@ viewMonsters monster =
         , SvgAttr.x (toString (x - monsterwidth / 2))
         , SvgAttr.y (toString (y - monsterheight / 2))
         , SvgAttr.preserveAspectRatio "none"
-        , SvgAttr.xlinkHref ("../assets/" ++ element2String monster.element ++ "Monster.png")
+        , SvgAttr.xlinkHref ("../assets/image/" ++ element2String monster.element ++ "Monster.png")
         ]
         []
 
@@ -167,7 +167,7 @@ viewLife model x =
         , SvgAttr.x (toString x)
         , SvgAttr.y "1070"
         , SvgAttr.preserveAspectRatio "xMidYMid"
-        , SvgAttr.xlinkHref "../assets/city.png"
+        , SvgAttr.xlinkHref "../assets/image/city.png"
         ]
         []
 
