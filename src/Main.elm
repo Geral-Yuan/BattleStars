@@ -40,5 +40,9 @@ key on keycode =
         13 ->
             Enter
 
+        83 ->
+            -- for debugging
+            Skip
+
         _ ->
             Key_None

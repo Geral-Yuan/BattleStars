@@ -11,19 +11,10 @@ import Task
 
 type State
     = Starting
-    | Playing1 -- Playing will be switched to Playing1, Playing2 (different levels)
-    | Playing2
-    | Playing3
-    | Playing4
-    | Playing5
-    | Scene11
-    | Scene12
-    | Scene2
-    | Scene3
-    | Scene4
-    | Scene5
-    | Victory
-    | Gameover
+    | Playing Int -- Playing will be switched to Playing1, Playing2 (different levels)
+    | Scene Int
+    | ClearLevel Int -- Input level integer
+    | Gameover Int
 
 
 type alias Model =
@@ -73,14 +64,16 @@ initLevel k model =
     case k of
         1 ->
             model
+
         2 ->
             model
+
         _ ->
             model
 
 
-playModel : Model -> State -> Model
-playModel model state =
+playModel : Model -> Int -> Model
+playModel model level =
     -- For players to select it when they click newGame
     { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
     , boss = initBoss
@@ -92,15 +85,15 @@ playModel model state =
     , time = 0
     , lives = 5 --five lives for a player
     , scores = 0
-    , state = state
+    , state = Playing level
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
     , level = 0
     }
 
 
-sceneModel : Model -> State -> Model
-sceneModel model state =
+sceneModel : Model
+sceneModel =
     -- to change scenes
     { monster_list = initMonsterList 12 --one life for each monster; 10 points for each monster
     , boss = initBoss
@@ -112,10 +105,10 @@ sceneModel model state =
     , time = 0
     , lives = 5 --five lives for a player
     , scores = 0
-    , state = state
+    , state = Scene 1
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
-    , level = 0
+    , level = 1
     }
 
 

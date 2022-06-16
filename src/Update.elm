@@ -16,7 +16,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Restart ->
-            ( playModel model model.state, Task.perform GetViewport getViewport )
+            ( playModel model model.level, Task.perform GetViewport getViewport )
 
         Resize width height ->
             ( { model | size = ( toFloat width, toFloat height ) }
@@ -24,7 +24,7 @@ update msg model =
             )
 
         Start ->
-            ( sceneModel model Scene11, Task.perform GetViewport getViewport )
+            ( sceneModel, Task.perform GetViewport getViewport )
 
         GetViewport { viewport } ->
             ( { model
@@ -37,7 +37,27 @@ update msg model =
             )
 
         Enter ->
-            updateScene model
+            case model.state of
+                Scene _ ->
+                    updateScene model
+
+                ClearLevel _ ->
+                    updateClearLevel model
+
+                _ ->
+                    ( model, Cmd.none )
+
+        Skip ->
+            case model.state of
+                Playing _ ->
+                    let
+                        nModel =
+                            model
+                    in
+                    ( { nModel | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
+
+                _ ->
+                    ( model, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
@@ -53,54 +73,96 @@ update msg model =
 updateScene : Model -> ( Model, Cmd Msg )
 updateScene model =
     case model.state of
-        Scene11 ->
+        Scene 1 ->
             let
                 nModel =
-                    initModel
+                    model
             in
-            ( { nModel | state = Scene12 }, Task.perform GetViewport getViewport )
+            ( { nModel | state = Scene 2 }, Task.perform GetViewport getViewport )
 
-        Scene12 ->
+        Scene 2 ->
             let
                 nModel =
-                    initModel
+                    model
             in
-            ( { nModel | state = Playing1 }, Task.perform GetViewport getViewport )
+            ( { nModel | state = Playing 1 }, Task.perform GetViewport getViewport )
 
-        Scene2 ->
+        Scene 3 ->
             let
                 nModel =
-                    initModel
+                    model
             in
-            ( { nModel | state = Playing2 }, Task.perform GetViewport getViewport )
+            ( { nModel | state = Playing 2 }, Task.perform GetViewport getViewport )
 
-        Scene3 ->
+        Scene 4 ->
             let
                 nModel =
-                    initModel
+                    model
             in
-            ( { nModel | state = Playing3 }, Task.perform GetViewport getViewport )
+            ( { nModel | state = Playing 3 }, Task.perform GetViewport getViewport )
 
-        Scene4 ->
+        Scene 5 ->
             let
                 nModel =
-                    initModel
+                    model
             in
-            ( { nModel | state = Playing4 }, Task.perform GetViewport getViewport )
+            ( { nModel | state = Playing 4 }, Task.perform GetViewport getViewport )
 
-        Scene5 ->
+        Scene 6 ->
             let
                 nModel =
-                    initModel
+                    model
             in
-            ( { nModel | state = Playing5 }, Task.perform GetViewport getViewport )
+            ( { nModel | state = Playing 5 }, Task.perform GetViewport getViewport )
 
-        Victory ->
+        Scene 7 ->
             let
                 nModel =
-                    initModel
+                    model
             in
-            ( { nModel | state = Gameover }, Task.perform GetViewport getViewport )
+            ( { nModel | state = Starting }, Task.perform GetViewport getViewport )
+
+        _ ->
+            ( model, Task.perform GetViewport getViewport )
+
+
+updateClearLevel : Model -> ( Model, Cmd Msg )
+updateClearLevel model =
+    case model.state of
+        ClearLevel 1 ->
+            let
+                nModel =
+                    model
+            in
+            ( { nModel | state = Scene 3 }, Task.perform GetViewport getViewport )
+
+        ClearLevel 2 ->
+            let
+                nModel =
+                    model
+            in
+            ( { nModel | state = Scene 4 }, Task.perform GetViewport getViewport )
+
+        ClearLevel 3 ->
+            let
+                nModel =
+                    model
+            in
+            ( { nModel | state = Scene 5 }, Task.perform GetViewport getViewport )
+
+        ClearLevel 4 ->
+            let
+                nModel =
+                    model
+            in
+            ( { nModel | state = Scene 6 }, Task.perform GetViewport getViewport )
+
+        ClearLevel 5 ->
+            let
+                nModel =
+                    model
+            in
+            ( { nModel | state = Scene 7 }, Task.perform GetViewport getViewport )
 
         _ ->
             ( model, Task.perform GetViewport getViewport )
@@ -524,7 +586,7 @@ checkEnd : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 checkEnd ( model, cmd ) =
     if model.lives == 0 then
         ( { model
-            | state = Gameover
+            | state = Gameover model.level
           }
         , cmd
         )
@@ -532,10 +594,11 @@ checkEnd ( model, cmd ) =
     else if List.isEmpty model.monster_list then
         ( { model
             | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
-            , state = Gameover
+            , state = ClearLevel model.level
           }
         , cmd
         )
+        -- Add one more condition here to check for Victory
 
     else
         ( model, cmd )
