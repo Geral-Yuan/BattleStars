@@ -170,7 +170,7 @@ model_boss model =
     , state = Playing 6
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
-    , level = 6
+    , level = 5
     , extraMonster = 0
     }
 
@@ -182,7 +182,7 @@ generateBallList paddle ballNum elemNum =
             []
 
         _ ->
-            generateBallList paddle (ballNum - 1) elemNum ++ [generateBall paddle (Random.initialSeed 1234) elemNum]
+            generateBallList paddle (ballNum - 1) elemNum ++ [ generateBall paddle (Random.initialSeed 1234) elemNum ]
 
 
 generateBall : Paddle -> Seed -> Int -> ( Ball, Seed )
