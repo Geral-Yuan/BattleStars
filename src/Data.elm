@@ -31,7 +31,7 @@ pixelHeight =
 
 paddleWidth : Float
 paddleWidth =
-    150
+    200
 
 
 paddleSpeed : Float
@@ -42,7 +42,6 @@ paddleSpeed =
 type Bounce
     = Horizontal
     | Vertical
-    | Back
     | Paddle_Bounce Float
     | None
 
@@ -209,4 +208,4 @@ element2ColorString elem =
             "green"
 
         Earth ->
-            "yellow"
+            "gold"

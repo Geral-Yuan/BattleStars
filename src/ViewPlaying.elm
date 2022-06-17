@@ -12,7 +12,7 @@ import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Model exposing (..)
 import Paddle exposing (..)
-import Svg exposing (Svg)
+import Svg exposing (Svg, stop)
 import Svg.Attributes as SvgAttr
 
 
@@ -29,45 +29,107 @@ viewPaddle model =
         []
 
 
-viewBall : Ball -> Svg Msg
+viewBall : Ball -> List (Svg Msg)
 viewBall ball =
-    Svg.circle
+    let
+        color =
+            element2ColorString ball.element
+    in
+    [ Svg.radialGradient
+        [ SvgAttr.id ("myBall" ++ color) ]
+        [ stop
+            [ SvgAttr.offset "0.1%"
+            , SvgAttr.stopColor "white"
+            , SvgAttr.stopOpacity "95%"
+            ]
+            []
+        , stop
+            [ SvgAttr.offset "50%"
+            , SvgAttr.stopColor color
+            , SvgAttr.stopOpacity "50%"
+            ]
+            []
+        , stop
+            [ SvgAttr.offset "100%"
+            , SvgAttr.stopColor color
+            , SvgAttr.stopOpacity "100%"
+            ]
+            []
+        ]
+    , Svg.circle
         [ SvgAttr.cx (toString (Tuple.first ball.pos))
         , SvgAttr.cy (toString (Tuple.second ball.pos))
         , SvgAttr.r (toString ball.radius)
-        , SvgAttr.fill (element2ColorString ball.element)
+        , SvgAttr.fill ("url('#myBall" ++ color ++ "')")
         ]
         []
+    ]
 
 
-viewBoss : Boss -> Svg Msg
+viewBoss : Boss -> List (Svg Msg)
 viewBoss boss =
     let
         ( x, y ) =
             boss.pos
     in
-    Svg.image
-        [ SvgAttr.width "1000"
-        , SvgAttr.height "500"
-        , SvgAttr.x (toString (x - 500))
-        , SvgAttr.y (toString (y + 700))
-        , SvgAttr.preserveAspectRatio "none"
-        , SvgAttr.xlinkHref "./assets/image/bossMonster.png"
-        ]
+    if boss.lives <= 0 && boss.lives > -10 then
         []
 
+    else
+        [ Svg.image
+            [ SvgAttr.width "1000"
+            , SvgAttr.height "500"
+            , SvgAttr.x (toString (x - 500))
+            , SvgAttr.y (toString (y + 700))
+            , SvgAttr.preserveAspectRatio "none"
+            , SvgAttr.xlinkHref "./assets/image/bossMonster.png"
+            ]
+            []
+        ]
 
-viewBossCover : Boss -> Svg Msg
+
+viewBossCover : Boss -> List (Svg Msg)
 viewBossCover boss =
-    Svg.circle
-        [ SvgAttr.cx (toString (Tuple.first boss.pos))
-        , SvgAttr.cy (toString (Tuple.second boss.pos))
-        , SvgAttr.r (toString (boss.boss_radius - 3))
-        , SvgAttr.fill "transparent"
-        , SvgAttr.strokeWidth "3"
-        , SvgAttr.stroke (element2ColorString boss.element)
-        ]
+    let
+        color =
+            element2ColorString boss.element
+
+        live =
+            if boss.lives >= 0 then
+                boss.lives
+
+            else if boss.lives <= -10 then
+                100
+
+            else
+                0
+    in
+    if boss.lives <= 0 && boss.lives > -10 then
         []
+
+    else
+        [ Svg.radialGradient
+            [ SvgAttr.id ("myRadial" ++ color ++ toString live) ]
+            [ stop
+                [ SvgAttr.offset "30%"
+                , SvgAttr.stopOpacity "0%"
+                ]
+                []
+            , stop
+                [ SvgAttr.offset "97%"
+                , SvgAttr.stopColor color
+                , SvgAttr.stopOpacity (toString (0.008 * toFloat live))
+                ]
+                []
+            ]
+        , Svg.circle
+            [ SvgAttr.cx (toString (Tuple.first boss.pos))
+            , SvgAttr.cy (toString (Tuple.second boss.pos))
+            , SvgAttr.r (toString (boss.boss_radius - 8))
+            , SvgAttr.fill ("url('#myRadial" ++ color ++ toString live ++ "')")
+            ]
+            []
+        ]
 
 
 
@@ -107,39 +169,41 @@ viewMonsters monster =
         []
 
 
-viewCover : Monster -> Svg Msg
+viewCover : Monster -> List (Svg msg)
 viewCover monster =
-    Svg.circle
+    let
+        color =
+            element2ColorString monster.element
+
+        live =
+            if monster.monster_lives >= 0 then
+                monster.monster_lives
+
+            else
+                0
+    in
+    [ Svg.radialGradient
+        [ SvgAttr.id ("myRadial" ++ color ++ toString live) ]
+        [ stop
+            [ SvgAttr.offset "40%"
+            , SvgAttr.stopOpacity "0%"
+            ]
+            []
+        , stop
+            [ SvgAttr.offset "95%"
+            , SvgAttr.stopColor color
+            , SvgAttr.stopOpacity (toString (0.2 * toFloat live))
+            ]
+            []
+        ]
+    , Svg.circle
         [ SvgAttr.cx (toString (Tuple.first monster.pos))
         , SvgAttr.cy (toString (Tuple.second monster.pos))
-        , SvgAttr.r (toString (monster.monster_radius - 5))
-        , SvgAttr.fill "transparent"
-        , SvgAttr.strokeWidth "5"
-        , SvgAttr.stroke (element2ColorString monster.element)
-        , SvgAttr.opacity
-            (toString
-                (case monster.monster_lives of
-                    5 ->
-                        1.0
-
-                    4 ->
-                        0.8
-
-                    3 ->
-                        0.6
-
-                    2 ->
-                        0.4
-
-                    1 ->
-                        0.2
-
-                    _ ->
-                        0.0
-                )
-            )
+        , SvgAttr.r (toString (monster.monster_radius - 8))
+        , SvgAttr.fill ("url('#myRadial" ++ color ++ toString live ++ "')")
         ]
         []
+    ]
 
 
 viewScore : Model -> Html Msg
@@ -162,10 +226,10 @@ viewLife : Model -> Int -> Svg Msg
 viewLife model x =
     -- draw cities using rectangles later
     Svg.image
-        [ SvgAttr.width "180"
-        , SvgAttr.height "100"
+        [ SvgAttr.width "180px"
+        , SvgAttr.height "100px"
         , SvgAttr.x (toString x)
-        , SvgAttr.y "1070"
+        , SvgAttr.y "1070px"
         , SvgAttr.preserveAspectRatio "xMidYMid"
         , SvgAttr.xlinkHref "./assets/image/city.png"
         ]
@@ -183,10 +247,10 @@ viewBase : Model -> Svg Msg
 viewBase model =
     Svg.rect
         [ SvgAttr.fill (getcolor (getColorful model.time))
-        , SvgAttr.width (toString pixelWidth)
-        , SvgAttr.height "30"
-        , SvgAttr.y "1170"
-        , SvgAttr.x "0"
+        , SvgAttr.width (toString pixelWidth ++ "px")
+        , SvgAttr.height "30px"
+        , SvgAttr.y "1170px"
+        , SvgAttr.x "0px"
         ]
         []
 
@@ -210,7 +274,7 @@ newGameButton =
         , style "font-size" "18px"
         , style "font-weight" "500"
         , style "height" "80px"
-        , style "left" "1250px"
+        , style "left" "986.6667px"
         , style "line-height" "60px"
         , style "outline" "none"
         , style "padding" "0"
@@ -225,15 +289,15 @@ renderStartButton : Html Msg
 renderStartButton =
     button
         [ style "opacity" "0"
-        , style "bottom" "100px" -- to be changed
-        , style "left" "490px" -- to be changed
+        , style "top" "974.4px" -- to be changed
+        , style "left" "496.8px" -- to be changed
         , style "cursor" "pointer"
         , style "display" "block"
-        , style "height" "140px"
+        , style "height" "136.8px"
         , style "line-height" "60px"
         , style "padding" "0"
         , style "position" "absolute"
-        , style "width" "220px"
+        , style "width" "218.4px"
         , onClick Start
         ]
         []
@@ -252,7 +316,7 @@ nextSceneButton =
         , style "font-size" "18px"
         , style "font-weight" "500"
         , style "height" "80px"
-        , style "left" "1250px"
+        , style "left" "986.6667px"
         , style "line-height" "60px"
         , style "outline" "none"
         , style "padding" "0"
