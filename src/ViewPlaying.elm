@@ -65,7 +65,7 @@ viewBossCover boss =
         , SvgAttr.r (toString (boss.boss_radius - 3))
         , SvgAttr.fill "transparent"
         , SvgAttr.strokeWidth "3"
-        , SvgAttr.stroke "white"
+        , SvgAttr.stroke (element2ColorString boss.element)
         ]
         []
 
@@ -112,9 +112,9 @@ viewCover monster =
     Svg.circle
         [ SvgAttr.cx (toString (Tuple.first monster.pos))
         , SvgAttr.cy (toString (Tuple.second monster.pos))
-        , SvgAttr.r (toString (monster.monster_radius - 8))
+        , SvgAttr.r (toString (monster.monster_radius - 5))
         , SvgAttr.fill "transparent"
-        , SvgAttr.strokeWidth "8"
+        , SvgAttr.strokeWidth "5"
         , SvgAttr.stroke (element2ColorString monster.element)
         , SvgAttr.opacity
             (toString
