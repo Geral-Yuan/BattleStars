@@ -182,7 +182,7 @@ generateBallList paddle ballNum elemNum =
             []
 
         _ ->
-            generateBall paddle (Random.initialSeed 1234) elemNum :: generateBallList paddle (ballNum - 1) elemNum
+            generateBallList paddle (ballNum - 1) elemNum ++ [generateBall paddle (Random.initialSeed 1234) elemNum]
 
 
 generateBall : Paddle -> Seed -> Int -> ( Ball, Seed )

@@ -54,11 +54,7 @@ update msg model =
         Skip ->
             case model.state of
                 Playing _ ->
-                    let
-                        nModel =
-                            model
-                    in
-                    ( { nModel | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
+                    ( { model | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
 
                 _ ->
                     ( model, Cmd.none )
@@ -168,40 +164,8 @@ updateScene model =
 updateClearLevel : Model -> ( Model, Cmd Msg )
 updateClearLevel model =
     case model.state of
-        ClearLevel 1 ->
-            let
-                nModel =
-                    model
-            in
-            ( { nModel | state = Scene 3 }, Task.perform GetViewport getViewport )
-
-        ClearLevel 2 ->
-            let
-                nModel =
-                    model
-            in
-            ( { nModel | state = Scene 4 }, Task.perform GetViewport getViewport )
-
-        ClearLevel 3 ->
-            let
-                nModel =
-                    model
-            in
-            ( { nModel | state = Scene 5 }, Task.perform GetViewport getViewport )
-
-        ClearLevel 4 ->
-            let
-                nModel =
-                    model
-            in
-            ( { nModel | state = Scene 6 }, Task.perform GetViewport getViewport )
-
-        ClearLevel 5 ->
-            let
-                nModel =
-                    model
-            in
-            ( { nModel | state = Scene 7 }, Task.perform GetViewport getViewport )
+        ClearLevel a ->
+            ( { model | state = Scene (a + 2) }, Task.perform GetViewport getViewport )
 
         _ ->
             ( model, Task.perform GetViewport getViewport )
@@ -755,14 +719,19 @@ checkEnd ( model, cmd ) =
         )
 
     else if (List.isEmpty model.monster_list && model.level < 5) || (model.boss.lives <= 0 && model.boss.lives > -10 && model.level == 5) then
-        ( { model
-            | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
-            , state = ClearLevel model.level
-            , scores = model.scores + model.level_scores
-            , level_scores = 0
-          }
-        , Cmd.batch [ cmd, Task.perform GetViewport getViewport ]
-        )
+        case model.state of
+            Playing _ ->
+                ( { model
+                    | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
+                    , state = ClearLevel model.level
+                    , scores = model.scores + model.level_scores
+                    , level_scores = 0
+                  }
+                , Cmd.batch [ cmd, Task.perform GetViewport getViewport ]
+                )
+
+            _ ->
+                ( model, Cmd.none )
         -- ( { nModel | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
         -- Add one more condition here to check for Victory
     else
