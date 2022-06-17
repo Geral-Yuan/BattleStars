@@ -105,14 +105,54 @@ matchScene n model =
             ]
 
         _ ->
-            [ helperScene1 "dodgerblue" model.time 1 "Zandalore has won the war and defeated the vicious elemental monsters!" ( 761.9107343, 325 ) 35
-            , helperScene1 "dodgerblue" model.time 2 "Undeniably, destroying the monsters was no easy feat. " ( 761.9107343, 400 ) 35
-            , helperScene1 "dodgerblue" model.time 3 "General, I thank you for accomplishing this key mission." ( 761.9107343, 475 ) 35
-            , helperScene1 "dodgerblue" model.time 4 "You have saved the world and justice has prevailed!" ( 761.9107343, 650 ) 35
-            , helperScene1 "white" model.time 5 "You have completed Boss Level!" ( 761.9107343, 750 ) 35
-            , helperScene1 "white" model.time 6 "Click Enter to go back to the Homepage" ( 761.9107343, 925 ) 35
+            [ helperScene1 "dodgerblue" model.time 1 "Zandalore has won the war and defeated the vicious elemental monsters!" ( 700, 325 ) 35
+            , helperScene1 "dodgerblue" model.time 2 "Undeniably, destroying the monsters was no easy feat. " ( 700, 400 ) 35
+            , helperScene1 "dodgerblue" model.time 3 "General, I thank you for accomplishing this key mission." ( 700, 475 ) 35
+            , helperScene1 "dodgerblue" model.time 4 "You have saved the world and justice has prevailed!" ( 700, 650 ) 35
+            , helperScene1 "white" model.time 5 "You have completed Boss Level!" ( 700, 750 ) 35
+            , helperScene1 "white" model.time 6 "Click Enter to go back to the Homepage" ( 700, 925 ) 35
             ]
+logoWidth : Float
+logoWidth = 523.2558
 
+logoHeight : Float
+logoHeight = 600
+
+
+determineOpct : Float -> Float
+determineOpct t =
+    if (t <= 6) then
+        (sin (t * pi / 6)) * 2 / 1.732
+    else 
+        0
+
+viewScene0 : Model -> Html Msg
+viewScene0 model =
+    let
+        ( w, h ) =
+            model.size
+        t = model.time
+        r =
+            if w / h > logoWidth / logoHeight then
+                Basics.min 1 (h / logoHeight)
+
+            else
+                Basics.min 1 (w / logoWidth)
+        
+    in
+    
+    div
+        [HtmlAttr.style "width" (String.fromFloat logoWidth ++ "px")
+        , HtmlAttr.style "height" (String.fromFloat logoHeight ++ "px")
+        , HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "left" (String.fromFloat ((w - logoWidth * r) / 2) ++ "px")
+        , HtmlAttr.style "top" (String.fromFloat ((h - logoHeight * r) / 2) ++ "px")
+        , HtmlAttr.style "opacity" ((determineOpct t) |> String.fromFloat)
+        , HtmlAttr.style "transform-origin" "0 0"
+        , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
+        , HtmlAttr.style "background" ("url('./assets/image/ace.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ ( " 523.2558px " ) ++ ( " 600px"))
+        ]
+        []
 
 viewScene1 : Model -> Html Msg
 viewScene1 model =
@@ -135,8 +175,6 @@ viewScene1 model =
         , HtmlAttr.style "top" (String.fromFloat ((h - sceneHeight * r) / 2) ++ "px")
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
-        , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ (String.fromFloat sceneHeight ++ "px") ++ (String.fromFloat sceneWidth ++ "px"))
-
         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
         --, HtmlAttr.style "margin" "10px 300px 10px"
         -- , HtmlAttr.style "overflow" "hidden"
