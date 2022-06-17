@@ -147,9 +147,10 @@ viewPlaying model =
                 ++ viewLives model
                 ++ List.map viewMonsters model.monster_list
                 ++ (List.concat (List.map viewCover model.monster_list))
-                ++ (List.concat(List.map viewBall model.ball_list))
-                ++ [ viewPaddle model, viewBoss model.boss] 
+                ++ (List.concat(List.map viewBall (List.reverse model.ball_list)))             
+                ++ viewBoss model.boss
                 ++ viewBossCover model.boss
+                ++ [ viewPaddle model]
             )
         , viewScore model
         ]
