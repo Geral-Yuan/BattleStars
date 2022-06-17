@@ -76,6 +76,26 @@ update msg model =
             else
                 ( model, Random.generate (GenerateMonster model.boss.element) randomPos )
 
+        Key Left on ->
+            let
+                paddle =
+                    model.paddle
+
+                newpaddle =
+                    { paddle | moveLeft = on }
+            in
+            ( { model | paddle = newpaddle }, Cmd.none )
+
+        Key Right on ->
+            let
+                paddle =
+                    model.paddle
+
+                newpaddle =
+                    { paddle | moveRight = on }
+            in
+            ( { model | paddle = newpaddle }, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
                 |> updatePaddle msg
@@ -189,14 +209,6 @@ updatePaddle msg ( model, cmd ) =
         Trans ->
             ( { model
                 | paddle = transPaddle model
-              }
-            , cmd
-            )
-
-        Key dir on ->
-            ( { model
-                | paddle =
-                    updatePaddleDir model.paddle dir on
               }
             , cmd
             )
@@ -729,6 +741,7 @@ checkEnd ( model, cmd ) =
                 ( model, Cmd.none )
         -- ( { nModel | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
         -- Add one more condition here to check for Victory
+
     else if model.boss.lives <= 0 && model.level == 5 then
         case model.state of
             Playing _ ->
@@ -744,6 +757,7 @@ checkEnd ( model, cmd ) =
 
             _ ->
                 ( model, Cmd.none )
+
     else
         ( model, cmd )
 
