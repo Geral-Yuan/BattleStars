@@ -206,15 +206,19 @@ updatePaddle msg ( model, cmd ) =
             , cmd
             )
 
-        Trans ->
-            ( { model
-                | paddle = transPaddle model
-              }
-            , cmd
-            )
-
         _ ->
-            ( model, cmd )
+            ( model, Cmd.none )
+
+
+
+-- Trans ->
+--     ( { model
+--         | paddle = transPaddle model
+--       }
+--     , cmd
+--     )
+-- _ ->
+--     ( model, cmd )
 
 
 shootBall : Model -> Model
@@ -731,7 +735,7 @@ checkEnd ( model, cmd ) =
                 ( { model
                     | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
                     , state = ClearLevel model.level
-                    , scores = model.scores + model.level_scores + checkBonus model
+                    , scores = model.scores + model.level_scores + checkBonus model + model.lives * 100
                     , level_scores = 0
                   }
                 , Cmd.batch [ cmd, Task.perform GetViewport getViewport ]
@@ -748,7 +752,7 @@ checkEnd ( model, cmd ) =
                 ( { model
                     | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
                     , state = ClearLevel model.level
-                    , scores = model.scores + model.level_scores + checkBonus model
+                    , scores = model.scores + model.level_scores + checkBonus model + model.lives * 100 + 1000
                     , level_scores = 0
                     , monster_list = []
                   }

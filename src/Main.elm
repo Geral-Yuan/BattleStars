@@ -32,9 +32,8 @@ key on keycode =
         37 ->
             Key Left on
 
-        38 ->
-            Trans
-
+        -- 38 ->
+        --     Trans
         39 ->
             Key Right on
 
