@@ -29,3 +29,4 @@ type Msg
     | Start
     | Skip -- For debugging
     | NextScene
+    | GenerateMonster Element (Float, Float)
