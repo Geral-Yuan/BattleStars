@@ -31,7 +31,7 @@ pixelHeight =
 
 paddleWidth : Float
 paddleWidth =
-    150
+    200
 
 
 paddleSpeed : Float

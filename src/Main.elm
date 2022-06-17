@@ -32,14 +32,13 @@ key on keycode =
         37 ->
             Key Left on
 
-        38 ->
-            Trans
-
+        -- 38 ->
+        --     Trans
         39 ->
             Key Right on
 
         13 ->
-            Enter
+            Enter on
 
         83 ->
             -- 'S' for debugging

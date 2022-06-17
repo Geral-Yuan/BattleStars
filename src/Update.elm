@@ -37,7 +37,7 @@ update msg model =
             , Cmd.none
             )
 
-        Enter ->
+        Enter False->
             case model.state of
                 Scene _ ->
                     -- let
@@ -76,6 +76,26 @@ update msg model =
             else
                 ( model, Random.generate (GenerateMonster model.boss.element) randomPos )
 
+        Key Left on ->
+            let
+                paddle =
+                    model.paddle
+
+                newpaddle =
+                    { paddle | moveLeft = on }
+            in
+            ( { model | paddle = newpaddle }, Cmd.none )
+
+        Key Right on ->
+            let
+                paddle =
+                    model.paddle
+
+                newpaddle =
+                    { paddle | moveRight = on }
+            in
+            ( { model | paddle = newpaddle }, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
                 |> updatePaddle msg
@@ -98,7 +118,12 @@ updateScene model =
                     model
             in
             ( { nModel | state = Scene 2, time = 0 }, Task.perform GetViewport getViewport )
-
+        Scene 0 ->
+            let
+                nModel =
+                    model
+            in
+            ( { nModel | state = Scene 1, time = 0 }, Task.perform GetViewport getViewport )
         Scene 1 ->
             let
                 nModel =
@@ -155,7 +180,7 @@ updateScene model =
             --         model
             -- in
             -- ( { nModel | state = Starting }, Task.perform GetViewport getViewport )
-            ( initModel, Task.perform GetViewport getViewport )
+            ( reModel, Task.perform GetViewport getViewport )
 
         _ ->
             ( model, Task.perform GetViewport getViewport )
@@ -186,23 +211,19 @@ updatePaddle msg ( model, cmd ) =
             , cmd
             )
 
-        Trans ->
-            ( { model
-                | paddle = transPaddle model
-              }
-            , cmd
-            )
-
-        Key dir on ->
-            ( { model
-                | paddle =
-                    updatePaddleDir model.paddle dir on
-              }
-            , cmd
-            )
-
         _ ->
-            ( model, cmd )
+            ( model, Cmd.none )
+
+
+
+-- Trans ->
+--     ( { model
+--         | paddle = transPaddle model
+--       }
+--     , cmd
+--     )
+-- _ ->
+--     ( model, cmd )
 
 
 shootBall : Model -> Model
@@ -651,8 +672,13 @@ updateTime msg ( model, cmd ) =
 
                 newboss =
                     { oldboss | bosstime = oldboss.bosstime + elapse / 1000 }
+                state = model.state
             in
-            ( { model | time = model.time + elapse / 1000, boss = newboss }, cmd )
+             if (state == Scene 0) && (model.time > 6.2) then
+                (updateScene model)
+            else 
+                ( { model | time = model.time + elapse / 1000, boss = newboss }, cmd )
+           
 
         _ ->
             ( model, cmd )
@@ -719,7 +745,7 @@ checkEnd ( model, cmd ) =
                 ( { model
                     | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
                     , state = ClearLevel model.level
-                    , scores = model.scores + model.level_scores + checkBonus model
+                    , scores = model.scores + model.level_scores + checkBonus model + model.lives * 100
                     , level_scores = 0
                   }
                 , Cmd.batch [ cmd, Task.perform GetViewport getViewport ]
@@ -729,13 +755,14 @@ checkEnd ( model, cmd ) =
                 ( model, Cmd.none )
         -- ( { nModel | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
         -- Add one more condition here to check for Victory
+
     else if model.boss.lives <= 0 && model.level == 5 then
         case model.state of
             Playing _ ->
                 ( { model
                     | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
                     , state = ClearLevel model.level
-                    , scores = model.scores + model.level_scores + checkBonus model
+                    , scores = model.scores + model.level_scores + checkBonus model + model.lives * 100 + 1000
                     , level_scores = 0
                     , monster_list = []
                   }
@@ -744,6 +771,7 @@ checkEnd ( model, cmd ) =
 
             _ ->
                 ( model, Cmd.none )
+
     else
         ( model, cmd )
 
