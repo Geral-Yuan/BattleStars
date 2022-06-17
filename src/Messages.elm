@@ -18,7 +18,7 @@ type Msg
     | Key_None
     | Enter
     | Shoot Bool
-    | Trans
+      -- | Trans
     | Tick Float
     | GetViewport Viewport
     | Resize Int Int
@@ -28,4 +28,4 @@ type Msg
     | Start
     | Skip -- For debugging
     | NextScene
-    | GenerateMonster Element (Float, Float)
+    | GenerateMonster Element ( Float, Float )
