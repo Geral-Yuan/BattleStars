@@ -91,7 +91,7 @@ viewStarting model =
         , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
-        , HtmlAttr.style "background" ("url('../assets/Start.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ (toString 1200 ++ "px " ++ (toString 1200 ++ "px")))
+        , HtmlAttr.style "background" ("url('./assets/image/Start.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ (toString 1200 ++ "px " ++ (toString 1200 ++ "px")))
         , HtmlAttr.style "background-attachment" "fixed"
         , HtmlAttr.style "outline" "medium white solid"
         ]
@@ -103,7 +103,7 @@ viewStarting model =
             [ Html.audio
                 [ HtmlAttr.autoplay True
                 , HtmlAttr.loop True
-                , HtmlAttr.src "../assets/Music/Start.ogg"
+                , HtmlAttr.src "./assets/audio/Start.ogg"
                 , HtmlAttr.preload "True"
                 , HtmlAttr.id "start"
                 , HtmlAttr.controls True
@@ -134,7 +134,7 @@ viewPlaying1 model =
         , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
-        , HtmlAttr.style "background" "url('../assets/background.png')"
+        , HtmlAttr.style "background" "url('./assets/image/background.png')"
         , HtmlAttr.style "outline" "medium white solid"
         ]
         [ div [ HtmlAttr.style "z-index" "99999999" ]
@@ -142,7 +142,7 @@ viewPlaying1 model =
                 [ HtmlAttr.autoplay True
                 , HtmlAttr.loop True
                 , HtmlAttr.controls True
-                , HtmlAttr.src "../assets/Music/gamePlay.ogg"
+                , HtmlAttr.src "./assets/audio/gamePlay.ogg"
                 , HtmlAttr.preload "True"
                 , HtmlAttr.id "game"
                 ]
@@ -189,7 +189,7 @@ viewClearLevel model =
         -- , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
-        , HtmlAttr.style "background" "url('../assets/background.png')"
+        , HtmlAttr.style "background" "url('./assets/image/background.png')"
         , HtmlAttr.style "outline" "medium white solid"
         ]
         [ nextSceneButton
@@ -221,7 +221,7 @@ viewGameover model =
         -- , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
-        , HtmlAttr.style "background" "url('../assets/background.png')"
+        , HtmlAttr.style "background" "url('./assets/image/background.png')"
         , HtmlAttr.style "outline" "medium white solid"
         ]
         [ newGameButton
