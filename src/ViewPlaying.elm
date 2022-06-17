@@ -226,10 +226,10 @@ viewLife : Model -> Int -> Svg Msg
 viewLife model x =
     -- draw cities using rectangles later
     Svg.image
-        [ SvgAttr.width "180"
-        , SvgAttr.height "100"
+        [ SvgAttr.width "180px"
+        , SvgAttr.height "100px"
         , SvgAttr.x (toString x)
-        , SvgAttr.y "1070"
+        , SvgAttr.y "1070px"
         , SvgAttr.preserveAspectRatio "xMidYMid"
         , SvgAttr.xlinkHref "./assets/image/city.png"
         ]
@@ -247,10 +247,10 @@ viewBase : Model -> Svg Msg
 viewBase model =
     Svg.rect
         [ SvgAttr.fill (getcolor (getColorful model.time))
-        , SvgAttr.width (toString pixelWidth)
-        , SvgAttr.height "30"
-        , SvgAttr.y "1170"
-        , SvgAttr.x "0"
+        , SvgAttr.width (toString pixelWidth ++ "px")
+        , SvgAttr.height "30px"
+        , SvgAttr.y "1170px"
+        , SvgAttr.x "0px"
         ]
         []
 
@@ -274,7 +274,7 @@ newGameButton =
         , style "font-size" "18px"
         , style "font-weight" "500"
         , style "height" "80px"
-        , style "left" "1250px"
+        , style "left" "986.6667px"
         , style "line-height" "60px"
         , style "outline" "none"
         , style "padding" "0"
@@ -289,15 +289,15 @@ renderStartButton : Html Msg
 renderStartButton =
     button
         [ style "opacity" "0"
-        , style "bottom" "100px" -- to be changed
-        , style "left" "490px" -- to be changed
+        , style "top" "974.4px" -- to be changed
+        , style "left" "496.8px" -- to be changed
         , style "cursor" "pointer"
         , style "display" "block"
-        , style "height" "140px"
+        , style "height" "136.8px"
         , style "line-height" "60px"
         , style "padding" "0"
         , style "position" "absolute"
-        , style "width" "220px"
+        , style "width" "218.4px"
         , onClick Start
         ]
         []
@@ -316,7 +316,7 @@ nextSceneButton =
         , style "font-size" "18px"
         , style "font-weight" "500"
         , style "height" "80px"
-        , style "left" "1250px"
+        , style "left" "986.6667px"
         , style "line-height" "60px"
         , style "outline" "none"
         , style "padding" "0"
