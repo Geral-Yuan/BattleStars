@@ -76,6 +76,26 @@ update msg model =
             else
                 ( model, Random.generate (GenerateMonster model.boss.element) randomPos )
 
+        Key Left on ->
+            let
+                paddle =
+                    model.paddle
+
+                newpaddle =
+                    { paddle | moveLeft = on }
+            in
+            ( { model | paddle = newpaddle }, Cmd.none )
+
+        Key Right on ->
+            let
+                paddle =
+                    model.paddle
+
+                newpaddle =
+                    { paddle | moveRight = on }
+            in
+            ( { model | paddle = newpaddle }, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
                 |> updatePaddle msg
@@ -165,7 +185,7 @@ updateClearLevel : Model -> ( Model, Cmd Msg )
 updateClearLevel model =
     case model.state of
         ClearLevel a ->
-            ( { model | state = Scene (a + 2) }, Task.perform GetViewport getViewport )
+            ( { model | state = Scene (a + 2), time = 0 }, Task.perform GetViewport getViewport )
 
         _ ->
             ( model, Task.perform GetViewport getViewport )
@@ -189,14 +209,6 @@ updatePaddle msg ( model, cmd ) =
         Trans ->
             ( { model
                 | paddle = transPaddle model
-              }
-            , cmd
-            )
-
-        Key dir on ->
-            ( { model
-                | paddle =
-                    updatePaddleDir model.paddle dir on
               }
             , cmd
             )
@@ -333,12 +345,7 @@ changeBossElement ( model, cmd ) =
             model.boss
     in
     if boss.bosstime >= 5 then
-        case model.level of
-            1 ->
-                ( { model | boss = { boss | bosstime = 0 } }, cmd )
-
-            _ ->
-                ( { model | boss = nextBossElement { boss | bosstime = 0 } model.level }, cmd )
+        ( { model | boss = nextBossElement { boss | bosstime = 0 } model.level }, cmd )
 
     else
         ( model, cmd )
@@ -356,7 +363,7 @@ nextBossElement boss level =
 nextElement : Element -> Int -> Element
 nextElement elem level =
     case level of
-        2 ->
+        1 ->
             case elem of
                 Water ->
                     Fire
@@ -383,7 +390,7 @@ generateMonster : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 generateMonster ( model, cmd ) =
     case model.boss.state of
         BossFight ->
-            if model.time > 5 * toFloat model.extraMonster then
+            if model.time > 2.5 * toFloat model.extraMonster then
                 ( model, Cmd.batch [ cmd, Random.generate (GenerateMonster model.boss.element) randomPos ] )
 
             else
@@ -468,7 +475,7 @@ checkBouncePaddle paddle ball =
             Paddle_Bounce (bx - px)
 
         else if bx <= px && bx + r >= px && by >= py && by <= py + paddle.height then
-            Paddle_Bounce (0)
+            Paddle_Bounce 0
 
         else if bx >= px + paddle.width && bx - r <= px + paddle.width && by >= py && by <= py + paddle.height then
             Paddle_Bounce (px + paddle.width)
@@ -718,7 +725,7 @@ checkEnd ( model, cmd ) =
         , cmd
         )
 
-    else if (List.isEmpty model.monster_list && model.level < 5) || (model.boss.lives <= 0 && model.boss.lives > -10 && model.level == 5) then
+    else if List.isEmpty model.monster_list && model.level < 5 then
         case model.state of
             Playing _ ->
                 ( { model
@@ -734,6 +741,22 @@ checkEnd ( model, cmd ) =
                 ( model, Cmd.none )
         -- ( { nModel | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
         -- Add one more condition here to check for Victory
+
+    else if model.boss.lives <= 0 && model.level == 5 then
+        case model.state of
+            Playing _ ->
+                ( { model
+                    | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
+                    , state = ClearLevel model.level
+                    , scores = model.scores + model.level_scores + checkBonus model
+                    , level_scores = 0
+                    , monster_list = []
+                  }
+                , Cmd.batch [ cmd, Task.perform GetViewport getViewport ]
+                )
+
+            _ ->
+                ( model, Cmd.none )
 
     else
         ( model, cmd )
