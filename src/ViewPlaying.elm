@@ -24,7 +24,7 @@ viewPaddle model =
         , SvgAttr.x (toString (Tuple.first model.paddle.pos))
         , SvgAttr.y (toString (Tuple.second model.paddle.pos))
         , SvgAttr.preserveAspectRatio "xMidYMid slice"
-        , SvgAttr.xlinkHref "../assets/ufo.png"
+        , SvgAttr.xlinkHref "./assets/image/ufo.png"
         ]
         []
 
@@ -52,7 +52,7 @@ viewBoss boss =
         , SvgAttr.x (toString (x - 500))
         , SvgAttr.y (toString (y + 700))
         , SvgAttr.preserveAspectRatio "none"
-        , SvgAttr.xlinkHref "../assets/bossMonster.png"
+        , SvgAttr.xlinkHref "./assets/image/bossMonster.png"
         ]
         []
 
@@ -65,7 +65,7 @@ viewBossCover boss =
         , SvgAttr.r (toString (boss.boss_radius - 3))
         , SvgAttr.fill "transparent"
         , SvgAttr.strokeWidth "3"
-        , SvgAttr.stroke "white"
+        , SvgAttr.stroke (element2ColorString boss.element)
         ]
         []
 
@@ -102,7 +102,7 @@ viewMonsters monster =
         , SvgAttr.x (toString (x - monsterwidth / 2))
         , SvgAttr.y (toString (y - monsterheight / 2))
         , SvgAttr.preserveAspectRatio "none"
-        , SvgAttr.xlinkHref ("../assets/" ++ element2String monster.element ++ "Monster.png")
+        , SvgAttr.xlinkHref ("./assets/image/" ++ element2String monster.element ++ "Monster.png")
         ]
         []
 
@@ -112,9 +112,9 @@ viewCover monster =
     Svg.circle
         [ SvgAttr.cx (toString (Tuple.first monster.pos))
         , SvgAttr.cy (toString (Tuple.second monster.pos))
-        , SvgAttr.r (toString (monster.monster_radius - 8))
+        , SvgAttr.r (toString (monster.monster_radius - 5))
         , SvgAttr.fill "transparent"
-        , SvgAttr.strokeWidth "8"
+        , SvgAttr.strokeWidth "5"
         , SvgAttr.stroke (element2ColorString monster.element)
         , SvgAttr.opacity
             (toString
@@ -167,7 +167,7 @@ viewLife model x =
         , SvgAttr.x (toString x)
         , SvgAttr.y "1070"
         , SvgAttr.preserveAspectRatio "xMidYMid"
-        , SvgAttr.xlinkHref "../assets/city.png"
+        , SvgAttr.xlinkHref "./assets/image/city.png"
         ]
         []
 

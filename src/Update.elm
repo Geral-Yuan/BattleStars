@@ -7,6 +7,7 @@ import Html.Attributes exposing (multiple)
 import Messages exposing (..)
 import Model exposing (..)
 import Paddle exposing (..)
+import Random
 import Scoreboard exposing (..)
 import Svg.Attributes exposing (by)
 import Task
@@ -62,14 +63,30 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        Shoot False->
+        Shoot False ->
             ( shootBall model, Cmd.none )
+
+        GenerateMonster elem ( nx, ny ) ->
+            let
+                idx =
+                    Maybe.withDefault 0 (List.maximum (List.map .idx model.monster_list))
+
+                nmonster =
+                    Monster (idx + 1) ( nx, ny ) monsterLives 10 60 elem Oscillating
+            in
+            if List.all (\monster -> (Tuple.first monster.pos - nx) ^ 2 + (Tuple.second monster.pos - ny) ^ 2 >= 130 ^ 2) model.monster_list then
+                ( { model | extraMonster = model.extraMonster + 1, monster_list = nmonster :: model.monster_list }, Cmd.none )
+
+            else
+                ( model, Random.generate (GenerateMonster model.boss.element) randomPos )
 
         _ ->
             ( model, Cmd.none )
                 |> updatePaddle msg
                 |> updateBall
                 |> moveStuff msg
+                |> changeBossElement
+                |> generateMonster
                 |> updateTime msg
                 |> checkFail
                 |> checkBallNumber
@@ -345,6 +362,78 @@ moveMonster dt model =
     monsterHitSurface { model | monster_list = nmonster_list }
 
 
+changeBossElement : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+changeBossElement ( model, cmd ) =
+    let
+        boss =
+            model.boss
+    in
+    if boss.bosstime >= 5 then
+        case model.level of
+            1 ->
+                ( { model | boss = { boss | bosstime = 0 } }, cmd )
+
+            _ ->
+                ( { model | boss = nextBossElement { boss | bosstime = 0 } model.level }, cmd )
+
+    else
+        ( model, cmd )
+
+
+nextBossElement : Boss -> Int -> Boss
+nextBossElement boss level =
+    let
+        nelem =
+            nextElement boss.element level
+    in
+    { boss | element = nelem }
+
+
+nextElement : Element -> Int -> Element
+nextElement elem level =
+    case level of
+        2 ->
+            case elem of
+                Water ->
+                    Fire
+
+                _ ->
+                    Water
+
+        _ ->
+            case elem of
+                Water ->
+                    Fire
+
+                Fire ->
+                    Grass
+
+                Grass ->
+                    Earth
+
+                _ ->
+                    Water
+
+
+generateMonster : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+generateMonster ( model, cmd ) =
+    case model.boss.state of
+        BossFight ->
+            if model.time > 5 * toFloat model.extraMonster then
+                ( model, Cmd.batch [ cmd, Random.generate (GenerateMonster model.boss.element) randomPos ] )
+
+            else
+                ( model, cmd )
+
+        _ ->
+            ( model, cmd )
+
+
+randomPos : Random.Generator ( Float, Float )
+randomPos =
+    Random.pair (Random.float 100 900) (Random.float 450 550)
+
+
 monsterHitSurface : Model -> Model
 monsterHitSurface model =
     let
@@ -545,13 +634,28 @@ checkBounceMonster ball monster =
 bounceBoss : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 bounceBoss ( model, cmd ) =
     let
-        mat_list =
-            List.map (checkBounceBoss model.boss) model.ball_list
+        oldBoss =
+            model.boss
+
+        ( hitBallList, otherBall ) =
+            List.partition (\ball -> checkBounceBoss oldBoss ball /= identityMat) model.ball_list
+
+        damage =
+            List.sum (List.map (\ball -> elementMatch ball.element oldBoss.element) hitBallList)
+
+        newBoss =
+            { oldBoss | lives = oldBoss.lives - damage }
 
         nball_list =
-            List.map2 newReflectedVelocity model.ball_list mat_list
+            List.map (\ball -> { ball | element = oldBoss.element }) hitBallList ++ otherBall
+
+        mat_list =
+            List.map (checkBounceBoss oldBoss) nball_list
+
+        nnball_list =
+            List.map2 newReflectedVelocity nball_list mat_list
     in
-    ( { model | ball_list = nball_list }
+    ( { model | ball_list = nnball_list, boss = newBoss }
     , cmd
     )
 
@@ -582,7 +686,14 @@ updateTime : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 updateTime msg ( model, cmd ) =
     case msg of
         Tick elapse ->
-            ( { model | time = model.time + elapse / 1000 }, cmd )
+            let
+                oldboss =
+                    model.boss
+
+                newboss =
+                    { oldboss | bosstime = oldboss.bosstime + elapse / 1000 }
+            in
+            ( { model | time = model.time + elapse / 1000, boss = newboss }, cmd )
 
         _ ->
             ( model, cmd )
@@ -636,14 +747,14 @@ checkBallNumber ( model, cmd ) =
 
 checkEnd : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 checkEnd ( model, cmd ) =
-    if model.lives == 0 then
+    if model.lives <= 0 then
         ( { model
             | state = Gameover model.level
           }
         , cmd
         )
 
-    else if List.isEmpty model.monster_list then
+    else if (List.isEmpty model.monster_list && model.level < 5) || (model.boss.lives <= 0 && model.boss.lives > -10 && model.level == 5) then
         ( { model
             | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
             , state = ClearLevel model.level
@@ -654,6 +765,5 @@ checkEnd ( model, cmd ) =
         )
         -- ( { nModel | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
         -- Add one more condition here to check for Victory
-
     else
         ( model, cmd )

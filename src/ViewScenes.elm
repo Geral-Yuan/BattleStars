@@ -41,7 +41,7 @@ viewScene1 model =
                 [ HtmlAttr.autoplay True
                 , HtmlAttr.loop True
                 , HtmlAttr.controls True
-                , HtmlAttr.src "../assets/Music/Start.ogg"
+                , HtmlAttr.src "./assets/audio/Start.ogg"
                 , HtmlAttr.preload "True"
                 , HtmlAttr.id "start"
                 ]
@@ -58,7 +58,7 @@ viewScene2 model =
         , HtmlAttr.style "position" "absolute"
         , HtmlAttr.style "left" (toString (1000 / 2 - 350) ++ "px")
         , HtmlAttr.style "top" "0px"
-        , HtmlAttr.style "background" ("url('../assets/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
+        , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
 
         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
         --, HtmlAttr.style "margin" "10px 300px 10px"
@@ -75,7 +75,7 @@ viewScene2 model =
                 [ HtmlAttr.autoplay True
                 , HtmlAttr.loop True
                 , HtmlAttr.controls True
-                , HtmlAttr.src "../assets/Music/Start.ogg"
+                , HtmlAttr.src "./assets/audio/Start.ogg"
                 , HtmlAttr.preload "True"
                 , HtmlAttr.id "start"
                 ]
@@ -92,7 +92,7 @@ viewScene3 model =
         , HtmlAttr.style "position" "absolute"
         , HtmlAttr.style "left" (toString (1000 / 2 - 350) ++ "px")
         , HtmlAttr.style "top" "0px"
-        , HtmlAttr.style "background" ("url('../assets/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
+        , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
 
         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
         --, HtmlAttr.style "margin" "10px 300px 10px"
@@ -109,7 +109,7 @@ viewScene3 model =
                 [ HtmlAttr.autoplay True
                 , HtmlAttr.loop True
                 , HtmlAttr.controls True
-                , HtmlAttr.src "../assets/Music/Start.ogg"
+                , HtmlAttr.src "./assets/audio/Start.ogg"
                 , HtmlAttr.preload "True"
                 , HtmlAttr.id "start"
                 ]
@@ -126,7 +126,7 @@ viewScene4 model =
         , HtmlAttr.style "position" "absolute"
         , HtmlAttr.style "left" (toString (pixelWidth / 2 - 350) ++ "px")
         , HtmlAttr.style "top" "0px"
-        , HtmlAttr.style "background" ("url('../assets/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
+        , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
 
         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
         --, HtmlAttr.style "margin" "10px 300px 10px"
@@ -143,7 +143,7 @@ viewScene4 model =
                 [ HtmlAttr.autoplay True
                 , HtmlAttr.loop True
                 , HtmlAttr.controls True
-                , HtmlAttr.src "../assets/Music/Start.ogg"
+                , HtmlAttr.src "./assets/audio/Start.ogg"
                 , HtmlAttr.preload "True"
                 , HtmlAttr.id "start"
                 ]
@@ -160,7 +160,7 @@ viewScene5 model =
         , HtmlAttr.style "position" "absolute"
         , HtmlAttr.style "left" (toString (pixelWidth / 2 - 350) ++ "px")
         , HtmlAttr.style "top" "0px"
-        , HtmlAttr.style "background" ("url('../assets/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
+        , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
 
         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
         --, HtmlAttr.style "margin" "10px 300px 10px"
@@ -177,7 +177,7 @@ viewScene5 model =
                 [ HtmlAttr.autoplay True
                 , HtmlAttr.loop True
                 , HtmlAttr.controls True
-                , HtmlAttr.src "../assets/Music/Start.ogg"
+                , HtmlAttr.src "./assets/audio/Start.ogg"
                 , HtmlAttr.preload "True"
                 , HtmlAttr.id "start"
                 ]
@@ -194,7 +194,7 @@ viewScene6 model =
         , HtmlAttr.style "position" "absolute"
         , HtmlAttr.style "left" (toString (pixelWidth / 2 - 350) ++ "px")
         , HtmlAttr.style "top" "0px"
-        , HtmlAttr.style "background" ("url('../assets/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
+        , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
 
         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
         --, HtmlAttr.style "margin" "10px 300px 10px"
@@ -211,7 +211,7 @@ viewScene6 model =
                 [ HtmlAttr.autoplay True
                 , HtmlAttr.loop True
                 , HtmlAttr.controls True
-                , HtmlAttr.src "../assets/Music/Start.ogg"
+                , HtmlAttr.src "./assets/audio/Start.ogg"
                 , HtmlAttr.preload "True"
                 , HtmlAttr.id "start"
                 ]
@@ -228,7 +228,7 @@ viewScene7 model =
         , HtmlAttr.style "position" "absolute"
         , HtmlAttr.style "left" (toString (pixelWidth / 2 - 350) ++ "px")
         , HtmlAttr.style "top" "0px"
-        , HtmlAttr.style "background" ("url('../assets/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
+        , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
 
         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
         --, HtmlAttr.style "margin" "10px 300px 10px"
@@ -245,7 +245,7 @@ viewScene7 model =
                 [ HtmlAttr.autoplay True
                 , HtmlAttr.loop True
                 , HtmlAttr.controls True
-                , HtmlAttr.src "../assets/Music/Start.ogg"
+                , HtmlAttr.src "./assets/audio/Start.ogg"
                 , HtmlAttr.preload "True"
                 , HtmlAttr.id "start"
                 ]
