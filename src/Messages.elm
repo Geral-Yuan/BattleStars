@@ -16,7 +16,7 @@ type Dir
 type Msg
     = Key Dir Bool
     | Key_None
-    | Enter
+    | Enter Bool
     | Shoot Bool
       -- | Trans
     | Tick Float

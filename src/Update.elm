@@ -37,7 +37,7 @@ update msg model =
             , Cmd.none
             )
 
-        Enter ->
+        Enter False->
             case model.state of
                 Scene _ ->
                     -- let
@@ -118,7 +118,12 @@ updateScene model =
                     model
             in
             ( { nModel | state = Scene 2, time = 0 }, Task.perform GetViewport getViewport )
-
+        Scene 0 ->
+            let
+                nModel =
+                    model
+            in
+            ( { nModel | state = Scene 1, time = 0 }, Task.perform GetViewport getViewport )
         Scene 1 ->
             let
                 nModel =
@@ -175,7 +180,7 @@ updateScene model =
             --         model
             -- in
             -- ( { nModel | state = Starting }, Task.perform GetViewport getViewport )
-            ( initModel, Task.perform GetViewport getViewport )
+            ( reModel, Task.perform GetViewport getViewport )
 
         _ ->
             ( model, Task.perform GetViewport getViewport )
@@ -667,8 +672,13 @@ updateTime msg ( model, cmd ) =
 
                 newboss =
                     { oldboss | bosstime = oldboss.bosstime + elapse / 1000 }
+                state = model.state
             in
-            ( { model | time = model.time + elapse / 1000, boss = newboss }, cmd )
+             if (state == Scene 0) && (model.time > 6.2) then
+                (updateScene model)
+            else 
+                ( { model | time = model.time + elapse / 1000, boss = newboss }, cmd )
+           
 
         _ ->
             ( model, cmd )

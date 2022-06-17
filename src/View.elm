@@ -29,7 +29,8 @@ view model =
 
                 Playing _ ->
                     viewPlaying model
-
+                Scene 0 ->
+                    viewScene0 model
                 Scene 1 ->
                     viewScene1 model
 

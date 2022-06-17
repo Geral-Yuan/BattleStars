@@ -38,7 +38,7 @@ key on keycode =
             Key Right on
 
         13 ->
-            Enter
+            Enter on
 
         83 ->
             -- 'S' for debugging
