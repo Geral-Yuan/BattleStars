@@ -28,7 +28,7 @@ view model =
                     viewStarting model
 
                 Playing _ ->
-                    viewPlaying1 model
+                    viewPlaying model
 
                 Scene 1 ->
                     viewScene1 model
@@ -36,21 +36,8 @@ view model =
                 Scene 2 ->
                     viewScene2 model
 
-                Scene 3 ->
-                    viewScene3 model
-
-                Scene 4 ->
-                    viewScene4 model
-
-                Scene 5 ->
-                    viewScene5 model
-
-                Scene 6 ->
-                    viewScene6 model
-
-                Scene _ ->
-                    -- Last Scene to congratulate players
-                    viewScene7 model
+                Scene a ->
+                    viewOtherScene a model
 
                 ClearLevel _ ->
                     viewClearLevel model
@@ -113,8 +100,8 @@ viewStarting model =
         ]
 
 
-viewPlaying1 : Model -> Html Msg
-viewPlaying1 model =
+viewPlaying : Model -> Html Msg
+viewPlaying model =
     let
         ( w, h ) =
             model.size
@@ -159,9 +146,11 @@ viewPlaying1 model =
              ]
                 ++ viewLives model
                 ++ List.map viewMonsters model.monster_list
-                ++ List.map viewCover model.monster_list
-                ++ List.map viewBall model.ball_list
-                ++ [ viewPaddle model, viewBoss model.boss, viewBossCover model.boss ]
+                ++ (List.concat (List.map viewCover model.monster_list))
+                ++ (List.concat(List.map viewBall (List.reverse model.ball_list)))             
+                ++ viewBoss model.boss
+                ++ viewBossCover model.boss
+                ++ [ viewPaddle model]
             )
         , viewScore model
         ]

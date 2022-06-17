@@ -31,8 +31,6 @@ newBounceVelocity ball bounce =
             Tuple.first (toPolar ( ball.v_x, ball.v_y ))
     in
     case bounce of
-        Back ->
-            { ball | v_y = -ball.v_y, v_x = -ball.v_x }
 
         Horizontal ->
             { ball | v_y = -ball.v_y }

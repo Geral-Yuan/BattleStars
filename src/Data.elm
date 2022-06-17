@@ -42,7 +42,6 @@ paddleSpeed =
 type Bounce
     = Horizontal
     | Vertical
-    | Back
     | Paddle_Bounce Float
     | None
 
@@ -70,6 +69,7 @@ type Boss_state
     = BossStopped
     | BossSlow
     | BossFast
+    | BossFight
 
 
 type alias Monster =
@@ -88,6 +88,8 @@ type alias Boss =
     , boss_radius : Float
     , lives : Int -- Except in the Boss level, the lives of Boss will be initialized as -1 for infinity
     , state : Boss_state
+    , element : Element
+    , bosstime : Float
     }
 
 
@@ -206,4 +208,4 @@ element2ColorString elem =
             "green"
 
         Earth ->
-            "brown"
+            "gold"
