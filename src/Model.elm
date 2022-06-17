@@ -243,7 +243,7 @@ initBoss level =
 
 initpaddle : Paddle
 initpaddle =
-    { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 1000, move_range = pixelWidth }
+    { pos = ( 500, 1000 ), moveLeft = False, moveRight = False, latestDir = Left, height = 40, width = paddleWidth, speed = 1000, move_range = pixelWidth }
 
 
 

@@ -7,7 +7,6 @@ import Data exposing (Element)
 type Dir
     = Left
     | Right
-    | Still --Still added because we are updating with Tick
 
 
 
