@@ -16,35 +16,52 @@ import Svg exposing (Svg)
 import Svg.Attributes as SvgAttr
 import ViewPlaying exposing (..)
 
-
+sceneWidth : Float
+sceneWidth = 2135.231317 
+sceneHeight : Float
+sceneHeight = 1200
 viewOtherScene : Int -> Model -> Html Msg
 viewOtherScene n model =
     let
+        ( w, h ) =
+            model.size
+
+        r =
+            if w / h > sceneWidth / sceneHeight then
+                Basics.min 1 (h / sceneHeight)
+
+            else
+                Basics.min 1 (w / sceneWidth)
         htmlMsg =
             matchScene n model
     in
-    div
-        [ HtmlAttr.style "width" (toString pixelWidth ++ "px")
-        , HtmlAttr.style "height" (toString pixelHeight ++ "px")
+    
+     div
+        [ HtmlAttr.style "width" (String.fromFloat sceneWidth ++ "px")
+        , HtmlAttr.style "height" (String.fromFloat sceneHeight ++ "px")
         , HtmlAttr.style "position" "absolute"
-        , HtmlAttr.style "left" (toString (1000 / 2 - 350) ++ "px")
-        , HtmlAttr.style "top" "0px"
-        , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 150px " ++ " 0px / " ++ "1050px " ++ " 550px")
+        , HtmlAttr.style "left" (String.fromFloat ((w - sceneWidth * r) / 2) ++ "px")
+        , HtmlAttr.style "top" (String.fromFloat ((h - sceneHeight * r) / 2) ++ "px")
+        , HtmlAttr.style "transform-origin" "0 0"
+        , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
+        , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "2135.231317px " ++ " 1200px")
         ]
         htmlMsg
-
+getLinePos : Int -> ( Float, Float )
+getLinePos line =
+    ( 761.9107343, toFloat (250 + 75 * line))
 
 matchScene : Int -> Model -> List (Html Msg)
 matchScene n model =
     case n of
         3 ->
-            [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 350, 150 ) 22
-            , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 350, 180 ) 22
-            , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 350, 260 ) 22
-            , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 350, 340 ) 22
-            , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 350, 420 ) 22
-            , helperScene1 "white" model.time 6 "Click S during the game to skip the level" ( 350, 450 ) 22
-            , helperScene1 "white" model.time 6 "Click Enter to continue" ( 350, 450 ) 22
+            [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 761.9107343, 325 ) 35
+            , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 761.9107343, 400 ) 35
+            , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 761.9107343, 475 ) 35
+            , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 761.9107343, 650 ) 35
+            , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 761.9107343, 750 ) 35
+            , helperScene1 "white" model.time 6 "Click S during the game to skip the level" ( 761.9107343, 850 ) 35
+            , helperScene1 "white" model.time 7 "Click Enter to continue" ( 761.9107343, 925 ) 35
             , div [ HtmlAttr.style "z-index" "99999999" ]
                 [ Html.audio
                     [ HtmlAttr.autoplay True
@@ -59,13 +76,13 @@ matchScene n model =
             ]
 
         4 ->
-            [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 350, 150 ) 22
-            , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 350, 180 ) 22
-            , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 350, 260 ) 22
-            , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 350, 340 ) 22
-            , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 350, 420 ) 22
-            , helperScene1 "white" model.time 6 "Click S during the game to skip the level" ( 350, 450 ) 22
-            , helperScene1 "white" model.time 6 "Click Enter to continue" ( 350, 450 ) 22
+            [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 761.9107343, 325  ) 35 
+            , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 761.9107343, 180 ) 35 
+            , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 761.9107343, 260 ) 35 
+            , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 761.9107343, 340 ) 35 
+            , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 761.9107343, 420 ) 35 
+            , helperScene1 "white" model.time 6 "Click S during the game to skip the level" ( 761.9107343, 450 ) 35 
+            , helperScene1 "white" model.time 6 "Click Enter to continue" ( 761.9107343, 450 ) 35 
             , div [ HtmlAttr.style "z-index" "99999999" ]
                 [ Html.audio
                     [ HtmlAttr.autoplay True
@@ -80,12 +97,12 @@ matchScene n model =
             ]
 
         5 ->
-            [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 350, 150 ) 22
-            , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 350, 180 ) 22
-            , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 350, 260 ) 22
-            , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 350, 340 ) 22
-            , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 350, 420 ) 22
-            , helperScene1 "white" model.time 6 "Click Enter to continue" ( 350, 450 ) 22
+            [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 761.9107343, 320 ) 35 
+            , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 761.9107343, 180 ) 35 
+            , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 761.9107343, 260 ) 35 
+            , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 761.9107343, 340 ) 35 
+            , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 761.9107343, 420 ) 35 
+            , helperScene1 "white" model.time 6 "Click Enter to continue" ( 761.9107343, 450 ) 35 
             , div [ HtmlAttr.style "z-index" "99999999" ]
                 [ Html.audio
                     [ HtmlAttr.autoplay True
@@ -100,12 +117,12 @@ matchScene n model =
             ]
 
         6 ->
-            [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 350, 150 ) 22
-            , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 350, 180 ) 22
-            , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 350, 260 ) 22
-            , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 350, 340 ) 22
-            , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 350, 420 ) 22
-            , helperScene1 "white" model.time 6 "Click Enter to continue" ( 350, 450 ) 22
+            [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 761.9107343, 325  ) 35 
+            , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 761.9107343, 180 ) 35 
+            , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 761.9107343, 260 ) 35 
+            , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 761.9107343, 340 ) 35 
+            , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 761.9107343, 420 ) 35 
+            , helperScene1 "white" model.time 6 "Click Enter to continue" ( 761.9107343, 450 ) 35 
             , div [ HtmlAttr.style "z-index" "99999999" ]
                 [ Html.audio
                     [ HtmlAttr.autoplay True
@@ -120,12 +137,12 @@ matchScene n model =
             ]
 
         _ ->
-            [ helperScene1 "dodgerblue" model.time 1 "Zandalore has won the war and defeated the vicious Aliens!" ( 350, 150 ) 22
-            , helperScene1 "dodgerblue" model.time 2 "Undeniably, destroying the aliens was no easy feat. " ( 350, 180 ) 22
-            , helperScene1 "dodgerblue" model.time 3 "General, I thank you for accomplishing this key mission." ( 350, 260 ) 22
-            , helperScene1 "dodgerblue" model.time 4 "You have saved the world and justice has prevailed!" ( 350, 340 ) 22
-            , helperScene1 "white" model.time 5 "You have completed Boss Level" ( 350, 420 ) 22
-            , helperScene1 "white" model.time 6 "Click Enter to go back to the Homepage" ( 350, 450 ) 22
+            [ helperScene1 "dodgerblue" model.time 1 "Zandalore has won the war and defeated the vicious Aliens!" ( 761.9107343, 325  ) 35 
+            , helperScene1 "dodgerblue" model.time 2 "Undeniably, destroying the aliens was no easy feat. " ( 761.9107343, 180 ) 35 
+            , helperScene1 "dodgerblue" model.time 3 "General, I thank you for accomplishing this key mission." ( 761.9107343, 260 ) 35 
+            , helperScene1 "dodgerblue" model.time 4 "You have saved the world and justice has prevailed!" ( 761.9107343, 340 ) 35 
+            , helperScene1 "white" model.time 5 "You have completed Boss Level" ( 761.9107343, 420 ) 35 
+            , helperScene1 "white" model.time 6 "Click Enter to go back to the Homepage" ( 761.9107343, 450 ) 35 
             , div [ HtmlAttr.style "z-index" "99999999" ]
                 [ Html.audio
                     [ HtmlAttr.autoplay True
@@ -142,12 +159,29 @@ matchScene n model =
 
 viewScene1 : Model -> Html Msg
 viewScene1 model =
+    let
+        ( w, h ) =
+            model.size
+
+        r =
+            if w / h > sceneWidth / sceneHeight then
+                Basics.min 1 (h / sceneHeight)
+
+            else
+                Basics.min 1 (w / sceneWidth)
+        
+    in
+    
     div
-        [ HtmlAttr.style "width" (toString pixelWidth ++ "px")
-        , HtmlAttr.style "height" (toString pixelHeight ++ "px")
+        [HtmlAttr.style "width" (String.fromFloat sceneWidth ++ "px")
+        , HtmlAttr.style "height" (String.fromFloat sceneHeight ++ "px")
         , HtmlAttr.style "position" "absolute"
-        , HtmlAttr.style "left" (toString (pixelWidth / 2 - 350) ++ "px")
-        , HtmlAttr.style "top" "0px"
+        , HtmlAttr.style "left" (String.fromFloat ((w - sceneWidth * r) / 2) ++ "px")
+        , HtmlAttr.style "top" (String.fromFloat ((h - sceneHeight * r) / 2) ++ "px")
+        , HtmlAttr.style "transform-origin" "0 0"
+        , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
+        , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ (String.fromFloat sceneHeight ++ "px") ++ (String.fromFloat sceneWidth ++ "px"))
+        
 
         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
         --, HtmlAttr.style "margin" "10px 300px 10px"
@@ -172,27 +206,37 @@ viewScene1 model =
             ]
         ]
 
-
 viewScene2 : Model -> Html Msg
 viewScene2 model =
-    div
-        [ HtmlAttr.style "width" (toString pixelWidth ++ "px")
-        , HtmlAttr.style "height" (toString pixelHeight ++ "px")
-        , HtmlAttr.style "position" "absolute"
-        , HtmlAttr.style "left" (toString (1000 / 2 - 350) ++ "px")
-        , HtmlAttr.style "top" "0px"
-        , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
+    let
+        ( w, h ) =
+            model.size
 
-        -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
-        --, HtmlAttr.style "margin" "10px 300px 10px"
-        -- , HtmlAttr.style "overflow" "hidden"
+        r =
+            if w / h > sceneWidth / sceneHeight then
+                Basics.min 1 (h / sceneHeight)
+
+            else
+                Basics.min 1 (w / sceneWidth)
+        
+    in
+    div
+        [ HtmlAttr.style "width" (String.fromFloat sceneWidth ++ "px")
+        , HtmlAttr.style "height" (String.fromFloat sceneHeight ++ "px")
+        , HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "left" (String.fromFloat ((w - sceneWidth * r) / 2) ++ "px")
+        , HtmlAttr.style "top" (String.fromFloat ((h - sceneHeight * r) / 2) ++ "px")
+        , HtmlAttr.style "transform-origin" "0 0"
+        , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
+        , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "2135.231317px " ++ " 1200px")
+
         ]
-        [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 350, 150 ) 22
-        , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 350, 180 ) 22
-        , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 350, 260 ) 22
-        , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 350, 340 ) 22
-        , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 350, 420 ) 22
-        , helperScene1 "white" model.time 6 "Click Enter to continue" ( 350, 450 ) 22
+        [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 761.9107343, 325  ) 35 
+        , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 761.9107343, 180 ) 35 
+        , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 761.9107343, 260 ) 35 
+        , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 761.9107343, 340 ) 35 
+        , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 761.9107343, 420 ) 35 
+        , helperScene1 "white" model.time 6 "Click Enter to continue" ( 761.9107343, 450 ) 35 
         , div [ HtmlAttr.style "z-index" "99999999" ]
             [ Html.audio
                 [ HtmlAttr.autoplay True
@@ -205,7 +249,6 @@ viewScene2 model =
                 []
             ]
         ]
-
 
 helperScene1 : String -> Float -> Float -> String -> ( Float, Float ) -> Int -> Html Msg
 helperScene1 color modeltime time string ( x, y ) font =
@@ -220,160 +263,3 @@ helperScene1 color modeltime time string ( x, y ) font =
         ]
         [ text string ]
 
-
-
--- viewScene3 : Model -> Html Msg
--- viewScene3 model =
---     div
---         [ HtmlAttr.style "width" (toString pixelWidth ++ "px")
---         , HtmlAttr.style "height" (toString pixelHeight ++ "px")
---         , HtmlAttr.style "position" "absolute"
---         , HtmlAttr.style "left" (toString (1000 / 2 - 350) ++ "px")
---         , HtmlAttr.style "top" "0px"
---         , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 150px " ++ " 0px / " ++ "1050px " ++ " 550px")
---         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
---         --, HtmlAttr.style "margin" "10px 300px 10px"
---         -- , HtmlAttr.style "overflow" "hidden"
---         ]
---         [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 350, 150 ) 22
---         , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 350, 180 ) 22
---         , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 350, 260 ) 22
---         , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 350, 340 ) 22
---         , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 350, 420 ) 22
---         , helperScene1 "white" model.time 6 "Click Enter to continue" ( 350, 450 ) 22
---         , div [ HtmlAttr.style "z-index" "99999999" ]
---             [ Html.audio
---                 [ HtmlAttr.autoplay True
---                 , HtmlAttr.loop True
---                 , HtmlAttr.controls True
---                 , HtmlAttr.src "./assets/audio/Start.ogg"
---                 , HtmlAttr.preload "True"
---                 , HtmlAttr.id "start"
---                 ]
---                 []
---             ]
---         ]
--- viewScene4 : Model -> Html Msg
--- viewScene4 model =
---     div
---         [ HtmlAttr.style "width" (toString pixelWidth ++ "px")
---         , HtmlAttr.style "height" (toString pixelHeight ++ "px")
---         , HtmlAttr.style "position" "absolute"
---         , HtmlAttr.style "left" (toString (pixelWidth / 2 - 350) ++ "px")
---         , HtmlAttr.style "top" "0px"
---         , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 150px " ++ " 0px / " ++ "1050px " ++ " 550px")
---         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
---         --, HtmlAttr.style "margin" "10px 300px 10px"
---         -- , HtmlAttr.style "overflow" "hidden"
---         ]
---         [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 350, 150 ) 22
---         , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 350, 180 ) 22
---         , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 350, 260 ) 22
---         , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 350, 340 ) 22
---         , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 350, 420 ) 22
---         , helperScene1 "white" model.time 6 "Click Enter to continue" ( 350, 450 ) 22
---         , div [ HtmlAttr.style "z-index" "99999999" ]
---             [ Html.audio
---                 [ HtmlAttr.autoplay True
---                 , HtmlAttr.loop True
---                 , HtmlAttr.controls True
---                 , HtmlAttr.src "./assets/audio/Start.ogg"
---                 , HtmlAttr.preload "True"
---                 , HtmlAttr.id "start"
---                 ]
---                 []
---             ]
---         ]
--- viewScene5 : Model -> Html Msg
--- viewScene5 model =
---     div
---         [ HtmlAttr.style "width" (toString pixelWidth ++ "px")
---         , HtmlAttr.style "height" (toString pixelHeight ++ "px")
---         , HtmlAttr.style "position" "absolute"
---         , HtmlAttr.style "left" (toString (pixelWidth / 2 - 350) ++ "px")
---         , HtmlAttr.style "top" "0px"
---         , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
---         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
---         --, HtmlAttr.style "margin" "10px 300px 10px"
---         -- , HtmlAttr.style "overflow" "hidden"
---         ]
---         [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 350, 150 ) 22
---         , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 350, 180 ) 22
---         , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 350, 260 ) 22
---         , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 350, 340 ) 22
---         , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 350, 420 ) 22
---         , helperScene1 "white" model.time 6 "Click Enter to continue" ( 350, 450 ) 22
---         , div [ HtmlAttr.style "z-index" "99999999" ]
---             [ Html.audio
---                 [ HtmlAttr.autoplay True
---                 , HtmlAttr.loop True
---                 , HtmlAttr.controls True
---                 , HtmlAttr.src "./assets/audio/Start.ogg"
---                 , HtmlAttr.preload "True"
---                 , HtmlAttr.id "start"
---                 ]
---                 []
---             ]
---         ]
--- viewScene6 : Model -> Html Msg
--- viewScene6 model =
---     div
---         [ HtmlAttr.style "width" (toString pixelWidth ++ "px")
---         , HtmlAttr.style "height" (toString pixelHeight ++ "px")
---         , HtmlAttr.style "position" "absolute"
---         , HtmlAttr.style "left" (toString (pixelWidth / 2 - 350) ++ "px")
---         , HtmlAttr.style "top" "0px"
---         , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
---         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
---         --, HtmlAttr.style "margin" "10px 300px 10px"
---         -- , HtmlAttr.style "overflow" "hidden"
---         ]
---         [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 350, 150 ) 22
---         , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 350, 180 ) 22
---         , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 350, 260 ) 22
---         , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 350, 340 ) 22
---         , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 350, 420 ) 22
---         , helperScene1 "white" model.time 6 "Click Enter to continue" ( 350, 450 ) 22
---         , div [ HtmlAttr.style "z-index" "99999999" ]
---             [ Html.audio
---                 [ HtmlAttr.autoplay True
---                 , HtmlAttr.loop True
---                 , HtmlAttr.controls True
---                 , HtmlAttr.src "./assets/audio/Start.ogg"
---                 , HtmlAttr.preload "True"
---                 , HtmlAttr.id "start"
---                 ]
---                 []
---             ]
---         ]
--- viewScene7 : Model -> Html Msg
--- viewScene7 model =
---     div
---         [ HtmlAttr.style "width" (toString pixelWidth ++ "px")
---         , HtmlAttr.style "height" (toString pixelHeight ++ "px")
---         , HtmlAttr.style "position" "absolute"
---         , HtmlAttr.style "left" (toString (pixelWidth / 2 - 350) ++ "px")
---         , HtmlAttr.style "top" "0px"
---         , HtmlAttr.style "background" ("url('./assets/image/scene.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ "1050px " ++ " 550px")
---         -- , HtmlAttr.style "margin" (toString (Tuple.second model.size / 2 - (600 * model.new_size) / 2) ++ "px " ++ toString (Tuple.first model.size / 2 - (700 * model.new_size) / 2) ++ "px")
---         --, HtmlAttr.style "margin" "10px 300px 10px"
---         -- , HtmlAttr.style "overflow" "hidden"
---         ]
---         [ helperScene1 "white" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 350, 150 ) 22
---         , helperScene1 "white" model.time 2 "has been living in peace for the past few centuries." ( 350, 180 ) 22
---         , helperScene1 "white" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 350, 260 ) 22
---         , helperScene1 "white" model.time 4 "to steal the secret to immortality." ( 350, 340 ) 22
---         , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 350, 420 ) 22
---         , helperScene1 "white" model.time 6 "Click Enter to continue" ( 350, 450 ) 22
---         , div [ HtmlAttr.style "z-index" "99999999" ]
---             [ Html.audio
---                 [ HtmlAttr.autoplay True
---                 , HtmlAttr.loop True
---                 , HtmlAttr.controls True
---                 , HtmlAttr.src "./assets/audio/Start.ogg"
---                 , HtmlAttr.preload "True"
---                 , HtmlAttr.id "start"
---                 ]
---                 []
---             ]
---         ]
