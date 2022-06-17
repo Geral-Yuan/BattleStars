@@ -42,7 +42,6 @@ paddleSpeed =
 type Bounce
     = Horizontal
     | Vertical
-    | Back
     | Paddle_Bounce Float
     | None
 
@@ -209,4 +208,4 @@ element2ColorString elem =
             "green"
 
         Earth ->
-            "yellow"
+            "gold"

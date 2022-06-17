@@ -155,7 +155,7 @@ updateScene model =
             --         model
             -- in
             -- ( { nModel | state = Starting }, Task.perform GetViewport getViewport )
-            ( initLevel 6 model, Task.perform GetViewport getViewport )
+            ( initModel, Task.perform GetViewport getViewport )
 
         _ ->
             ( model, Task.perform GetViewport getViewport )
@@ -468,10 +468,10 @@ checkBouncePaddle paddle ball =
             Paddle_Bounce (bx - px)
 
         else if bx <= px && bx + r >= px && by >= py && by <= py + paddle.height then
-            Back
+            Paddle_Bounce (0)
 
         else if bx >= px + paddle.width && bx - r <= px + paddle.width && by >= py && by <= py + paddle.height then
-            Back
+            Paddle_Bounce (px + paddle.width)
 
         else
             None
@@ -724,7 +724,7 @@ checkEnd ( model, cmd ) =
                 ( { model
                     | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
                     , state = ClearLevel model.level
-                    , scores = model.scores + model.level_scores
+                    , scores = model.scores + model.level_scores + checkBonus model
                     , level_scores = 0
                   }
                 , Cmd.batch [ cmd, Task.perform GetViewport getViewport ]
@@ -734,5 +734,29 @@ checkEnd ( model, cmd ) =
                 ( model, Cmd.none )
         -- ( { nModel | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
         -- Add one more condition here to check for Victory
+
     else
         ( model, cmd )
+
+
+checkBonus : Model -> Int
+checkBonus model =
+    -- Bonus will be awarded for more lives
+    case model.lives of
+        5 ->
+            50
+
+        4 ->
+            40
+
+        3 ->
+            30
+
+        2 ->
+            20
+
+        1 ->
+            10
+
+        _ ->
+            0
