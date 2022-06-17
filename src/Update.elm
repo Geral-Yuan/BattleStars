@@ -468,10 +468,10 @@ checkBouncePaddle paddle ball =
             Paddle_Bounce (bx - px)
 
         else if bx <= px && bx + r >= px && by >= py && by <= py + paddle.height then
-            Back
+            Paddle_Bounce (0)
 
         else if bx >= px + paddle.width && bx - r <= px + paddle.width && by >= py && by <= py + paddle.height then
-            Back
+            Paddle_Bounce (px + paddle.width)
 
         else
             None
