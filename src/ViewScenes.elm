@@ -52,65 +52,114 @@ viewOtherScene n model =
 
 matchScene : Int -> Model -> List (Html Msg)
 matchScene n model =
+    let
+        x =
+            761.9107343
+
+        x_ =
+            700
+    in
     case n of
         2 ->
-            [ helperScene1 "white" model.time 1 "Gameplay: Water is more effective against fire" ( 761.9107343, 325 ) 35
-            , helperScene1 "white" model.time 2 "There are 2 different monsters: fire and water monster." ( 761.9107343, 450 ) 35
-            , helperScene1 "white" model.time 3 "Boss elemental monster functions as a border here." ( 761.9107343, 525 ) 35
-            , helperScene1 "white" model.time 4 "Bullet changes element after coming in contact with monster." ( 761.9107343, 600 ) 35
-            , helperScene1 "white" model.time 5 "Water bullets deal more damage against fire monsters." ( 761.9107343, 675 ) 35
-            , helperScene1 "white" model.time 6 "All the best General! Destroy the evil elemental monsters!" ( 761.9107343, 750 ) 35
-            , helperScene1 "white" model.time 7 "Click S during the game to skip the level and SPACE to fire" ( 761.9107343, 850 ) 35
-            , helperScene1 "white" model.time 7 "Click Enter to continue" ( 761.9107343, 925 ) 35
+            [ ( ( x, 325 ), 35 )
+                |> helperScene1 "white" model.time 1 "Gameplay: Water is more effective against fire"
+            , ( ( x, 450 ), 35 )
+                |> helperScene1 "white" model.time 2 "There are 2 different monsters: fire and water monster."
+            , ( ( x, 525 ), 35 )
+                |> helperScene1 "white" model.time 3 "Boss elemental monster functions as a border here."
+            , ( ( x, 600 ), 35 )
+                |> helperScene1 "white" model.time 4 "Bullet changes element after coming in contact with monster."
+            , ( ( x, 675 ), 35 )
+                |> helperScene1 "white" model.time 5 "Water bullets deal more damage against fire monsters."
+            , ( ( x, 750 ), 35 )
+                |> helperScene1 "white" model.time 6 "All the best General! Destroy the evil elemental monsters!"
+            , ( ( x, 850 ), 35 )
+                |> helperScene1 "white" model.time 7 "Click S during the game to skip the level and SPACE to fire"
+            , ( ( x, 925 ), 35 )
+                |> helperScene1 "white" model.time 7 "Click Enter to continue"
             ]
 
         3 ->
-            [ helperScene1 "white" model.time 1 "General!! The monsters have penetrated into our defences!" ( 761.9107343, 325 ) 35
-            , helperScene1 "white" model.time 2 "Gameplay: Boss monster changes element randomly" ( 761.9107343, 400 ) 35
-            , helperScene1 "white" model.time 3 "Monsters are moving down" ( 761.9107343, 475 ) 35
-            , helperScene1 "white" model.time 4 "2 lives will be deducted when monsters are too low." ( 761.9107343, 550 ) 35
-            , helperScene1 "white" model.time 5 "See you on the other side General!" ( 761.9107343, 625 ) 35
-            , helperScene1 "white" model.time 6 "Click S during the game to skip the level and SPACE to fire" ( 761.9107343, 850 ) 35
-            , helperScene1 "white" model.time 7 "Click Enter to continue" ( 761.9107343, 925 ) 35
+            [ ( ( x, 325 ), 35 )
+                |> helperScene1 "white" model.time 1 "General!! The monsters have penetrated into our defences!"
+            , ( ( x, 400 ), 35 )
+                |> helperScene1 "white" model.time 2 "Gameplay: Boss monster changes element randomly"
+            , ( ( x, 475 ), 35 )
+                |> helperScene1 "white" model.time 3 "Monsters are moving down"
+            , ( ( x, 550 ), 35 )
+                |> helperScene1 "white" model.time 4 "2 lives will be deducted when monsters are too low."
+            , ( ( x, 625 ), 35 )
+                |> helperScene1 "white" model.time 5 "See you on the other side General!"
+            , ( ( x, 850 ), 35 )
+                |> helperScene1 "white" model.time 6 "Click S during the game to skip the level and SPACE to fire"
+            , ( ( x, 925 ), 35 )
+                |> helperScene1 "white" model.time 7 "Click Enter to continue"
             ]
 
         4 ->
-            [ helperScene1 "white" model.time 1 "General!! There is another wave of monsters attacking!" ( 761.9107343, 325 ) 35
-            , helperScene1 "white" model.time 2 "Gameplay: Water>Fire>Nature>Earth>Water" ( 761.9107343, 400 ) 35
-            , helperScene1 "white" model.time 3 "Monsters will move down even faster" ( 761.9107343, 475 ) 35
-            , helperScene1 "white" model.time 4 "Higher scores awarded for more effective kills" ( 761.9107343, 650 ) 35
-            , helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!" ( 761.9107343, 750 ) 35
-            , helperScene1 "white" model.time 6 "Click S during the game to skip the level and SPACE to fire" ( 761.9107343, 850 ) 35
-            , helperScene1 "white" model.time 7 "Click Enter to continue" ( 761.9107343, 925 ) 35
+            [ ( ( x, 325 ), 35 )
+                |> helperScene1 "white" model.time 1 "General!! There is another wave of monsters attacking!"
+            , ( ( x, 400 ), 35 )
+                |> helperScene1 "white" model.time 2 "Gameplay: Water>Fire>Nature>Earth>Water"
+            , ( ( x, 475 ), 35 )
+                |> helperScene1 "white" model.time 3 "Monsters will move down even faster"
+            , ( ( x, 650 ), 35 )
+                |> helperScene1 "white" model.time 4 "Higher scores awarded for more effective kills"
+            , ( ( x, 750 ), 35 )
+                |> helperScene1 "white" model.time 5 "General, you are our only hope to save Zandalore!"
+            , ( ( x, 850 ), 35 )
+                |> helperScene1 "white" model.time 6 "Click S during the game to skip the level and SPACE to fire"
+            , ( ( x, 925 ), 35 )
+                |> helperScene1 "white" model.time 7 "Click Enter to continue"
             ]
 
         5 ->
-            [ helperScene1 "white" model.time 1 "General!! The monsters seem like they are retreating!" ( 761.9107343, 325 ) 35
-            , helperScene1 "white" model.time 2 "Gameplay: 2 balls present" ( 761.9107343, 400 ) 35
-            , helperScene1 "white" model.time 3 "Choose when you want to launch ball with SPACE" ( 761.9107343, 475 ) 35
-            , helperScene1 "white" model.time 4 "Monsters will be moving around" ( 761.9107343, 650 ) 35
-            , helperScene1 "white" model.time 5 "Do not be complacent, the war isn't over yet!" ( 761.9107343, 750 ) 35
-            , helperScene1 "white" model.time 6 "Click S during the game to skip the level and SPACE to fire" ( 761.9107343, 850 ) 35
-            , helperScene1 "white" model.time 7 "Click Enter to continue" ( 761.9107343, 925 ) 35
+            [ ( ( x, 325 ), 35 )
+                |> helperScene1 "white" model.time 1 "General!! The monsters seem like they are retreating!"
+            , ( ( x, 400 ), 35 )
+                |> helperScene1 "white" model.time 2 "Gameplay: 2 balls present"
+            , ( ( x, 475 ), 35 )
+                |> helperScene1 "white" model.time 3 "Choose when you want to launch ball with SPACE"
+            , ( ( x, 650 ), 35 )
+                |> helperScene1 "white" model.time 4 "Monsters will be moving around"
+            , ( ( x, 750 ), 35 )
+                |> helperScene1 "white" model.time 5 "Do not be complacent, the war isn't over yet!"
+            , ( ( x, 850 ), 35 )
+                |> helperScene1 "white" model.time 6 "Click S during the game to skip the level and SPACE to fire"
+            , ( ( x, 925 ), 35 )
+                |> helperScene1 "white" model.time 7 "Click Enter to continue"
             ]
 
         6 ->
-            [ helperScene1 "white" model.time 1 "Bad news!! The elemental boss monster is attacking us!" ( 761.9107343, 325 ) 35
-            , helperScene1 "white" model.time 2 "Gameplay: defeat the boss!" ( 761.9107343, 400 ) 35
-            , helperScene1 "white" model.time 3 "Boss will spawn smaller elemental monsters" ( 761.9107343, 475 ) 35
-            , helperScene1 "white" model.time 4 "Remember, strategy is key to winning." ( 761.9107343, 650 ) 35
-            , helperScene1 "white" model.time 5 "General, this is your last chance to exterminate them!" ( 761.9107343, 750 ) 35
-            , helperScene1 "white" model.time 6 "Click S during the game to skip the level and SPACE to fire" ( 761.9107343, 850 ) 35
-            , helperScene1 "white" model.time 7 "Click Enter to continue" ( 761.9107343, 925 ) 35
+            [ ( ( x, 325 ), 35 )
+                |> helperScene1 "white" model.time 1 "Bad news!! The elemental boss monster is attacking us!"
+            , ( ( x, 400 ), 35 )
+                |> helperScene1 "white" model.time 2 "Gameplay: defeat the boss!"
+            , ( ( x, 475 ), 35 )
+                |> helperScene1 "white" model.time 3 "Boss will spawn smaller elemental monsters"
+            , ( ( x, 650 ), 35 )
+                |> helperScene1 "white" model.time 4 "Remember, strategy is key to winning."
+            , ( ( x, 750 ), 35 )
+                |> helperScene1 "white" model.time 5 "General, this is your last chance to exterminate them!"
+            , ( ( x, 850 ), 35 )
+                |> helperScene1 "white" model.time 6 "Click S during the game to skip the level and SPACE to fire"
+            , ( ( x, 925 ), 35 )
+                |> helperScene1 "white" model.time 7 "Click Enter to continue"
             ]
 
         _ ->
-            [ helperScene1 "dodgerblue" model.time 1 "Zandalore has won the war and defeated the vicious elemental monsters!" ( 700, 325 ) 35
-            , helperScene1 "dodgerblue" model.time 2 "Undeniably, destroying the monsters was no easy feat. " ( 700, 400 ) 35
-            , helperScene1 "dodgerblue" model.time 3 "General, I thank you for accomplishing this key mission." ( 700, 475 ) 35
-            , helperScene1 "dodgerblue" model.time 4 "You have saved the world and justice has prevailed!" ( 700, 650 ) 35
-            , helperScene1 "white" model.time 5 "You have completed Boss Level!" ( 700, 750 ) 35
-            , helperScene1 "white" model.time 6 "Click Enter to go back to the Homepage" ( 700, 925 ) 35
+            [ ( ( x_, 325 ), 35 )
+                |> helperScene1 "dodgerblue" model.time 1 "Zandalore has won the war and defeated the vicious elemental monsters!"
+            , ( ( x_, 400 ), 35 )
+                |> helperScene1 "dodgerblue" model.time 2 "Undeniably, destroying the monsters was no easy feat. "
+            , ( ( x_, 475 ), 35 )
+                |> helperScene1 "dodgerblue" model.time 3 "General, I thank you for accomplishing this key mission."
+            , ( ( x_, 650 ), 35 )
+                |> helperScene1 "dodgerblue" model.time 4 "You have saved the world and justice has prevailed!"
+            , ( ( x_, 750 ), 35 )
+                |> helperScene1 "white" model.time 5 "You have completed Boss Level!"
+            , ( ( x_, 925 ), 35 )
+                |> helperScene1 "white" model.time 6 "Click Enter to go back to the Homepage"
             ]
 
 
@@ -158,7 +207,8 @@ viewScene0 model =
         , HtmlAttr.style "opacity" (determineOpct t |> String.fromFloat)
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
-        , HtmlAttr.style "background" ("url('./assets/image/ace.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ " 523.2558px " ++ " 600px")
+        , ("url('./assets/image/ace.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ " 523.2558px " ++ " 600px")
+            |> HtmlAttr.style "background"
         ]
         []
 
@@ -175,6 +225,9 @@ viewScene1 model =
 
             else
                 Basics.min 1 (w / sceneWidth)
+
+        x =
+            100
     in
     div
         [ HtmlAttr.style "width" (String.fromFloat sceneWidth ++ "px")
@@ -185,12 +238,18 @@ viewScene1 model =
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
         ]
-        [ helperScene1 "dodgerblue" model.time 1 "Zandalore, the only space colony that has mastered immortality," ( 100, 100 ) 30
-        , helperScene1 "dodgerblue" model.time 2 "has been living in peace for the past few centuries." ( 100, 180 ) 30
-        , helperScene1 "dodgerblue" model.time 3 "But one day, the elemental monsters attack Zandalore" ( 100, 260 ) 30
-        , helperScene1 "dodgerblue" model.time 4 "and kill millions of Zandalorians to steal the secret to immortality." ( 100, 340 ) 30
-        , helperScene1 "dodgerblue" model.time 5 "General, you are our only hope to save Zandalore!" ( 100, 420 ) 30
-        , helperScene1 "white" model.time 6 "Click Enter to continue" ( 100, 500 ) 30
+        [ ( ( x, 100 ), 30 )
+            |> helperScene1 "dodgerblue" model.time 1 "Zandalore, the only space colony that has mastered immortality,"
+        , ( ( x, 180 ), 30 )
+            |> helperScene1 "dodgerblue" model.time 2 "has been living in peace for the past few centuries."
+        , ( ( x, 260 ), 30 )
+            |> helperScene1 "dodgerblue" model.time 3 "But one day, the elemental monsters attack Zandalore"
+        , ( ( x, 340 ), 30 )
+            |> helperScene1 "dodgerblue" model.time 4 "and kill millions of Zandalorians to steal the secret to immortality."
+        , ( ( x, 420 ), 30 )
+            |> helperScene1 "dodgerblue" model.time 5 "General, you are our only hope to save Zandalore!"
+        , ( ( x, 500 ), 30 )
+            |> helperScene1 "white" model.time 6 "Click Enter to continue"
         ]
 
 
@@ -225,7 +284,13 @@ viewStarting model =
         , HtmlAttr.style "top" (String.fromFloat ((h - startHeight * r) / 2) ++ "px")
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
-        , HtmlAttr.style "background" ("url('./assets/image/Start.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ (toString startWidth ++ "px " ++ (toString startHeight ++ "px")))
+        , ("url('./assets/image/Start.png')"
+            ++ " no-repeat fixed "
+            ++ " 0px "
+            ++ " 0px / "
+            ++ (toString startWidth ++ "px " ++ (toString startHeight ++ "px"))
+          )
+            |> HtmlAttr.style "background"
         ]
         [ renderStartButton
         , div [ HtmlAttr.style "z-index" "99999999" ]
@@ -276,9 +341,12 @@ viewClearLevel model =
         , HtmlAttr.style "background" "url('./assets/image/background.png')"
         ]
         [ nextSceneButton
-        , helperScene1 (getcolor (getColorful model.time)) model.time 1 "MISSION ACCOMPLISHED" ( 6400 * (2490 - 1385) / 6 / 2490, 300 ) 100
-        , helperScene1 (getcolor (getColorful model.time)) model.time 1 ("Level " ++ toString model.level ++ " cleared") ( 6400 * (2490 - 883) / 6 / 2490, 450 ) 100
-        , helperScene1 (getcolor (getColorful model.time)) model.time 2 ("Score: " ++ toString model.scores) ( 6400 * (2490 - 700) / 6 / 2490, 600 ) 100
+        , ( ( 6400 * (2490 - 1385) / 6 / 2490, 300 ), 100 )
+            |> helperScene1 (getcolor (getColorful model.time)) model.time 1 "MISSION ACCOMPLISHED"
+        , ( ( 6400 * (2490 - 883) / 6 / 2490, 450 ), 100 )
+            |> helperScene1 (getcolor (getColorful model.time)) model.time 1 ("Level " ++ toString model.level ++ " cleared")
+        , ( ( 6400 * (2490 - 700) / 6 / 2490, 600 ), 100 )
+            |> helperScene1 (getcolor (getColorful model.time)) model.time 2 ("Score: " ++ toString model.scores)
         ]
 
 
@@ -306,7 +374,8 @@ viewGameover model =
         , HtmlAttr.style "background" "url('./assets/image/background.png')"
         ]
         [ newGameButton
-        , helperScene1 (getcolor (getColorful model.time)) model.time 1 "MISSION FAILED" ( 649.7978, 450 ) 100
+        , ( ( 649.7978, 450 ), 100 )
+            |> helperScene1 (getcolor (getColorful model.time)) model.time 1 "MISSION FAILED"
         ]
 
 
@@ -365,8 +434,8 @@ nextSceneButton =
         [ text "Next Level" ]
 
 
-helperScene1 : String -> Float -> Float -> String -> ( Float, Float ) -> Int -> Html Msg
-helperScene1 color modeltime time string ( x, y ) font =
+helperScene1 : String -> Float -> Float -> String -> ( ( Float, Float ), Int ) -> Html Msg
+helperScene1 color modeltime time string ( ( x, y ), font ) =
     div
         [ HtmlAttr.style "opacity" (toString (modeltime - time))
         , HtmlAttr.style "left" (toString x ++ "px")
