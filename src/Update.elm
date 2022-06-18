@@ -66,8 +66,12 @@ update msg model =
 
                 nmonster =
                     Monster (idx + 1) ( nx, ny ) monsterLives 10 60 elem Oscillating
+
+                condition =
+                    model.monster_list
+                        |> List.all (\monster -> (Tuple.first monster.pos - nx) ^ 2 + (Tuple.second monster.pos - ny) ^ 2 >= 130 ^ 2)
             in
-            if List.all (\monster -> (Tuple.first monster.pos - nx) ^ 2 + (Tuple.second monster.pos - ny) ^ 2 >= 130 ^ 2) model.monster_list then
+            if condition then
                 ( { model | extraMonster = model.extraMonster + 1, monster_list = nmonster :: model.monster_list }, Cmd.none )
 
             else
@@ -244,7 +248,8 @@ moveMonster : Float -> Model -> Model
 moveMonster dt model =
     let
         nmonster_list =
-            List.map (\monster -> { monster | pos = addVec monster.pos (scaleVec dt (detVelocity monster model)) }) model.monster_list
+            model.monster_list
+                |> List.map (\monster -> { monster | pos = addVec monster.pos (scaleVec dt (detVelocity monster model)) })
     in
     monsterHitSurface { model | monster_list = nmonster_list }
 
@@ -634,31 +639,12 @@ checkBallNumber ( model, cmd ) =
         ( model, cmd )
 
 
-checkBonus : Model -> Int
-checkBonus model =
-    -- Bonus will be awarded for more lives
-    case model.lives of
-        5 ->
-            50
-
-        4 ->
-            40
-
-        3 ->
-            30
-
-        2 ->
-            20
-
-        1 ->
-            10
-
-        _ ->
-            0
-
-
 checkEnd : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 checkEnd ( model, cmd ) =
+    let
+        bonus_score =
+            Maybe.withDefault 0 (List.maximum [ model.lives, 0 ]) * 100
+    in
     if model.lives <= 0 then
         ( { model
             | state = Gameover model.level
@@ -672,7 +658,7 @@ checkEnd ( model, cmd ) =
                 ( { model
                     | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
                     , state = ClearLevel model.level
-                    , scores = model.scores + model.level_scores + checkBonus model + model.lives * 100
+                    , scores = model.scores + model.level_scores + bonus_score
                     , level_scores = 0
                   }
                 , Cmd.batch [ cmd, Task.perform GetViewport getViewport ]
@@ -689,7 +675,7 @@ checkEnd ( model, cmd ) =
                 ( { model
                     | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
                     , state = ClearLevel model.level
-                    , scores = model.scores + model.level_scores + checkBonus model + model.lives * 100 + 1000
+                    , scores = model.scores + model.level_scores + bonus_score + 1000
                     , level_scores = 0
                     , monster_list = []
                   }
