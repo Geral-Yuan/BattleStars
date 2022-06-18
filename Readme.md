@@ -1,5 +1,4 @@
-Breakout Game (Milestone2): Complete the basic game implementation, i.e. a keyboard driven paddle and a bouncing ball
-which breaks bricks when touching them
+Breakout Game with twist (Milestone3): Thrilling and exciting heroic experience that where players must devise a game strategy to enhance effectiveness of kills against the elemental monsters while protecting their cities. Players will be rewarded with an indescribable sense of accomplishment when you have successfully kill the monsters and defend their planet.  
 
 # README
 
@@ -14,28 +13,21 @@ You can install `Elm` by downloading the installer with the links below and run 
 
 More information can be found in [Official Guide](https://guide.elm-lang.org/install/elm.html), 
 
-## Usage
+## 1. Usage:
 First, please use ``` cd ``` commands to enter the m1 folder of the project. 
 
 Next, run ```elm make src/Main.elm``` to compile it into index.html file.
 
 Finally, open the index.html file.
 
-# Detailed information
-
-## Complete
-
-### Milestone2 ###
-
-### Game Rules
-- Use the paddle to bounce the ball. The goal is to break all the bricks. 
-- When the ball hits one brick, the ball will bounce, the brick will be broken and the player will get 10 points.
-- The player have three lives. After the lives are used up, the player loses.
-
-### Paddle Feature
-- When the ball hits the front of the paddle, it will bounce following the reflection route. 
-- When the ball hits the sides of the paddle, it will bounce back with the same routes where it comes.
-
+## 2. Feature:
+### Strategic gameplay with Elemental monsters and bullets 
+### Elemental attributes create an addictive gameplay
+### Neon-themed sci-fic graphics
+### Rounded monsters to increase unpredictablity of ball and thrill for players
+### Moving monsters to apply both time and scoring pressure on players
+### Intricately designed scoring and reward system that will incentivize players to beat their high scores 
+### Heroic storyline and fascinating adventure within the game
 
 
 # Author team: **ACE Studios**
