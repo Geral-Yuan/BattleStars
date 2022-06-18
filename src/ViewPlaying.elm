@@ -1,21 +1,60 @@
-module ViewPlaying exposing (..)
+module ViewPlaying exposing (viewPlaying)
 
 {- This file contains all the helper functions needed in the major game states -}
 
-import Bounce exposing (..)
-import Color exposing (..)
-import Data exposing (..)
+import Color exposing (getcolor, getColorful)
+import Data exposing (pixelHeight, pixelWidth, Boss, Ball, monsterheight, monsterwidth, Monster)
+import MyElement exposing (element2ColorString, element2String)
 import Debug exposing (toString)
-import Html exposing (..)
-import Html.Attributes as HtmlAttr exposing (..)
-import Html.Events exposing (onClick)
-import Messages exposing (..)
-import Model exposing (..)
-import Paddle exposing (..)
+import Html exposing (Html, div, text)
+import Messages exposing (Msg(..))
+import Model exposing (Model)
 import Svg exposing (Svg, stop)
 import Svg.Attributes as SvgAttr
+import Html.Attributes as HtmlAttr exposing (style)
+{-view the playing scene-}
+viewPlaying : Model -> Html Msg
+viewPlaying model =
+    let
+        ( w, h ) =
+            model.size
 
+        r =
+            if w / h > pixelWidth / pixelHeight then
+                Basics.min 1 (h / pixelHeight)
 
+            else
+                Basics.min 1 (w / pixelWidth)
+    in
+    div
+        [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
+        , HtmlAttr.style "height" (String.fromFloat pixelHeight ++ "px")
+        , HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
+        , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
+        , HtmlAttr.style "transform-origin" "0 0"
+        , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
+        , HtmlAttr.style "background" ("url('./assets/image/background.png')")
+        ]
+        [ Svg.svg
+            [ SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            ]
+            -- draw monsters
+            ([ viewBase model
+
+             -- , viewLife model
+             ]
+                ++ viewLives model
+                ++ List.map viewMonsters model.monster_list
+                ++ (List.concat (List.map viewCover model.monster_list))
+                ++ (List.concat(List.map viewBall (List.reverse model.ball_list)))             
+                ++ viewBoss model.boss
+                ++ viewBossCover model.boss
+                ++ [ viewPaddle model]
+            )
+        , viewScore model
+        ]
 viewPaddle : Model -> Svg Msg
 viewPaddle model =
     Svg.image
@@ -136,22 +175,6 @@ viewBossCover boss =
 --wyj test the element
 
 
-element2String : Element -> String
-element2String elem =
-    case elem of
-        Water ->
-            "water"
-
-        Fire ->
-            "fire"
-
-        Grass ->
-            "grass"
-
-        Earth ->
-            "earth"
-
-
 viewMonsters : Monster -> Svg Msg
 viewMonsters monster =
     let
@@ -222,8 +245,8 @@ viewScore model =
         [ text (toString (model.scores + model.level_scores)) ]
 
 
-viewLife : Model -> Int -> Svg Msg
-viewLife model x =
+viewLife :  Int -> Svg Msg
+viewLife x =
     -- draw cities using rectangles later
     Svg.image
         [ SvgAttr.width "180px"
@@ -240,7 +263,7 @@ viewLives : Model -> List (Svg Msg)
 viewLives model =
     List.range 1 model.lives
         |> List.map (\x -> (x - 1) * 205)
-        |> List.map (viewLife model)
+        |> List.map viewLife
 
 
 viewBase : Model -> Svg Msg
@@ -253,75 +276,3 @@ viewBase model =
         , SvgAttr.x "0px"
         ]
         []
-
-
-
-----------
---HELPER FUNCTIONS
-----------
-
-
-newGameButton : Html Msg
-newGameButton =
-    button
-        [ style "background" "#34495f"
-        , style "border" "0"
-        , style "top" "790px"
-        , style "color" "white"
-        , style "cursor" "pointer"
-        , style "display" "block"
-        , style "font-family" "Helvetica, Arial, sans-serif"
-        , style "font-size" "18px"
-        , style "font-weight" "500"
-        , style "height" "80px"
-        , style "left" "986.6667px"
-        , style "line-height" "60px"
-        , style "outline" "none"
-        , style "padding" "0"
-        , style "position" "absolute"
-        , style "width" "160px"
-        , onClick Restart
-        ]
-        [ text "Try Again" ]
-
-
-renderStartButton : Html Msg
-renderStartButton =
-    button
-        [ style "opacity" "0"
-        , style "top" "974.4px" -- to be changed
-        , style "left" "496.8px" -- to be changed
-        , style "cursor" "pointer"
-        , style "display" "block"
-        , style "height" "136.8px"
-        , style "line-height" "60px"
-        , style "padding" "0"
-        , style "position" "absolute"
-        , style "width" "218.4px"
-        , onClick Start
-        ]
-        []
-
-
-nextSceneButton : Html Msg
-nextSceneButton =
-    button
-        [ style "background" "#34495f"
-        , style "border" "0"
-        , style "top" "790px"
-        , style "color" "white"
-        , style "cursor" "pointer"
-        , style "display" "block"
-        , style "font-family" "Helvetica, Arial, sans-serif"
-        , style "font-size" "18px"
-        , style "font-weight" "500"
-        , style "height" "80px"
-        , style "left" "986.6667px"
-        , style "line-height" "60px"
-        , style "outline" "none"
-        , style "padding" "0"
-        , style "position" "absolute"
-        , style "width" "160px"
-        , onClick NextScene
-        ]
-        [ text "Next Level" ]

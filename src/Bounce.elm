@@ -1,20 +1,15 @@
-module Bounce exposing (..)
+module Bounce exposing (Bounce(..), newReflectedVelocity, newBounceVelocity, newPaddleBounceVelocity, getMonsterElement, updateMonster)
 
-import Data exposing (..)
-import Messages exposing (..)
-import Model exposing (..)
-import Paddle exposing (..)
-import Random exposing (..)
+import Data exposing (Ball, Mat, multiMatVec, paddleWidth, Element, Monster)
+import MyElement exposing (elementMatch)
+import Messages exposing (Msg(..))
 
-
-
-
-
-changePos : ( Float, Float ) -> ( Float, Float ) -> ( Float, Float )
-changePos ( x, y ) ( dx, dy ) =
-    ( x + dx, y + dy )
-
-
+type Bounce
+    = Horizontal
+    | Vertical
+    | Paddle_Bounce Float
+    | None
+{-for bounce between circles-}
 newReflectedVelocity : Ball -> Mat -> Ball
 newReflectedVelocity ball l =
     let
@@ -22,7 +17,6 @@ newReflectedVelocity ball l =
             multiMatVec l ( ball.v_x, ball.v_y )
     in
     { ball | v_x = nv_x, v_y = nv_y }
-
 
 newBounceVelocity : Ball -> Bounce -> Ball
 newBounceVelocity ball bounce =
@@ -46,8 +40,6 @@ newBounceVelocity ball bounce =
 
         _ ->
             ball
-
-
 
 --wyj
 

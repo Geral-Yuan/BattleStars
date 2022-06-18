@@ -1,8 +1,6 @@
-module Paddle exposing (..)
+module Paddle exposing (Paddle, movePaddle)
 
-import Data exposing (..)
-import Html.Attributes exposing (dir)
-import Messages exposing (..)
+import Messages exposing (Dir(..))
 
 
 type alias Paddle =
