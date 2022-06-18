@@ -18,12 +18,10 @@ type Msg
     | Key_None
     | Enter Bool
     | Shoot Bool
-      -- | Trans
     | Tick Float
     | GetViewport Viewport
     | Resize Int Int
     | Hit Int Element
-    | New_Element Element
     | Restart -- Restart level if player loses
     | Start
     | Skip -- For debugging
