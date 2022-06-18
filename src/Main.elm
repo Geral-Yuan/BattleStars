@@ -2,13 +2,12 @@ module Main exposing (..)
 
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta, onKeyDown, onKeyUp, onResize)
-import Data exposing (Ball)
 import Html.Events exposing (keyCode)
 import Json.Decode as Decode
 import Messages exposing (..)
 import Model exposing (Model, init)
-import Update exposing (..)
-import View exposing (..)
+import Update exposing (update)
+import View exposing (view)
 
 
 main : Program () Model Msg
@@ -31,14 +30,12 @@ key on keycode =
     case keycode of
         37 ->
             Key Left on
-
-        -- 38 ->
-        --     Trans
+            
         39 ->
             Key Right on
 
         13 ->
-            Enter
+            Enter on
 
         83 ->
             -- 'S' for debugging
