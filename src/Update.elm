@@ -1,11 +1,11 @@
-module Update exposing (..)
+module Update exposing (update)
 
-import Bounce exposing (..)
+import Bounce exposing (Bounce(..), newBounceVelocity, newReflectedVelocity, updateMonster)
 import Browser.Dom exposing (getViewport)
-import Data exposing (..)
-import Html.Attributes exposing (multiple)
+import Data exposing (Ball, Ball_state(..), Boss, Boss_state(..), Element(..), Mat, Monster, Monster_state(..), addVec, identityMat, innerVec, monsterLives, reflectionMat, scaleVec)
 import Messages exposing (..)
 import Model exposing (..)
+import MyElement exposing (elementMatch)
 import Paddle exposing (..)
 import Random
 import Scoreboard exposing (..)
@@ -37,12 +37,9 @@ update msg model =
             , Cmd.none
             )
 
-        Enter False->
+        Enter False ->
             case model.state of
                 Scene _ ->
-                    -- let
-                    --     (nmodel, _) = updateClearLevel model
-                    -- in
                     updateScene model
 
                 _ ->
@@ -54,7 +51,7 @@ update msg model =
         Skip ->
             case model.state of
                 Playing _ ->
-                    ( { model | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
+                    ( { model | state = ClearLevel model.level, monster_list = [] }, Task.perform GetViewport getViewport )
 
                 _ ->
                     ( model, Cmd.none )
@@ -69,8 +66,12 @@ update msg model =
 
                 nmonster =
                     Monster (idx + 1) ( nx, ny ) monsterLives 10 60 elem Oscillating
+
+                condition =
+                    model.monster_list
+                        |> List.all (\monster -> (Tuple.first monster.pos - nx) ^ 2 + (Tuple.second monster.pos - ny) ^ 2 >= 130 ^ 2)
             in
-            if List.all (\monster -> (Tuple.first monster.pos - nx) ^ 2 + (Tuple.second monster.pos - ny) ^ 2 >= 130 ^ 2) model.monster_list then
+            if condition then
                 ( { model | extraMonster = model.extraMonster + 1, monster_list = nmonster :: model.monster_list }, Cmd.none )
 
             else
@@ -118,12 +119,14 @@ updateScene model =
                     model
             in
             ( { nModel | state = Scene 2, time = 0 }, Task.perform GetViewport getViewport )
+
         Scene 0 ->
             let
                 nModel =
                     model
             in
             ( { nModel | state = Scene 1, time = 0 }, Task.perform GetViewport getViewport )
+
         Scene 1 ->
             let
                 nModel =
@@ -131,59 +134,18 @@ updateScene model =
             in
             ( { nModel | state = Starting, time = 0 }, Task.perform GetViewport getViewport )
 
-        Scene 2 ->
-            -- let
-            --     nModel =
-            --         model
-            -- in
-            ( initLevel 1 model, Task.perform GetViewport getViewport )
-
-        -- ( { nModel | state = Playing 1 }, Task.perform GetViewport getViewport )
-        -- Playing 1 ->
-        --     ( initLevel 1 model , Task.perform GetViewport getViewport)
-        -- Scene 3 ->
-        --     let
-        --         nModel =
-        --             model
-        --     in
-        --     ( { nModel | state = Playing 2 }, Task.perform GetViewport getViewport )
-        Scene 3 ->
-            ( initLevel 2 model, Task.perform GetViewport getViewport )
-
-        Scene 4 ->
-            -- let
-            --     nModel =
-            --         model
-            -- in
-            -- ( { nModel | state = Playing 3 }, Task.perform GetViewport getViewport )
-            ( initLevel 3 model, Task.perform GetViewport getViewport )
-
-        Scene 5 ->
-            -- let
-            --     nModel =
-            --         model
-            -- in
-            -- ( { nModel | state = Playing 4 }, Task.perform GetViewport getViewport )
-            ( initLevel 4 model, Task.perform GetViewport getViewport )
-
-        Scene 6 ->
-            -- let
-            --     nModel =
-            --         model
-            -- in
-            -- ( { nModel | state = Playing 5 }, Task.perform GetViewport getViewport )
-            ( initLevel 5 model, Task.perform GetViewport getViewport )
-
         Scene 7 ->
-            -- let
-            --     nModel =
-            --         model
-            -- in
-            -- ( { nModel | state = Starting }, Task.perform GetViewport getViewport )
             ( reModel, Task.perform GetViewport getViewport )
+
+        Scene k ->
+            ( initLevel (k - 1) model, Task.perform GetViewport getViewport )
 
         _ ->
             ( model, Task.perform GetViewport getViewport )
+
+
+
+{- The clear level shows the score after completing one level -}
 
 
 updateClearLevel : Model -> ( Model, Cmd Msg )
@@ -194,10 +156,6 @@ updateClearLevel model =
 
         _ ->
             ( model, Task.perform GetViewport getViewport )
-
-
-
---wyj
 
 
 updatePaddle : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
@@ -213,17 +171,6 @@ updatePaddle msg ( model, cmd ) =
 
         _ ->
             ( model, Cmd.none )
-
-
-
--- Trans ->
---     ( { model
---         | paddle = transPaddle model
---       }
---     , cmd
---     )
--- _ ->
---     ( model, cmd )
 
 
 shootBall : Model -> Model
@@ -244,59 +191,6 @@ shootBall model =
 
         Nothing ->
             model
-
-
-
---wyj
--- getTerminal : Model -> Float
--- getTerminal  model =
---     let
---         nmodel =
---             bounceAll ( model, Cmd.none )
---             |> Tuple.first
---         ball = model.ball       --找更下面的ball
---         cy = Tuple.second (ball.pos)
---         paddle = model.paddle
---         py=Tuple.second (paddle.pos)
---     in
---     if cy + ball.radius <= py then
---         getTerminal (moveBall nmodel (0.01) )
---     else
---         (model.ball.pos
---         |> Tuple.first)
---         - paddle.width /2
---wyj
--- a function that let paddle catch ball automatically
-
-
-getTerminal : Model -> Float
-getTerminal model =
-    let
-        nmodel =
-            bounceAll ( model, Cmd.none )
-                |> Tuple.first
-
-        py =
-            Tuple.second model.paddle.pos
-    in
-    case List.filter (\ball -> Tuple.second ball.pos + ball.radius > py) model.ball_list |> List.head of
-        Nothing ->
-            getTerminal (moveBall 0.01 nmodel)
-
-        Just ball ->
-            Tuple.first ball.pos - model.paddle.width / 2
-
-
-transPaddle : Model -> Paddle
-transPaddle model =
-    let
-        paddle =
-            model.paddle
-
-        py =
-            Tuple.second paddle.pos
-    in
-    { paddle | pos = ( getTerminal model, py ) }
 
 
 updateBall : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
@@ -332,7 +226,7 @@ moveEachBall : Float -> Paddle -> Ball -> Ball
 moveEachBall dt paddle ball =
     case ball.state of
         Free ->
-            { ball | pos = changePos ball.pos ( ball.v_x * dt, ball.v_y * dt ) }
+            { ball | pos = addVec ball.pos ( ball.v_x * dt, ball.v_y * dt ) }
 
         Carryed ->
             { ball | pos = addVec paddle.pos ( paddle.width / 2, -15 ) }
@@ -342,7 +236,8 @@ moveMonster : Float -> Model -> Model
 moveMonster dt model =
     let
         nmonster_list =
-            List.map (\monster -> { monster | pos = addVec monster.pos (scaleVec dt (detVelocity monster model)) }) model.monster_list
+            model.monster_list
+                |> List.map (\monster -> { monster | pos = addVec monster.pos (scaleVec dt (detVelocity monster model)) })
     in
     monsterHitSurface { model | monster_list = nmonster_list }
 
@@ -672,13 +567,15 @@ updateTime msg ( model, cmd ) =
 
                 newboss =
                     { oldboss | bosstime = oldboss.bosstime + elapse / 1000 }
-                state = model.state
+
+                state =
+                    model.state
             in
-             if (state == Scene 0) && (model.time > 6.2) then
-                (updateScene model)
-            else 
+            if (state == Scene 0) && (model.time > 6.2) then
+                updateScene model
+
+            else
                 ( { model | time = model.time + elapse / 1000, boss = newboss }, cmd )
-           
 
         _ ->
             ( model, cmd )
@@ -732,6 +629,10 @@ checkBallNumber ( model, cmd ) =
 
 checkEnd : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 checkEnd ( model, cmd ) =
+    let
+        bonus_score =
+            Maybe.withDefault 0 (List.maximum [ model.lives, 0 ]) * 100
+    in
     if model.lives <= 0 then
         ( { model
             | state = Gameover model.level
@@ -739,30 +640,13 @@ checkEnd ( model, cmd ) =
         , cmd
         )
 
-    else if List.isEmpty model.monster_list && model.level < 5 then
+    else if (List.isEmpty model.monster_list && model.level < 5) || (model.boss.lives <= 0 && model.level == 5) then
         case model.state of
             Playing _ ->
                 ( { model
                     | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
                     , state = ClearLevel model.level
-                    , scores = model.scores + model.level_scores + checkBonus model + model.lives * 100
-                    , level_scores = 0
-                  }
-                , Cmd.batch [ cmd, Task.perform GetViewport getViewport ]
-                )
-
-            _ ->
-                ( model, Cmd.none )
-        -- ( { nModel | state = ClearLevel model.level }, Task.perform GetViewport getViewport )
-        -- Add one more condition here to check for Victory
-
-    else if model.boss.lives <= 0 && model.level == 5 then
-        case model.state of
-            Playing _ ->
-                ( { model
-                    | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
-                    , state = ClearLevel model.level
-                    , scores = model.scores + model.level_scores + checkBonus model + model.lives * 100 + 1000
+                    , scores = model.scores + model.level_scores + bonus_score + (model.level // 5) * 1000
                     , level_scores = 0
                     , monster_list = []
                   }
@@ -774,26 +658,3 @@ checkEnd ( model, cmd ) =
 
     else
         ( model, cmd )
-
-
-checkBonus : Model -> Int
-checkBonus model =
-    -- Bonus will be awarded for more lives
-    case model.lives of
-        5 ->
-            50
-
-        4 ->
-            40
-
-        3 ->
-            30
-
-        2 ->
-            20
-
-        1 ->
-            10
-
-        _ ->
-            0

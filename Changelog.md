@@ -6,6 +6,92 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [m3.9] -- 2022-06-18
+
+### Added
+- Team Logo
+- Booklet
+
+### Changed
+- More smooth paddle
+- Updated contents
+- Change the background music
+- Reconstruct the viewScene function
+
+### Fixed
+- Resize problems
+- Restart errors
+- Code quality
+- Scene Model bugs
+
+## [m3.8] -- 2022-06-17
+
+### Added
+- Boss Level
+- Boss generating monsters
+- Fancy glass-like covers for monsters and the boss
+- Fancy appearance of the balls
+
+### Fixed
+- clearLevel bugs
+
+## [m3.7] -- 2022-06-16
+### Added 
+- Bonus score
+- Monster hit surface
+- Boss features, including data type, moveBoss, updateBoss, viewBoss, viewBossCover
+- Type State
+- changeOpacity
+- Different contents in different scenes
+- viewClearLevel
+### Changed
+- renderbuttons
+- view scene1-5 to scene Int
+- reset the score and view the score
+
+### Removed
+- viewPlaying 2-5
+
+### Fixed
+- Shooting the balls
+
+
+## [m3.6] -- 2022-06-15
+### Added 
+- Pictures for the cover, background, clearlevel and the scene 
+- `update` and `view` functions of the scenes and scene switching
+## [m3.5] -- 2022-06-15
+### Added 
+- Move the monster
+- Generate the initial ball list
+
+## [m3.4] -- 2022-06-15
+### Added 
+- Monster lives
+- Vector and matrix operation
+- Rounded bounce
+- Protection cover
+
+### Changed
+- Overall, code simplified
+- Types and monster are changed into monster
+- 
+### Fixed
+- Only one ball can change its element
+
+## [m3.3] -- 2022-06-14
+### Added 
+
+- Data.elm: store common data types and parameters
+- Element system: including union type `Element`, the effective-weak damage between elements and the `changeElement` function implemented on the monster and the ball
+- Teleport the paddle to the first landing-point of the ball  
+
+### Changed
+
+- The bounce machanism between balls and the paddle: the ball will change its reflection angle when hitting different positions of the paddle.
+
+### Bugs
+- Only one ball can change its element
 
 ## [m3.2] -- 2022-06-13
 

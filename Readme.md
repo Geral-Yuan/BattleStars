@@ -1,5 +1,4 @@
-Breakout Game (Milestone2): Complete the basic game implementation, i.e. a keyboard driven paddle and a bouncing ball
-which breaks bricks when touching them
+Breakout Game with twist (Milestone3): Thrilling and exciting heroic experience that where players must devise a game strategy to enhance effectiveness of kills against the elemental monsters while protecting their cities. Players will be rewarded with an indescribable sense of accomplishment when you have successfully kill the monsters and defend their planet.  
 
 # README
 
@@ -13,34 +12,73 @@ You can install `Elm` by downloading the installer with the links below and run 
 [Windows](https://github.com/elm/compiler/releases/download/0.19.1/installer-for-windows.exe)
 
 More information can be found in [Official Guide](https://guide.elm-lang.org/install/elm.html), 
+## Detailed Information
 
-## Usage
-First, please use ``` cd ``` commands to enter the m1 folder of the project. 
+### 1. Usage:
+- First, please use ``` cd ``` commands to enter folder of the project. 
 
-Next, run ```elm make src/Main.elm``` to compile it into index.html file.
+- Next, run ```elm make src/Main.elm``` to compile it into index.html file.
 
-Finally, open the index.html file.
+- Finally, open the index.html file.
 
-# Detailed information
+### 2. Features:
+- Strategic gameplay with Elemental monsters and bullets 
+- Elemental attributes create an addictive gameplay
+- Neon-themed sci-fic graphics
+- Rounded monsters to increase unpredictablity of ball and thrill for players
+- Moving monsters to apply both time and scoring pressure on players
+- Intricately designed scoring and reward system that will incentivize players to beat their high scores 
+- Heroic storyline and fascinating adventure within the game
 
-## Complete
+### 3. Game Operations
+- press `space` to shoot one ball
+- use `←` `→` to control the paddle to bounce the ball
+- press `s` to skip the level
+- press `Enter` to skip the Logo animation and narrative scenes
 
-### Milestone2 ###
+### 4. File Description
+#### Main
+- Call init, update, view and subscription to run the game
 
-### Game Rules
-- Use the paddle to bounce the ball. The goal is to break all the bricks. 
-- When the ball hits one brick, the ball will bounce, the brick will be broken and the player will get 10 points.
-- The player have three lives. After the lives are used up, the player loses.
+#### Model
+- The definitions of Model
+- All init functions
 
-### Paddle Feature
-- When the ball hits the front of the paddle, it will bounce following the reflection route. 
-- When the ball hits the sides of the paddle, it will bounce back with the same routes where it comes.
+#### Update
+- Most update functions
 
+#### View
+- This file contains the view function for all the game states
 
+#### ViewPlaying
+- This file contains the view function for the playing (fighting) states
+
+#### ViewScenes
+- This file contains the view function for all the scenes (Logo cover, narratives and clearLevel)
+
+#### Bounce
+- Functions related to bounce between balls, monsters and the paddle
+
+#### Paddle
+- Functions related to the movement of the paddle
+#### Scoreboard
+- Functions to get and calculate the score
+
+#### MyElement
+- Translate `Element` and `String` from one to the other
+
+#### Message
+- All messages that are generated in the game update
+
+#### Data
+- Common data types and useful tools
+
+#### Color
+- Functions to change colors
 
 # Author team: **ACE Studios**
 
-**Team menbers:**
+**Team members:**
 
 Ekkanat Tanchavalit
 

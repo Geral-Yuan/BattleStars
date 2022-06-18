@@ -1,7 +1,7 @@
-module Model exposing (..)
+module Model exposing (State(..), Model, initLevel, reModel, detVelocity, detVelocityBoss, generateBall, init)
 
 import Browser.Dom exposing (getViewport)
-import Data exposing (..)
+import Data exposing (Monster, Monster_state(..), Ball_state(..), Ball, Boss, Boss_state(..), Element(..), addVec, monsterLives, paddleWidth, pixelWidth )
 import Messages exposing (..)
 import Paddle exposing (..)
 import Random exposing (..)
@@ -62,21 +62,10 @@ initModel =
 
 reModel : Model
 reModel =
-    { monster_list = initMonsterList 1 4 --one life for each monster; 10 points for each monster
-    , boss = initBoss 1
-    , paddle = initpaddle
-    , ball_list = List.map Tuple.first (generateBallList initpaddle 1 1)
-    , ballnumber = 1
-    , time = 0
-    , lives = 5 --five lives for a player
-    , scores = 0
-    , level_scores = 0
-    , state = Starting
-    , size = ( 2000, 1000 )
-    , seed = Random.initialSeed 1234
-    , level = 1
-    , extraMonster = 0
-    }
+    let
+        nmodel = initModel
+    in
+    {nmodel | state = Starting}
 
 
 initLevel : Int -> Model -> Model
