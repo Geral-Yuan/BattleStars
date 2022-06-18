@@ -1,7 +1,8 @@
-module Scoreboard exposing (..)
+module Scoreboard exposing (getMonster_score, findHitMonster)
 
-import Data exposing (..)
-import Messages exposing (..)
+import Data exposing (Monster)
+import MyElement exposing (elementMatch)
+import Messages exposing (Msg(..))
 
 
 

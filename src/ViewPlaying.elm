@@ -1,21 +1,60 @@
-module ViewPlaying exposing (..)
+module ViewPlaying exposing (viewPlaying)
 
 {- This file contains all the helper functions needed in the major game states -}
 
-import Bounce exposing (..)
-import Color exposing (..)
-import Data exposing (..)
+import Color exposing (getcolor, getColorful)
+import Data exposing (pixelHeight, pixelWidth, Boss, Ball, monsterheight, monsterwidth, Monster)
+import MyElement exposing (element2ColorString, element2String)
 import Debug exposing (toString)
-import Html exposing (..)
-import Html.Attributes as HtmlAttr exposing (..)
-import Html.Events exposing (onClick)
-import Messages exposing (..)
-import Model exposing (..)
-import Paddle exposing (..)
+import Html exposing (Html, div, text)
+import Messages exposing (Msg(..))
+import Model exposing (Model)
 import Svg exposing (Svg, stop)
 import Svg.Attributes as SvgAttr
+import Html.Attributes as HtmlAttr exposing (style)
+{-view the playing scene-}
+viewPlaying : Model -> Html Msg
+viewPlaying model =
+    let
+        ( w, h ) =
+            model.size
 
+        r =
+            if w / h > pixelWidth / pixelHeight then
+                Basics.min 1 (h / pixelHeight)
 
+            else
+                Basics.min 1 (w / pixelWidth)
+    in
+    div
+        [ HtmlAttr.style "width" (String.fromFloat pixelWidth ++ "px")
+        , HtmlAttr.style "height" (String.fromFloat pixelHeight ++ "px")
+        , HtmlAttr.style "position" "absolute"
+        , HtmlAttr.style "left" (String.fromFloat ((w - pixelWidth * r) / 2) ++ "px")
+        , HtmlAttr.style "top" (String.fromFloat ((h - pixelHeight * r) / 2) ++ "px")
+        , HtmlAttr.style "transform-origin" "0 0"
+        , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
+        , HtmlAttr.style "background" ("url('./assets/image/background.png')")
+        ]
+        [ Svg.svg
+            [ SvgAttr.width "100%"
+            , SvgAttr.height "100%"
+            ]
+            -- draw monsters
+            ([ viewBase model
+
+             -- , viewLife model
+             ]
+                ++ viewLives model
+                ++ List.map viewMonsters model.monster_list
+                ++ (List.concat (List.map viewCover model.monster_list))
+                ++ (List.concat(List.map viewBall (List.reverse model.ball_list)))             
+                ++ viewBoss model.boss
+                ++ viewBossCover model.boss
+                ++ [ viewPaddle model]
+            )
+        , viewScore model
+        ]
 viewPaddle : Model -> Svg Msg
 viewPaddle model =
     Svg.image
@@ -32,120 +71,108 @@ viewPaddle model =
 viewBall : Ball -> List (Svg Msg)
 viewBall ball =
     let
-        color = element2ColorString ball.element
+        color =
+            element2ColorString ball.element
     in
-    [
-    Svg.radialGradient
-        [SvgAttr.id ("myBall" ++ color)]
-        [
-        stop
-            [SvgAttr.offset "0.1%"
+    [ Svg.radialGradient
+        [ SvgAttr.id ("myBall" ++ color) ]
+        [ stop
+            [ SvgAttr.offset "0.1%"
             , SvgAttr.stopColor "white"
             , SvgAttr.stopOpacity "95%"
             ]
             []
-        , stop 
-            [SvgAttr.offset "50%"
+        , stop
+            [ SvgAttr.offset "50%"
             , SvgAttr.stopColor color
             , SvgAttr.stopOpacity "50%"
             ]
             []
-        , stop 
-            [SvgAttr.offset "100%"
+        , stop
+            [ SvgAttr.offset "100%"
             , SvgAttr.stopColor color
             , SvgAttr.stopOpacity "100%"
             ]
             []
         ]
-        
-    ,Svg.circle
+    , Svg.circle
         [ SvgAttr.cx (toString (Tuple.first ball.pos))
         , SvgAttr.cy (toString (Tuple.second ball.pos))
         , SvgAttr.r (toString ball.radius)
-        , SvgAttr.fill ("url('#myBall" ++ color ++  "')" )
-        
+        , SvgAttr.fill ("url('#myBall" ++ color ++ "')")
         ]
         []
     ]
 
 
-viewBoss : Boss -> Svg Msg
+viewBoss : Boss -> List (Svg Msg)
 viewBoss boss =
     let
         ( x, y ) =
             boss.pos
     in
-    Svg.image
-        [ SvgAttr.width "1000"
-        , SvgAttr.height "500"
-        , SvgAttr.x (toString (x - 500))
-        , SvgAttr.y (toString (y + 700))
-        , SvgAttr.preserveAspectRatio "none"
-        , SvgAttr.xlinkHref "./assets/image/bossMonster.png"
-        ]
+    if boss.lives <= 0 && boss.lives > -10 then
         []
+
+    else
+        [ Svg.image
+            [ SvgAttr.width "1000"
+            , SvgAttr.height "500"
+            , SvgAttr.x (toString (x - 500))
+            , SvgAttr.y (toString (y + 700))
+            , SvgAttr.preserveAspectRatio "none"
+            , SvgAttr.xlinkHref "./assets/image/bossMonster.png"
+            ]
+            []
+        ]
 
 
 viewBossCover : Boss -> List (Svg Msg)
 viewBossCover boss =
     let
-        color = element2ColorString boss.element
-        live = 
+        color =
+            element2ColorString boss.element
+
+        live =
             if boss.lives >= 0 then
                 boss.lives
+
             else if boss.lives <= -10 then
                 100
+
             else
                 0
-                
     in
-        [
-        Svg.radialGradient
-        [SvgAttr.id ("myRadial" ++ color ++ toString(live))]
-        [
-        stop
-            [SvgAttr.offset "30%"
-            , SvgAttr.stopOpacity "0%"
-            ]
-            []
-        , stop 
-            [SvgAttr.offset "97%"
-            , SvgAttr.stopColor color
-            , SvgAttr.stopOpacity (toString (0.0080 * toFloat(live)))
-            ]
-            []
-        ]
-        ,
-         Svg.circle
-        [ SvgAttr.cx (toString (Tuple.first boss.pos))
-        , SvgAttr.cy (toString (Tuple.second boss.pos))
-        , SvgAttr.r (toString (boss.boss_radius - 8))
-        , SvgAttr.fill ("url('#myRadial" ++ color ++ toString(live) ++ "')" )
-
-        ]
+    if boss.lives <= 0 && boss.lives > -10 then
         []
-        ]
 
+    else
+        [ Svg.radialGradient
+            [ SvgAttr.id ("myRadial" ++ color ++ toString live) ]
+            [ stop
+                [ SvgAttr.offset "30%"
+                , SvgAttr.stopOpacity "0%"
+                ]
+                []
+            , stop
+                [ SvgAttr.offset "97%"
+                , SvgAttr.stopColor color
+                , SvgAttr.stopOpacity (toString (0.008 * toFloat live))
+                ]
+                []
+            ]
+        , Svg.circle
+            [ SvgAttr.cx (toString (Tuple.first boss.pos))
+            , SvgAttr.cy (toString (Tuple.second boss.pos))
+            , SvgAttr.r (toString (boss.boss_radius - 8))
+            , SvgAttr.fill ("url('#myRadial" ++ color ++ toString live ++ "')")
+            ]
+            []
+        ]
 
 
 
 --wyj test the element
-
-
-element2String : Element -> String
-element2String elem =
-    case elem of
-        Water ->
-            "water"
-
-        Fire ->
-            "fire"
-
-        Grass ->
-            "grass"
-
-        Earth ->
-            "earth"
 
 
 viewMonsters : Monster -> Svg Msg
@@ -168,40 +195,39 @@ viewMonsters monster =
 viewCover : Monster -> List (Svg msg)
 viewCover monster =
     let
-        color = element2ColorString monster.element
-        live = 
+        color =
+            element2ColorString monster.element
+
+        live =
             if monster.monster_lives >= 0 then
                 monster.monster_lives
+
             else
                 0
-                
     in
-        [
-        Svg.radialGradient
-        [SvgAttr.id ("myRadial" ++ color ++ toString(live))]
-        [
-        stop
-            [SvgAttr.offset "40%"
+    [ Svg.radialGradient
+        [ SvgAttr.id ("myRadial" ++ color ++ toString live) ]
+        [ stop
+            [ SvgAttr.offset "40%"
             , SvgAttr.stopOpacity "0%"
             ]
             []
-        , stop 
-            [SvgAttr.offset "95%"
+        , stop
+            [ SvgAttr.offset "95%"
             , SvgAttr.stopColor color
-            , SvgAttr.stopOpacity (toString (0.2 * toFloat(live)))
+            , SvgAttr.stopOpacity (toString (0.2 * toFloat live))
             ]
             []
         ]
-        ,
-         Svg.circle
+    , Svg.circle
         [ SvgAttr.cx (toString (Tuple.first monster.pos))
         , SvgAttr.cy (toString (Tuple.second monster.pos))
         , SvgAttr.r (toString (monster.monster_radius - 8))
-        , SvgAttr.fill ("url('#myRadial" ++ color ++ toString(live) ++ "')" )
-
+        , SvgAttr.fill ("url('#myRadial" ++ color ++ toString live ++ "')")
         ]
         []
-        ]
+    ]
+
 
 viewScore : Model -> Html Msg
 viewScore model =
@@ -219,14 +245,14 @@ viewScore model =
         [ text (toString (model.scores + model.level_scores)) ]
 
 
-viewLife : Model -> Int -> Svg Msg
-viewLife model x =
+viewLife :  Int -> Svg Msg
+viewLife x =
     -- draw cities using rectangles later
     Svg.image
-        [ SvgAttr.width "180"
-        , SvgAttr.height "100"
+        [ SvgAttr.width "180px"
+        , SvgAttr.height "100px"
         , SvgAttr.x (toString x)
-        , SvgAttr.y "1070"
+        , SvgAttr.y "1070px"
         , SvgAttr.preserveAspectRatio "xMidYMid"
         , SvgAttr.xlinkHref "./assets/image/city.png"
         ]
@@ -237,88 +263,16 @@ viewLives : Model -> List (Svg Msg)
 viewLives model =
     List.range 1 model.lives
         |> List.map (\x -> (x - 1) * 205)
-        |> List.map (viewLife model)
+        |> List.map viewLife
 
 
 viewBase : Model -> Svg Msg
 viewBase model =
     Svg.rect
         [ SvgAttr.fill (getcolor (getColorful model.time))
-        , SvgAttr.width (toString pixelWidth)
-        , SvgAttr.height "30"
-        , SvgAttr.y "1170"
-        , SvgAttr.x "0"
+        , SvgAttr.width (toString pixelWidth ++ "px")
+        , SvgAttr.height "30px"
+        , SvgAttr.y "1170px"
+        , SvgAttr.x "0px"
         ]
         []
-
-
-
-----------
---HELPER FUNCTIONS
-----------
-
-
-newGameButton : Html Msg
-newGameButton =
-    button
-        [ style "background" "#34495f"
-        , style "border" "0"
-        , style "top" "790px"
-        , style "color" "white"
-        , style "cursor" "pointer"
-        , style "display" "block"
-        , style "font-family" "Helvetica, Arial, sans-serif"
-        , style "font-size" "18px"
-        , style "font-weight" "500"
-        , style "height" "80px"
-        , style "left" "1250px"
-        , style "line-height" "60px"
-        , style "outline" "none"
-        , style "padding" "0"
-        , style "position" "absolute"
-        , style "width" "160px"
-        , onClick Restart
-        ]
-        [ text "Try Again" ]
-
-
-renderStartButton : Html Msg
-renderStartButton =
-    button
-        [ style "opacity" "0"
-        , style "bottom" "100px" -- to be changed
-        , style "left" "490px" -- to be changed
-        , style "cursor" "pointer"
-        , style "display" "block"
-        , style "height" "140px"
-        , style "line-height" "60px"
-        , style "padding" "0"
-        , style "position" "absolute"
-        , style "width" "220px"
-        , onClick Start
-        ]
-        []
-
-
-nextSceneButton : Html Msg
-nextSceneButton =
-    button
-        [ style "background" "#34495f"
-        , style "border" "0"
-        , style "top" "790px"
-        , style "color" "white"
-        , style "cursor" "pointer"
-        , style "display" "block"
-        , style "font-family" "Helvetica, Arial, sans-serif"
-        , style "font-size" "18px"
-        , style "font-weight" "500"
-        , style "height" "80px"
-        , style "left" "1250px"
-        , style "line-height" "60px"
-        , style "outline" "none"
-        , style "padding" "0"
-        , style "position" "absolute"
-        , style "width" "160px"
-        , onClick NextScene
-        ]
-        [ text "Next Level" ]

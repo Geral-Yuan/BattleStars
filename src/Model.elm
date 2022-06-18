@@ -1,7 +1,7 @@
-module Model exposing (..)
+module Model exposing (State(..), Model, initLevel, reModel, detVelocity, detVelocityBoss, generateBall, init)
 
 import Browser.Dom exposing (getViewport)
-import Data exposing (..)
+import Data exposing (Monster, Monster_state(..), Ball_state(..), Ball, Boss, Boss_state(..), Element(..), addVec, monsterLives, paddleWidth, pixelWidth )
 import Messages exposing (..)
 import Paddle exposing (..)
 import Random exposing (..)
@@ -44,7 +44,7 @@ init _ =
 
 initModel : Model
 initModel =
-    { monster_list = initMonsterList 1 8 --one life for each monster; 10 points for each monster
+    { monster_list = initMonsterList 1 4 --one life for each monster; 10 points for each monster
     , boss = initBoss 1
     , paddle = initpaddle
     , ball_list = List.map Tuple.first (generateBallList initpaddle 1 1)
@@ -53,12 +53,19 @@ initModel =
     , lives = 5 --five lives for a player
     , scores = 0
     , level_scores = 0
-    , state = Scene 1
+    , state = Scene 0
     , size = ( 2000, 1000 )
     , seed = Random.initialSeed 1234
     , level = 1
     , extraMonster = 0
     }
+
+reModel : Model
+reModel =
+    let
+        nmodel = initModel
+    in
+    {nmodel | state = Starting}
 
 
 initLevel : Int -> Model -> Model
@@ -82,10 +89,10 @@ initLevel k model =
 
 model_1 : Model -> Model
 model_1 model =
-    { monster_list = initMonsterList 1 8 --one life for each monster; 10 points for each monster
+    { monster_list = initMonsterList 1 4 --one life for each monster; 10 points for each monster
     , boss = initBoss 1
     , paddle = initpaddle
-    , ball_list = List.map Tuple.first (generateBallList initpaddle 1 1)
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 1 2)
     , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
@@ -104,7 +111,7 @@ model_2 model =
     { monster_list = initMonsterList 2 15 --one life for each monster; 10 points for each monster
     , boss = initBoss 2
     , paddle = initpaddle
-    , ball_list = List.map Tuple.first (generateBallList initpaddle 1 2)
+    , ball_list = List.map Tuple.first (generateBallList initpaddle 1 4)
     , ballnumber = 1
     , time = 0
     , lives = 5 --five lives for a player
@@ -229,7 +236,7 @@ initBoss : Int -> Boss
 initBoss level =
     case level of
         1 ->
-            Boss ( 500, -1250 ) 1250 -10 BossStopped Water 0
+            Boss ( 500, -900 ) 1250 -10 BossStopped Water 0
 
         3 ->
             Boss ( 500, -1250 ) 1250 -10 BossFast Water 0
@@ -243,7 +250,7 @@ initBoss level =
 
 initpaddle : Paddle
 initpaddle =
-    { pos = ( 500, 1000 ), dir = Still, height = 20, width = paddleWidth, speed = 1000, move_range = pixelWidth }
+    { pos = ( 500, 1000 ), moveLeft = False, moveRight = False, latestDir = Left, height = 40, width = paddleWidth, speed = 1000, move_range = pixelWidth }
 
 
 
@@ -274,14 +281,7 @@ detPosition : Int -> Int -> ( Float, Float )
 detPosition level idx =
     case level of
         1 ->
-            let
-                row =
-                    (idx - 1) // 4
-
-                column =
-                    modBy 4 (idx - 1) + 1
-            in
-            ( toFloat column * 200, toFloat row * 200 + 100 )
+            ( toFloat idx * 200, 450 )
 
         2 ->
             let
@@ -331,15 +331,20 @@ detElem : Int -> Int -> Element
 detElem level idx =
     case level of
         1 ->
-            Water
-
-        2 ->
             case modBy 2 idx of
                 1 ->
                     Water
 
                 _ ->
                     Fire
+
+        2 ->
+            case modBy 2 idx of
+                1 ->
+                    Earth
+
+                _ ->
+                    Grass
 
         _ ->
             case modBy 4 idx of
