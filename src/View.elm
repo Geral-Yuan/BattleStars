@@ -3,13 +3,16 @@ module View exposing (view)
 {- This file contains the view function for all the major game states -}
 -- import Html.Events exposing (onClick)
 
-
 import Html exposing (Html, div)
 import Html.Attributes as HtmlAttr
 import Messages exposing (Msg)
 import Model exposing (Model, State(..))
 import ViewPlaying exposing (..)
 import ViewScenes exposing (..)
+
+
+
+-- View, ViewScenes created by Jovan
 
 
 view : Model -> Html Msg
@@ -23,6 +26,9 @@ view model =
                 Playing _ ->
                     viewPlaying model
 
+                ClearLevel _ ->
+                    viewClearLevel model
+
                 Scene 0 ->
                     viewScene0 model
 
@@ -31,9 +37,6 @@ view model =
 
                 Scene a ->
                     viewOtherScene a model
-
-                ClearLevel _ ->
-                    viewClearLevel model
 
                 Gameover _ ->
                     viewGameover model
@@ -48,4 +51,3 @@ view model =
         ]
         [ viewAll
         ]
-
