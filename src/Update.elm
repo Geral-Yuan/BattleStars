@@ -1,9 +1,9 @@
-module Update exposing (..)
+module Update exposing (update)
 
-import Bounce exposing (..)
+import Bounce exposing (Bounce(..), newBounceVelocity, newReflectedVelocity, updateMonster)
 import Browser.Dom exposing (getViewport)
-import Data exposing (..)
-import Html.Attributes exposing (multiple)
+import Data exposing (Monster, Monster_state(..), Ball_state(..), scaleVec, Ball, Boss, Boss_state(..), Element(..), identityMat, addVec, changePos, Mat, innerVec, reflectionMat, monsterLives )
+import MyElement exposing (elementMatch)
 import Messages exposing (..)
 import Model exposing (..)
 import Paddle exposing (..)
@@ -37,12 +37,9 @@ update msg model =
             , Cmd.none
             )
 
-        Enter ->
+        Enter False->
             case model.state of
                 Scene _ ->
-                    -- let
-                    --     (nmodel, _) = updateClearLevel model
-                    -- in
                     updateScene model
 
                 _ ->
@@ -118,7 +115,12 @@ updateScene model =
                     model
             in
             ( { nModel | state = Scene 2, time = 0 }, Task.perform GetViewport getViewport )
-
+        Scene 0 ->
+            let
+                nModel =
+                    model
+            in
+            ( { nModel | state = Scene 1, time = 0 }, Task.perform GetViewport getViewport )
         Scene 1 ->
             let
                 nModel =
@@ -127,60 +129,27 @@ updateScene model =
             ( { nModel | state = Starting, time = 0 }, Task.perform GetViewport getViewport )
 
         Scene 2 ->
-            -- let
-            --     nModel =
-            --         model
-            -- in
             ( initLevel 1 model, Task.perform GetViewport getViewport )
 
-        -- ( { nModel | state = Playing 1 }, Task.perform GetViewport getViewport )
-        -- Playing 1 ->
-        --     ( initLevel 1 model , Task.perform GetViewport getViewport)
-        -- Scene 3 ->
-        --     let
-        --         nModel =
-        --             model
-        --     in
-        --     ( { nModel | state = Playing 2 }, Task.perform GetViewport getViewport )
         Scene 3 ->
             ( initLevel 2 model, Task.perform GetViewport getViewport )
 
         Scene 4 ->
-            -- let
-            --     nModel =
-            --         model
-            -- in
-            -- ( { nModel | state = Playing 3 }, Task.perform GetViewport getViewport )
             ( initLevel 3 model, Task.perform GetViewport getViewport )
 
         Scene 5 ->
-            -- let
-            --     nModel =
-            --         model
-            -- in
-            -- ( { nModel | state = Playing 4 }, Task.perform GetViewport getViewport )
             ( initLevel 4 model, Task.perform GetViewport getViewport )
 
         Scene 6 ->
-            -- let
-            --     nModel =
-            --         model
-            -- in
-            -- ( { nModel | state = Playing 5 }, Task.perform GetViewport getViewport )
             ( initLevel 5 model, Task.perform GetViewport getViewport )
 
         Scene 7 ->
-            -- let
-            --     nModel =
-            --         model
-            -- in
-            -- ( { nModel | state = Starting }, Task.perform GetViewport getViewport )
-            ( initModel, Task.perform GetViewport getViewport )
+            ( reModel, Task.perform GetViewport getViewport )
 
         _ ->
             ( model, Task.perform GetViewport getViewport )
 
-
+{-The clear level shows the score after completing one level-}
 updateClearLevel : Model -> ( Model, Cmd Msg )
 updateClearLevel model =
     case model.state of
@@ -189,11 +158,6 @@ updateClearLevel model =
 
         _ ->
             ( model, Task.perform GetViewport getViewport )
-
-
-
---wyj
-
 
 updatePaddle : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 updatePaddle msg ( model, cmd ) =
@@ -206,16 +170,8 @@ updatePaddle msg ( model, cmd ) =
             , cmd
             )
 
-        Trans ->
-            ( { model
-                | paddle = transPaddle model
-              }
-            , cmd
-            )
-
         _ ->
-            ( model, cmd )
-
+            ( model, Cmd.none )
 
 shootBall : Model -> Model
 shootBall model =
@@ -235,59 +191,6 @@ shootBall model =
 
         Nothing ->
             model
-
-
-
---wyj
--- getTerminal : Model -> Float
--- getTerminal  model =
---     let
---         nmodel =
---             bounceAll ( model, Cmd.none )
---             |> Tuple.first
---         ball = model.ball       --找更下面的ball
---         cy = Tuple.second (ball.pos)
---         paddle = model.paddle
---         py=Tuple.second (paddle.pos)
---     in
---     if cy + ball.radius <= py then
---         getTerminal (moveBall nmodel (0.01) )
---     else
---         (model.ball.pos
---         |> Tuple.first)
---         - paddle.width /2
---wyj
--- a function that let paddle catch ball automatically
-
-
-getTerminal : Model -> Float
-getTerminal model =
-    let
-        nmodel =
-            bounceAll ( model, Cmd.none )
-                |> Tuple.first
-
-        py =
-            Tuple.second model.paddle.pos
-    in
-    case List.filter (\ball -> Tuple.second ball.pos + ball.radius > py) model.ball_list |> List.head of
-        Nothing ->
-            getTerminal (moveBall 0.01 nmodel)
-
-        Just ball ->
-            Tuple.first ball.pos - model.paddle.width / 2
-
-
-transPaddle : Model -> Paddle
-transPaddle model =
-    let
-        paddle =
-            model.paddle
-
-        py =
-            Tuple.second paddle.pos
-    in
-    { paddle | pos = ( getTerminal model, py ) }
 
 
 updateBall : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
@@ -663,8 +566,13 @@ updateTime msg ( model, cmd ) =
 
                 newboss =
                     { oldboss | bosstime = oldboss.bosstime + elapse / 1000 }
+                state = model.state
             in
-            ( { model | time = model.time + elapse / 1000, boss = newboss }, cmd )
+             if (state == Scene 0) && (model.time > 6.2) then
+                (updateScene model)
+            else 
+                ( { model | time = model.time + elapse / 1000, boss = newboss }, cmd )
+           
 
         _ ->
             ( model, cmd )
@@ -731,7 +639,7 @@ checkEnd ( model, cmd ) =
                 ( { model
                     | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
                     , state = ClearLevel model.level
-                    , scores = model.scores + model.level_scores + checkBonus model
+                    , scores = model.scores + model.level_scores + checkBonus model + model.lives * 100
                     , level_scores = 0
                   }
                 , Cmd.batch [ cmd, Task.perform GetViewport getViewport ]
@@ -748,7 +656,7 @@ checkEnd ( model, cmd ) =
                 ( { model
                     | ball_list = List.map (\ball -> { ball | v_x = 0, v_y = 0 }) model.ball_list
                     , state = ClearLevel model.level
-                    , scores = model.scores + model.level_scores + checkBonus model
+                    , scores = model.scores + model.level_scores + checkBonus model + model.lives * 100 + 1000
                     , level_scores = 0
                     , monster_list = []
                   }
