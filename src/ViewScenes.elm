@@ -1,15 +1,14 @@
-module ViewScenes exposing (viewOtherScene, viewScene0, viewScene1, viewClearLevel, viewGameover, viewStarting)
+module ViewScenes exposing (viewClearLevel, viewGameover, viewOtherScene, viewScene0, viewScene1, viewStarting)
 
 {- This file contains all the scenes for the game -}
 
-
-import Color exposing (getcolor, getColorful)
+import Color exposing (getColorful, getcolor)
 import Debug exposing (toString)
-import Html exposing (Html, div, button, text)
+import Html exposing (Html, button, div, text)
 import Html.Attributes as HtmlAttr exposing (style)
+import Html.Events exposing (onClick)
 import Messages exposing (..)
 import Model exposing (Model)
-import Html.Events exposing (onClick)
 
 
 sceneWidth : Float
@@ -63,18 +62,8 @@ matchScene n model =
             , helperScene1 "white" model.time 6 "All the best General! Destroy the evil elemental monsters!" ( 761.9107343, 750 ) 35
             , helperScene1 "white" model.time 7 "Click S during the game to skip the level and SPACE to fire" ( 761.9107343, 850 ) 35
             , helperScene1 "white" model.time 7 "Click Enter to continue" ( 761.9107343, 925 ) 35
-            , div [ HtmlAttr.style "z-index" "99999999" ]
-                [ Html.audio
-                    [ HtmlAttr.autoplay True
-                    , HtmlAttr.loop True
-                    , HtmlAttr.controls True
-                    , HtmlAttr.src "./assets/audio/Start.ogg"
-                    , HtmlAttr.preload "True"
-                    , HtmlAttr.id "start"
-                    ]
-                    []
-                ]
             ]
+
         3 ->
             [ helperScene1 "white" model.time 1 "General!! The monsters have penetrated into our defences!" ( 761.9107343, 325 ) 35
             , helperScene1 "white" model.time 2 "Gameplay: Boss monster changes element randomly" ( 761.9107343, 400 ) 35
@@ -123,47 +112,56 @@ matchScene n model =
             , helperScene1 "white" model.time 5 "You have completed Boss Level!" ( 700, 750 ) 35
             , helperScene1 "white" model.time 6 "Click Enter to go back to the Homepage" ( 700, 925 ) 35
             ]
+
+
 logoWidth : Float
-logoWidth = 523.2558
+logoWidth =
+    523.2558
+
 
 logoHeight : Float
-logoHeight = 600
+logoHeight =
+    600
 
 
 determineOpct : Float -> Float
 determineOpct t =
-    if (t <= 6) then
-        (sin (t * pi / 6)) * 2 / 1.732
-    else 
+    if t <= 6 then
+        sin (t * pi / 6) * 2 / 1.732
+
+    else
         0
+
 
 viewScene0 : Model -> Html Msg
 viewScene0 model =
     let
         ( w, h ) =
             model.size
-        t = model.time
+
+        t =
+            model.time
+
         r =
             if w / h > logoWidth / logoHeight then
                 Basics.min 1 (h / logoHeight)
 
             else
                 Basics.min 1 (w / logoWidth)
-        
     in
-    
     div
-        [HtmlAttr.style "width" (String.fromFloat logoWidth ++ "px")
+        [ HtmlAttr.style "width" (String.fromFloat logoWidth ++ "px")
         , HtmlAttr.style "height" (String.fromFloat logoHeight ++ "px")
         , HtmlAttr.style "position" "absolute"
         , HtmlAttr.style "left" (String.fromFloat ((w - logoWidth * r) / 2) ++ "px")
         , HtmlAttr.style "top" (String.fromFloat ((h - logoHeight * r) / 2) ++ "px")
-        , HtmlAttr.style "opacity" ((determineOpct t) |> String.fromFloat)
+        , HtmlAttr.style "opacity" (determineOpct t |> String.fromFloat)
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
-        , HtmlAttr.style "background" ("url('./assets/image/ace.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ ( " 523.2558px " ) ++ ( " 600px"))
+        , HtmlAttr.style "background" ("url('./assets/image/ace.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ " 523.2558px " ++ " 600px")
         ]
         []
+
 
 viewScene1 : Model -> Html Msg
 viewScene1 model =
@@ -193,24 +191,18 @@ viewScene1 model =
         , helperScene1 "dodgerblue" model.time 4 "and kill millions of Zandalorians to steal the secret to immortality." ( 100, 340 ) 30
         , helperScene1 "dodgerblue" model.time 5 "General, you are our only hope to save Zandalore!" ( 100, 420 ) 30
         , helperScene1 "white" model.time 6 "Click Enter to continue" ( 100, 500 ) 30
-        , div [ HtmlAttr.style "z-index" "99999999" ]
-            [ Html.audio
-                [ HtmlAttr.autoplay True
-                , HtmlAttr.loop True
-                , HtmlAttr.controls True
-                , HtmlAttr.src "./assets/audio/Start.ogg"
-                , HtmlAttr.preload "True"
-                , HtmlAttr.id "start"
-                ]
-                []
-            ]
         ]
 
+
 startWidth : Float
-startWidth = 1200
+startWidth =
+    1200
+
 
 startHeight : Float
-startHeight = 1200
+startHeight =
+    1200
+
 
 viewStarting : Model -> Html Msg
 viewStarting model =
@@ -229,34 +221,37 @@ viewStarting model =
         [ HtmlAttr.style "width" (String.fromFloat startWidth ++ "px")
         , HtmlAttr.style "height" (String.fromFloat startHeight ++ "px")
         , HtmlAttr.style "position" "absolute"
-        , HtmlAttr.style "left" (String.fromFloat (((w - startWidth * r) / 2) ) ++ "px")
+        , HtmlAttr.style "left" (String.fromFloat ((w - startWidth * r) / 2) ++ "px")
         , HtmlAttr.style "top" (String.fromFloat ((h - startHeight * r) / 2) ++ "px")
         , HtmlAttr.style "transform-origin" "0 0"
         , HtmlAttr.style "transform" ("scale(" ++ String.fromFloat r ++ ")")
-        , HtmlAttr.style "background" ("url('./assets/image/Start.png')"  ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ (toString startWidth ++ "px " ++ (toString startHeight ++ "px")))
+        , HtmlAttr.style "background" ("url('./assets/image/Start.png')" ++ " no-repeat fixed " ++ " 0px " ++ " 0px / " ++ (toString startWidth ++ "px " ++ (toString startHeight ++ "px")))
         ]
         [ renderStartButton
-        , div
-            [ HtmlAttr.style "left" "-200px"
-            , HtmlAttr.style "top" "0px"
-            ]
+        , div [ HtmlAttr.style "z-index" "99999999" ]
             [ Html.audio
                 [ HtmlAttr.autoplay True
                 , HtmlAttr.loop True
-                , HtmlAttr.src "./assets/audio/Start.ogg"
-                , HtmlAttr.preload "True"
-                , HtmlAttr.id "start"
                 , HtmlAttr.controls True
+                , HtmlAttr.src "./assets/audio/gamePlay.ogg"
+                , HtmlAttr.preload "True"
+                , HtmlAttr.id "gamePlay"
                 ]
                 []
             ]
         ]
 
+
 clearWidth : Float
-clearWidth = 6400/3
+clearWidth =
+    6400 / 3
+
 
 cleatHeight : Float
-cleatHeight = 1200
+cleatHeight =
+    1200
+
+
 viewClearLevel : Model -> Html Msg
 viewClearLevel model =
     let
@@ -271,10 +266,9 @@ viewClearLevel model =
                 Basics.min 1 (w / clearWidth)
     in
     div
-        [ HtmlAttr.style "width" (String.fromFloat (clearWidth) ++ "px")
+        [ HtmlAttr.style "width" (String.fromFloat clearWidth ++ "px")
         , HtmlAttr.style "height" (String.fromFloat cleatHeight ++ "px")
         , HtmlAttr.style "position" "absolute"
-
         , HtmlAttr.style "left" (String.fromFloat ((w - clearWidth * r) / 2) ++ "px")
         , HtmlAttr.style "top" (String.fromFloat ((h - cleatHeight * r) / 2) ++ "px")
         , HtmlAttr.style "transform-origin" "0 0"
@@ -282,9 +276,9 @@ viewClearLevel model =
         , HtmlAttr.style "background" "url('./assets/image/background.png')"
         ]
         [ nextSceneButton
-        , helperScene1 (getcolor (getColorful model.time)) model.time 1 "MISSION ACCOMPLISHED" ( 6400 * (2490-1385) /6 /2490, 300 ) 100
-        , helperScene1 (getcolor (getColorful model.time)) model.time 1 ("Level " ++ toString model.level ++ " cleared") (  6400 * (2490-883) /6 /2490, 450 ) 100
-        , helperScene1 (getcolor (getColorful model.time)) model.time 2 ("Score: " ++ toString model.scores) (  6400 * (2490-700) /6 /2490, 600 ) 100
+        , helperScene1 (getcolor (getColorful model.time)) model.time 1 "MISSION ACCOMPLISHED" ( 6400 * (2490 - 1385) / 6 / 2490, 300 ) 100
+        , helperScene1 (getcolor (getColorful model.time)) model.time 1 ("Level " ++ toString model.level ++ " cleared") ( 6400 * (2490 - 883) / 6 / 2490, 450 ) 100
+        , helperScene1 (getcolor (getColorful model.time)) model.time 2 ("Score: " ++ toString model.scores) ( 6400 * (2490 - 700) / 6 / 2490, 600 ) 100
         ]
 
 
@@ -302,7 +296,7 @@ viewGameover model =
                 Basics.min 1 (w / clearWidth)
     in
     div
-        [ HtmlAttr.style "width" (String.fromFloat (clearWidth) ++ "px")
+        [ HtmlAttr.style "width" (String.fromFloat clearWidth ++ "px")
         , HtmlAttr.style "height" (String.fromFloat cleatHeight ++ "px")
         , HtmlAttr.style "position" "absolute"
         , HtmlAttr.style "left" (String.fromFloat ((w - clearWidth * r) / 2) ++ "px")
@@ -312,26 +306,21 @@ viewGameover model =
         , HtmlAttr.style "background" "url('./assets/image/background.png')"
         ]
         [ newGameButton
-        , helperScene1 (getcolor (getColorful model.time)) model.time 1 "MISSION FAILED" (  649.7978 , 450 ) 100
+        , helperScene1 (getcolor (getColorful model.time)) model.time 1 "MISSION FAILED" ( 649.7978, 450 ) 100
         ]
+
 
 newGameButton : Html Msg
 newGameButton =
     button
         [ style "background" "#34495f"
-        , style "border" "0"
         , style "top" "790px"
         , style "color" "white"
-        , style "cursor" "pointer"
         , style "display" "block"
-        , style "font-family" "Helvetica, Arial, sans-serif"
         , style "font-size" "18px"
         , style "font-weight" "500"
         , style "height" "80px"
         , style "left" "986.6667px"
-        , style "line-height" "60px"
-        , style "outline" "none"
-        , style "padding" "0"
         , style "position" "absolute"
         , style "width" "160px"
         , onClick Restart
@@ -361,24 +350,21 @@ nextSceneButton : Html Msg
 nextSceneButton =
     button
         [ style "background" "#34495f"
-        , style "border" "0"
         , style "top" "790px"
         , style "color" "white"
-        , style "cursor" "pointer"
-        , style "display" "block"
-        , style "font-family" "Helvetica, Arial, sans-serif"
         , style "font-size" "18px"
         , style "font-weight" "500"
         , style "height" "80px"
         , style "left" "986.6667px"
         , style "line-height" "60px"
         , style "outline" "none"
-        , style "padding" "0"
         , style "position" "absolute"
         , style "width" "160px"
         , onClick NextScene
         ]
         [ text "Next Level" ]
+
+
 helperScene1 : String -> Float -> Float -> String -> ( Float, Float ) -> Int -> Html Msg
 helperScene1 color modeltime time string ( x, y ) font =
     div

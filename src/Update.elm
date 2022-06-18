@@ -2,10 +2,10 @@ module Update exposing (update)
 
 import Bounce exposing (Bounce(..), newBounceVelocity, newReflectedVelocity, updateMonster)
 import Browser.Dom exposing (getViewport)
-import Data exposing (Monster, Monster_state(..), Ball_state(..), scaleVec, Ball, Boss, Boss_state(..), Element(..), identityMat, addVec, changePos, Mat, innerVec, reflectionMat, monsterLives )
-import MyElement exposing (elementMatch)
+import Data exposing (Ball, Ball_state(..), Boss, Boss_state(..), Element(..), Mat, Monster, Monster_state(..), addVec, changePos, identityMat, innerVec, monsterLives, reflectionMat, scaleVec)
 import Messages exposing (..)
 import Model exposing (..)
+import MyElement exposing (elementMatch)
 import Paddle exposing (..)
 import Random
 import Scoreboard exposing (..)
@@ -37,7 +37,7 @@ update msg model =
             , Cmd.none
             )
 
-        Enter False->
+        Enter False ->
             case model.state of
                 Scene _ ->
                     updateScene model
@@ -115,12 +115,14 @@ updateScene model =
                     model
             in
             ( { nModel | state = Scene 2, time = 0 }, Task.perform GetViewport getViewport )
+
         Scene 0 ->
             let
                 nModel =
                     model
             in
             ( { nModel | state = Scene 1, time = 0 }, Task.perform GetViewport getViewport )
+
         Scene 1 ->
             let
                 nModel =
@@ -149,7 +151,11 @@ updateScene model =
         _ ->
             ( model, Task.perform GetViewport getViewport )
 
-{-The clear level shows the score after completing one level-}
+
+
+{- The clear level shows the score after completing one level -}
+
+
 updateClearLevel : Model -> ( Model, Cmd Msg )
 updateClearLevel model =
     case model.state of
@@ -158,6 +164,7 @@ updateClearLevel model =
 
         _ ->
             ( model, Task.perform GetViewport getViewport )
+
 
 updatePaddle : Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 updatePaddle msg ( model, cmd ) =
@@ -172,6 +179,7 @@ updatePaddle msg ( model, cmd ) =
 
         _ ->
             ( model, Cmd.none )
+
 
 shootBall : Model -> Model
 shootBall model =
@@ -566,13 +574,15 @@ updateTime msg ( model, cmd ) =
 
                 newboss =
                     { oldboss | bosstime = oldboss.bosstime + elapse / 1000 }
-                state = model.state
+
+                state =
+                    model.state
             in
-             if (state == Scene 0) && (model.time > 6.2) then
-                (updateScene model)
-            else 
+            if (state == Scene 0) && (model.time > 6.2) then
+                updateScene model
+
+            else
                 ( { model | time = model.time + elapse / 1000, boss = newboss }, cmd )
-           
 
         _ ->
             ( model, cmd )
@@ -624,6 +634,29 @@ checkBallNumber ( model, cmd ) =
         ( model, cmd )
 
 
+checkBonus : Model -> Int
+checkBonus model =
+    -- Bonus will be awarded for more lives
+    case model.lives of
+        5 ->
+            50
+
+        4 ->
+            40
+
+        3 ->
+            30
+
+        2 ->
+            20
+
+        1 ->
+            10
+
+        _ ->
+            0
+
+
 checkEnd : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 checkEnd ( model, cmd ) =
     if model.lives <= 0 then
@@ -668,26 +701,3 @@ checkEnd ( model, cmd ) =
 
     else
         ( model, cmd )
-
-
-checkBonus : Model -> Int
-checkBonus model =
-    -- Bonus will be awarded for more lives
-    case model.lives of
-        5 ->
-            50
-
-        4 ->
-            40
-
-        3 ->
-            30
-
-        2 ->
-            20
-
-        1 ->
-            10
-
-        _ ->
-            0
