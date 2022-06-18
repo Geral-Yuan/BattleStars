@@ -1,23 +1,12 @@
-module Scoreboard exposing (getMonster_score, findHitMonster)
+module Scoreboard exposing (findHitMonster, getMonster_score)
 
 import Data exposing (Monster)
-import MyElement exposing (elementMatch)
 import Messages exposing (Msg(..))
+import MyElement exposing (elementMatch)
 
 
 
 -- Scoreboard system done by Jovan
-
-
-findHitMonster : List Monster -> Msg -> Maybe Monster
-findHitMonster monster_list msg =
-    case msg of
-        Hit k _ ->
-            Tuple.first (List.partition (\{ idx } -> idx == k) monster_list)
-                |> List.head
-
-        _ ->
-            Nothing
 
 
 getMonster_score : List Monster -> Msg -> Int
@@ -52,3 +41,14 @@ bonusScore eff =
 
         _ ->
             0
+
+
+findHitMonster : List Monster -> Msg -> Maybe Monster
+findHitMonster monster_list msg =
+    case msg of
+        Hit k _ ->
+            Tuple.first (List.partition (\{ idx } -> idx == k) monster_list)
+                |> List.head
+
+        _ ->
+            Nothing
